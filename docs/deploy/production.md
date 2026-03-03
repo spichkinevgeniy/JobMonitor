@@ -2,7 +2,7 @@
 
 ## Preconditions
 
-- Docker and Docker Compose plugin are installed on the VPS.
+- Docker and docker-compose are installed on the VPS.
 - Repository is cloned on the VPS.
 - `.env` exists on the server and is not committed to git.
 - `MIRROR_CHANNEL` is an integer channel ID.
@@ -29,7 +29,7 @@ git pull --ff-only
 
 2. Start only database:
 ```bash
-docker compose -f docker-compose.yml up -d db
+docker-compose -f docker-compose.yml up -d db
 ```
 
 3. Apply migrations:
@@ -39,7 +39,7 @@ make prod-migrate
 
 4. Start application:
 ```bash
-docker compose -f docker-compose.yml up -d app
+docker-compose -f docker-compose.yml up -d app
 ```
 
 5. Check logs:
@@ -53,7 +53,7 @@ make prod-logs SERVICE=app
 2. Complete authorization once.
 3. Restart app:
 ```bash
-docker compose -f docker-compose.yml restart app
+docker-compose -f docker-compose.yml restart app
 ```
 4. Ensure no re-authorization is required. Session is stored in `telethon_session` volume.
 
@@ -103,7 +103,7 @@ make prod-logs SERVICE=app
 
 - Run daily logical backup:
 ```bash
-docker compose -f docker-compose.yml exec -T db \
+docker-compose -f docker-compose.yml exec -T db \
   pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB" > /opt/backups/job_monitor_$(date +%F).sql
 ```
 - Store backups outside Docker volumes.

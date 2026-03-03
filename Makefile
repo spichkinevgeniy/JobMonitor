@@ -4,9 +4,9 @@ PROJECT_DIR = app
 TEST_DIR = test
 VENV_DIR = .venv
 LOGFIRE_PROJECT = jobmonitor
-DEV_COMPOSE = docker compose -f docker-compose.yml -f docker-compose.override.yml
-PROD_COMPOSE = docker compose -f docker-compose.yml
-OBS_COMPOSE = docker compose -f docker-compose.observability.yml
+DEV_COMPOSE = docker-compose -f docker-compose.yml -f docker-compose.override.yml
+PROD_COMPOSE = docker-compose -f docker-compose.yml
+OBS_COMPOSE = docker-compose -f docker-compose.observability.yml
 
 .PHONY: help venv install run lint format test test-unit test-integration clean \
 	docker-build \
