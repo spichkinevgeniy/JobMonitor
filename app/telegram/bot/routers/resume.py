@@ -1,4 +1,4 @@
-﻿from io import BytesIO
+from io import BytesIO
 
 from aiogram import F, Router
 from aiogram.filters import StateFilter
@@ -142,9 +142,7 @@ async def processing_resume_document_block(message: Message) -> None:
 
 @router.message(
     StateFilter(BotStates.main_menu, None),
-    ~F.text.in_(
-        {UPLOAD_BUTTON_TEXT, TRACKING_BUTTON_TEXT, HELP_BUTTON_TEXT, PROFILE_BUTTON_TEXT}
-    ),
+    ~F.text.in_({UPLOAD_BUTTON_TEXT, TRACKING_BUTTON_TEXT, HELP_BUTTON_TEXT, PROFILE_BUTTON_TEXT}),
 )
 async def main_menu_fallback(message: Message) -> None:
     await message.answer(

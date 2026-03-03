@@ -1,4 +1,4 @@
-﻿from aiogram.types import ReplyKeyboardMarkup
+from aiogram.types import ReplyKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 START_BUTTON_TEXT = "Начать пользоваться ботом"

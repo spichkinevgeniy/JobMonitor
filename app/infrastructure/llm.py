@@ -117,5 +117,3 @@ def get_resume_salary_agent() -> Agent[None, OutResumeSalaryParse]:
         name="resume_salary_agent",
         metadata={"agent_type": "resume_salary"},
     )
-
-

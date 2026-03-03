@@ -71,24 +71,17 @@ def build_tracking_intro_and_available_steps(user: User) -> tuple[str, list[str]
     ]
 
     if work_format_text is None:
-        lines.append(
-            "• 🏠 Формат: не найден в резюме "
-        )
+        lines.append("• 🏠 Формат: не найден в резюме ")
     else:
         lines.append(f"• 🏠 Формат: {work_format_text}")
 
     if salary_text is None:
-        lines.append(
-            "• 💰 Зарплата: не указана "
-            "(или не найдена)"
-        )
+        lines.append("• 💰 Зарплата: не указана (или не найдена)")
     else:
         lines.append(f"• 💰 Зарплата: {salary_text}")
 
     if experience_text is None:
-        lines.append(
-            "• ⏳ Опыт: не найден в резюме "
-        )
+        lines.append("• ⏳ Опыт: не найден в резюме ")
     else:
         lines.append(f"• ⏳ Опыт: {experience_text}")
 

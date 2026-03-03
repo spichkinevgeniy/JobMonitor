@@ -90,9 +90,7 @@ async def _ask_current_step(message: Message, state: FSMContext) -> bool:
     return False
 
 
-async def _finalize_filters(
-    message: Message, state: FSMContext, service: UserService
-) -> None:
+async def _finalize_filters(message: Message, state: FSMContext, service: UserService) -> None:
     if message.from_user is None:
         await state.clear()
         await message.answer(
@@ -117,9 +115,7 @@ async def _finalize_filters(
 
     updated = await service.update_filters(
         tg_id=message.from_user.id,
-        experience_min_months=(
-            exp_min_months if isinstance(exp_min_months, int) else None
-        ),
+        experience_min_months=(exp_min_months if isinstance(exp_min_months, int) else None),
         salary_mode=salary_mode,
         work_format=user.cv_work_format,
         work_format_mode=format_mode,
@@ -140,9 +136,7 @@ async def _finalize_filters(
     )
 
 
-async def _advance_or_finalize(
-    message: Message, state: FSMContext, service: UserService
-) -> None:
+async def _advance_or_finalize(message: Message, state: FSMContext, service: UserService) -> None:
     data = await state.get_data()
     step_index = int(data.get(STEP_INDEX_KEY, 0)) + 1
     await state.update_data({STEP_INDEX_KEY: step_index})
@@ -237,11 +231,7 @@ async def filter_experience_step(message: Message, state: FSMContext) -> None:
     F.text.in_({SALARY_STRICT_TEXT, SALARY_SOFT_TEXT}),
 )
 async def filter_salary_step(message: Message, state: FSMContext) -> None:
-    mode = (
-        FilterMode.STRICT
-        if message.text == SALARY_STRICT_TEXT
-        else FilterMode.SOFT
-    )
+    mode = FilterMode.STRICT if message.text == SALARY_STRICT_TEXT else FilterMode.SOFT
     await state.update_data({SALARY_MODE_KEY: mode.value})
     service = UserService(UserUnitOfWork(async_session_factory))
     await _advance_or_finalize(message, state, service)

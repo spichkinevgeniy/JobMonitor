@@ -14,9 +14,7 @@ class InfoRawVacancy(BaseModel):
 class OutVacancyParse(BaseModel):
     is_vacancy: bool = Field(
         ...,
-        description=(
-            "Признак того, является ли текст описанием вакансии (job description)."
-        ),
+        description=("Признак того, является ли текст описанием вакансии (job description)."),
     )
     specializations: list[SpecializationType] = Field(
         default_factory=list,

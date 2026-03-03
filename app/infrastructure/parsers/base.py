@@ -9,5 +9,4 @@ ParserInput = Union[BytesIO, str]
 
 class BaseResumeParser(ABC):
     @abstractmethod
-    async def extract_text(self, source: ParserInput) -> OutResumeParse:
-        ...
+    async def extract_text(self, source: ParserInput) -> OutResumeParse: ...

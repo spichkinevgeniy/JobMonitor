@@ -55,9 +55,7 @@ def vacancy_from_model(model: VacancyModel) -> Vacancy:
         mirror_chat_id=model.mirror_chat_id,
         mirror_message_id=model.mirror_message_id,
         salary=Salary.create(model.salary_amount, model.salary_currency),
-        work_format=WorkFormat(model.work_format)
-        if model.work_format
-        else WorkFormat.UNDEFINED,
+        work_format=WorkFormat(model.work_format) if model.work_format else WorkFormat.UNDEFINED,
         content_hash=ContentHash(model.content_hash),
         created_at=model.created_at,
         is_active=model.is_active,

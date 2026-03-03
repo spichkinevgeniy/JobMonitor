@@ -1,4 +1,4 @@
-﻿from aiogram import F, Router
+from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
@@ -27,9 +27,7 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
         )
         logger.info(f"User {user.username} saved in db")
     except Exception:
-        logger.exception(
-            f"Failed to save user (tg_id={message.from_user.id})"
-        )
+        logger.exception(f"Failed to save user (tg_id={message.from_user.id})")
         user = None
 
     body_text = (

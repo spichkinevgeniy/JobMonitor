@@ -1,4 +1,4 @@
-﻿from app.domain.user.entities import User
+from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode
 from app.telegram.bot.tracking_settings_view import format_salary, format_work_format
 
@@ -10,9 +10,7 @@ def build_search_profile_text(user: User) -> str:
 
     salary = format_salary(user.cv_salary)
     work_format = format_work_format(user.cv_work_format)
-    experience_text, experience_hint = _format_experience_filter(
-        user.filter_experience_min_months
-    )
+    experience_text, experience_hint = _format_experience_filter(user.filter_experience_min_months)
 
     lines = [
         "👤 Мой профиль поиска",

@@ -10,5 +10,4 @@ class INotificationService(Protocol):
         mirror_chat_id: int,
         mirror_message_id: int,
         user_ids: list[int],
-    ) -> None:
-        ...
+    ) -> None: ...

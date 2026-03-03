@@ -33,9 +33,7 @@ def user_to_model(user: User) -> UserModel:
         filter_experience_min_months=user.filter_experience_min_months,
         cv_salary_amount=user.cv_salary.amount if user.cv_salary else None,
         cv_salary_currency=(
-            user.cv_salary.currency.value
-            if user.cv_salary and user.cv_salary.currency
-            else None
+            user.cv_salary.currency.value if user.cv_salary and user.cv_salary.currency else None
         ),
         filter_salary_mode=user.filter_salary_mode.value,
         cv_work_format=user.cv_work_format.value if user.cv_work_format else None,
@@ -54,9 +52,7 @@ def apply_user(model: UserModel, user: User) -> None:
     model.filter_experience_min_months = user.filter_experience_min_months
     model.cv_salary_amount = user.cv_salary.amount if user.cv_salary else None
     model.cv_salary_currency = (
-        user.cv_salary.currency.value
-        if user.cv_salary and user.cv_salary.currency
-        else None
+        user.cv_salary.currency.value if user.cv_salary and user.cv_salary.currency else None
     )
     model.filter_salary_mode = user.filter_salary_mode.value
     model.cv_work_format = user.cv_work_format.value if user.cv_work_format else None
@@ -75,9 +71,7 @@ def user_from_model(model: UserModel) -> User:
         model.cv_salary_currency and model.cv_salary_currency.strip()
     )
     salary = (
-        UserSalary.create(model.cv_salary_amount, model.cv_salary_currency)
-        if has_salary
-        else None
+        UserSalary.create(model.cv_salary_amount, model.cv_salary_currency) if has_salary else None
     )
 
     work_format = UserWorkFormat(model.cv_work_format) if model.cv_work_format else None
@@ -98,9 +92,7 @@ def user_from_model(model: UserModel) -> User:
         filter_experience_min_months=filter_experience_min_months,
         cv_salary=salary,
         filter_salary_mode=(
-            FilterMode(model.filter_salary_mode)
-            if model.filter_salary_mode
-            else FilterMode.SOFT
+            FilterMode(model.filter_salary_mode) if model.filter_salary_mode else FilterMode.SOFT
         ),
         cv_work_format=work_format,
         filter_work_format_mode=(

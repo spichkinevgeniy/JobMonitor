@@ -58,9 +58,7 @@ class User:
                 stack = created_stack
 
         experience_months = None if cv_experience_months is None else max(0, cv_experience_months)
-        experience_min_months = cls._normalize_experience_min_months(
-            filter_experience_min_months
-        )
+        experience_min_months = cls._normalize_experience_min_months(filter_experience_min_months)
         has_salary = cv_salary_amount is not None or bool(
             cv_salary_currency and cv_salary_currency.strip()
         )

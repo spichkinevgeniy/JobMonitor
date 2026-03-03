@@ -47,7 +47,7 @@ class Vacancy:
         work_format: WorkFormat,
         salary_amount: int | None = None,
         salary_currency: str | None = None,
-        created_at: datetime | None = None
+        created_at: datetime | None = None,
     ) -> "Vacancy":
         if not text or not text.strip():
             raise ValidationError("Текст вакансии не может быть пустым.")
@@ -60,17 +60,14 @@ class Vacancy:
 
         langs = PrimaryLanguages.from_strs(languages_raw)
         if not langs.items:
-            raise ValidationError(
-                "Основные языки программирования не указаны. Матчинг невозможен."
-            )
+            raise ValidationError("Основные языки программирования не указаны. Матчинг невозможен.")
 
         stack = TechStack.create(tech_stack_raw)
 
-        salary_vo = Salary.create(
-            amount=salary_amount, currency=salary_currency)
-        
+        salary_vo = Salary.create(amount=salary_amount, currency=salary_currency)
+
         now = datetime.now(UTC)
-        
+
         return cls(
             id=VacancyId(vacancy_id),
             text=text.strip(),

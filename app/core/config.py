@@ -134,10 +134,7 @@ class BaseAppSettings(BaseSettings):
 
         if missing:
             joined = ", ".join(sorted(set(missing)))
-            raise ValueError(
-                "Invalid production configuration. Set valid values for: "
-                f"{joined}"
-            )
+            raise ValueError(f"Invalid production configuration. Set valid values for: {joined}")
 
 
 class LocalAppSettings(BaseAppSettings):

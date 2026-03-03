@@ -17,7 +17,7 @@ def test_specializations_from_strs_valid():
 
 
 def test_primary_languages_from_strs_valid():
-    input_strings = ['Python', ' Go ', '', 'dsadasd']
+    input_strings = ["Python", " Go ", "", "dsadasd"]
     result = PrimaryLanguages.from_strs(input_strings)
 
     assert isinstance(result, PrimaryLanguages)
@@ -28,13 +28,16 @@ def test_primary_languages_from_strs_valid():
     assert len(result.items) == 2
 
 
-@pytest.mark.parametrize("input_data, expected", [
-    ([" python ", "js"], {"Python", "Js"}),
-    ([], set()),
-    (None, set()),
-    (["", "  "], set()),
-    (["python", "python", "PYTHON"], {"Python"}),
-])
+@pytest.mark.parametrize(
+    "input_data, expected",
+    [
+        ([" python ", "js"], {"Python", "Js"}),
+        ([], set()),
+        (None, set()),
+        (["", "  "], set()),
+        (["python", "python", "PYTHON"], {"Python"}),
+    ],
+)
 def test_tech_stack_behavior(input_data, expected):
     stack = TechStack.create(input_data)
     assert stack.items == frozenset(expected)
@@ -49,7 +52,7 @@ def test_tech_stack_behavior(input_data, expected):
         (1500, "  ", None),
         (2000, None, None),
         (None, None, None),
-    ]
+    ],
 )
 def test_salary_create_success(amount, currency_input, expected_currency):
     salary = Salary.create(amount=amount, currency=currency_input)

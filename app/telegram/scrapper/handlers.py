@@ -47,9 +47,7 @@ class TelegramScraper:
             content_hash = Vacancy.compute_content_hash(message_info.text).value
             check_uow = VacancyUnitOfWork(self._session_factory)
             async with check_uow:
-                exists = await check_uow.vacancies.exists_by_content_hash(
-                    ContentHash(content_hash)
-                )
+                exists = await check_uow.vacancies.exists_by_content_hash(ContentHash(content_hash))
             if exists:
                 logger.info(
                     f"Duplicate vacancy skipped before parse (content_hash={content_hash}, "
@@ -108,7 +106,7 @@ class TelegramScraper:
 
     async def _send_to_mirror(self, event: events.NewMessage.Event) -> InfoRawVacancy | None:
         message: Message = event.message
-        text = (message.text or "")
+        text = message.text or ""
 
         if not text:
             logger.info(
@@ -145,4 +143,3 @@ class TelegramScraper:
             chat_id=event.chat_id,
             message_id=message.id,
         )
-
