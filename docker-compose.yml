@@ -1,29 +1,62 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: job_monitor_db
-    restart: always
-    env_file:
-      - .env
+    container_name: job_monitor_db_prod
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER?Variable is not set}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?Variable is not set}
       POSTGRES_DB: ${POSTGRES_DB?Variable is not set}
-    ports:
-      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: job_monitor_pgadmin
-    restart: always
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: job_monitor_app_prod
+    restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "5050:80"
+      APP_ENV: production
+      API_ID: ${API_ID?Variable is not set}
+      API_HASH: ${API_HASH?Variable is not set}
+      TELEGRAM_PHONE: ${TELEGRAM_PHONE:-}
+      TELETHON_LOGIN_MODE: ${TELETHON_LOGIN_MODE:-qr}
+      TELEGRAM_2FA_PASSWORD: ${TELEGRAM_2FA_PASSWORD:-}
+      BOT_TOKEN: ${BOT_TOKEN?Variable is not set}
+      CHANNELS_MAP_PATH: ${CHANNELS_MAP_PATH:-channels_map.json}
+      MIRROR_CHANNEL: ${MIRROR_CHANNEL?Variable is not set}
+      POSTGRES_SERVER: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB?Variable is not set}
+      POSTGRES_USER: ${POSTGRES_USER?Variable is not set}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?Variable is not set}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY?Variable is not set}
+      GOOGLE_MODEL: ${GOOGLE_MODEL:-gemini-2.5-flash}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      SENTRY_ENV: ${SENTRY_ENV:-production}
+      SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-0.0}
+      LOGFIRE_ENABLED: ${LOGFIRE_ENABLED:-false}
+      LOGFIRE_TOKEN: ${LOGFIRE_TOKEN:-}
+      LOGFIRE_SERVICE_NAME: ${LOGFIRE_SERVICE_NAME:-smartjobmonitor}
+      LOGFIRE_ENV: ${LOGFIRE_ENV:-production}
+      METRICS_ENABLED: ${METRICS_ENABLED:-true}
+      METRICS_ADDR: ${METRICS_ADDR:-0.0.0.0}
+      METRICS_PORT: ${METRICS_PORT:-8000}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - telethon_session:/app/data
+      - ./channels_map.json:/app/channels_map.json:ro
+
 volumes:
   postgres_data:
+  telethon_session:

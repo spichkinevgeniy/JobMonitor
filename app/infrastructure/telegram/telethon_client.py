@@ -1,4 +1,4 @@
-import asyncio
+from pathlib import Path
 
 from telethon import TelegramClient
 from telethon.errors import FloodWaitError, PhoneNumberInvalidError, SessionPasswordNeededError
@@ -12,20 +12,25 @@ logger = get_app_logger(__name__)
 class TelethonClientProvider:
     _QR_REFRESH_SECONDS = 10
 
-    def __init__(self, session_name: str = "job_monitor") -> None:
-        self._client = TelegramClient(session_name, config.API_ID, config.API_HASH)
+    def __init__(self, session_name: str | None = None) -> None:
+        self._session_name = session_name or "data/job_monitor"
+        self._client = TelegramClient(self._session_name, config.API_ID, config.API_HASH)
 
     @property
     def client(self) -> TelegramClient:
         return self._client
 
     async def start(self) -> TelegramClient:
+        self._ensure_session_dir()
         await self._ensure_authorized()
         return self._client
 
     async def stop(self) -> None:
         if self._client.is_connected():
             await self._client.disconnect()
+
+    def _ensure_session_dir(self) -> None:
+        Path(self._session_name).parent.mkdir(parents=True, exist_ok=True)
 
     async def _ensure_authorized(self) -> None:
         if not self._client.is_connected():
@@ -56,13 +61,15 @@ class TelethonClientProvider:
                 try:
                     await qr_login.wait(timeout=self._QR_REFRESH_SECONDS)
                     break
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     logger.warning("QR timed out, generating a new one...")
                     await qr_login.recreate()
                     self._log_qr(qr_login.url)
-                except SessionPasswordNeededError:
+                except SessionPasswordNeededError as err:
                     if not config.TELEGRAM_2FA_PASSWORD:
-                        raise RuntimeError("2FA is enabled. Set TELEGRAM_2FA_PASSWORD in .env")
+                        raise RuntimeError(
+                            "2FA is enabled. Set TELEGRAM_2FA_PASSWORD in .env"
+                        ) from err
                     await self._client.sign_in(password=config.TELEGRAM_2FA_PASSWORD)
                     break
 

@@ -5,7 +5,7 @@ from telethon import TelegramClient, events
 from telethon.tl.custom.message import Message
 
 from app.application.dto import InfoRawVacancy
-from app.application.ports.llm_port import ILLMExtractor
+from app.application.ports.llm_port import IVacancyLLMExtractor
 from app.application.ports.observability_port import IObservabilityService
 from app.application.services.matcher_service import MatcherService
 from app.application.services.vacancy_service import VacancyService
@@ -26,7 +26,7 @@ class TelegramScraper:
         client: TelegramClient,
         bot: Bot,
         session_factory: async_sessionmaker[AsyncSession],
-        extractor: ILLMExtractor,
+        extractor: IVacancyLLMExtractor,
         observability: IObservabilityService,
     ) -> None:
         self.client = client

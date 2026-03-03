@@ -102,7 +102,9 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
         except Exception as e:
             logger.error(f"Failed to edit message: {e}")
 
-        await message.answer("Отслеживание включено: теперь я буду присылать подходящие вакансии. 🔎")
+        await message.answer(
+            "Отслеживание включено: теперь я буду присылать подходящие вакансии. 🔎"
+        )
         await state.set_state(BotStates.main_menu)
 
     except NotAResumeError:

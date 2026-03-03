@@ -12,7 +12,7 @@ warn_unused_configs = true
 exclude = ["^\\.venv/"]
 
 [project]
-name = "smartjobmonitor"
+name = "jobmonitor"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"

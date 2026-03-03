@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from app.application.dto import InfoRawVacancy, OutVacancyParse
-from app.application.ports.llm_port import ILLMExtractor
+from app.application.ports.llm_port import IVacancyLLMExtractor
 from app.application.ports.observability_port import IObservabilityService
 from app.application.ports.unit_of_work import VacancyUnitOfWork
 from app.core.logger import get_app_logger
@@ -15,7 +15,7 @@ class VacancyService:
     def __init__(
         self,
         uow: VacancyUnitOfWork,
-        extractor: ILLMExtractor,
+        extractor: IVacancyLLMExtractor,
         observability: IObservabilityService,
     ) -> None:
         self._uow = uow

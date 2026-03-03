@@ -5,9 +5,10 @@ import fitz
 from PIL import Image
 from pydantic_ai import BinaryContent
 
-from app.application.dto import OutResumeParse
+from app.application.dto import OutResumeParse, OutResumeSalaryParse
 from app.core.logger import get_app_logger
-from app.infrastructure.llm_provider import get_resume_parse_agent
+from app.domain.shared.value_objects import Salary
+from app.infrastructure.llm import get_resume_parse_agent, get_resume_salary_agent
 from app.infrastructure.parsers.base import BaseResumeParser, ParserInput
 from app.infrastructure.parsers.exceptions import NotAResumeError, ParserError, TooManyPagesError
 
@@ -16,19 +17,21 @@ logger = get_app_logger(__name__)
 
 class PDFParser(BaseResumeParser):
     def __init__(self) -> None:
-        self._agent = get_resume_parse_agent()
+        self._resume_agent = get_resume_parse_agent()
+        self._salary_agent = get_resume_salary_agent()
 
     async def extract_text(self, source: ParserInput) -> OutResumeParse:
         if not isinstance(source, io.BytesIO):
-            raise ParserError(f"PDFParser ожидает BytesIO, получен {type(source)}")
+            raise ParserError(f"PDFParser expects BytesIO, got {type(source)}")
+
         logger.info("Resume parsing started")
         images, pdf_text = self._pdf_to_images_and_text(source)
 
         if not images:
-            raise ParserError("Не удалось получить изображения из PDF")
+            raise ParserError("Unable to render images from PDF")
         if len(images) > 10:
             logger.warning("Resume rejected: too many pages (%d)", len(images))
-            raise TooManyPagesError("Резюме слишком длинное (более 10 страниц)")
+            raise TooManyPagesError("Resume is too long (more than 10 pages)")
 
         try:
             logger.info("Resume images ready: %d pages", len(images))
@@ -40,7 +43,7 @@ class PDFParser(BaseResumeParser):
 
         if not parsed_data.is_resume:
             logger.info("Resume parsing completed: not a resume")
-            raise NotAResumeError("Этот документ не похож на резюме")
+            raise NotAResumeError("Document is not recognized as a resume")
 
         logger.info("Resume parsing completed: success")
         return parsed_data
@@ -80,12 +83,13 @@ class PDFParser(BaseResumeParser):
     async def _run_agent(self, images: list[Image.Image], pdf_text: str) -> OutResumeParse:
         current_date = datetime.now().strftime("%B %Y")
         prompt_parts: list[str | BinaryContent] = [
-            f"Текущая дата для расчётов: {current_date}\n"
-            "Пожалуйста, извлеките весь текст и проанализируйте следующие данные резюме.\n\n"
-            "Текстовый слой PDF (используй вместе со скриншотами):\n"
+            f"Current date for calculations: {current_date}\n"
+            "Analyze the resume using both sources below.\n\n"
+            "PDF text layer:\n"
             f"{pdf_text}\n\n"
-            "Скриншоты страниц резюме:"
+            "Resume page images:",
         ]
+
         for idx, img in enumerate(images, start=1):
             image_to_use = img
             if img.mode in ("RGBA", "P"):
@@ -94,25 +98,73 @@ class PDFParser(BaseResumeParser):
             img_byte_arr = io.BytesIO()
             image_to_use.save(img_byte_arr, format="JPEG", quality=85, optimize=True)
             img_bytes = img_byte_arr.getvalue()
-
-            prompt_parts.append(
-                BinaryContent(
-                    data=img_bytes,
-                    media_type="image/jpeg",
-                )
-            )
+            prompt_parts.append(BinaryContent(data=img_bytes, media_type="image/jpeg"))
 
             logger.debug(
-                "Подготовлено изображение %d: размер=%.2f КБ (JPEG)",
+                "Prepared image %d: size=%.2f KB (JPEG)",
                 idx,
                 len(img_bytes) / 1024,
             )
+
             img_byte_arr.close()
             if image_to_use is not img:
                 image_to_use.close()
 
-        result = await self._agent.run(
+        result = await self._resume_agent.run(
             user_prompt=prompt_parts,
             metadata={"pipeline": "resume_parse"},
         )
+        parsed_data = result.output
+
+        salary_source = "resume_pass" if parsed_data.salary is not None else "none"
+        salary_evidence: str | None = None
+        if parsed_data.salary is None and pdf_text.strip():
+            salary_source, salary_evidence = await self._try_fill_salary(parsed_data, pdf_text)
+
+        amount = parsed_data.salary.amount if parsed_data.salary else None
+        currency = (
+            parsed_data.salary.currency.value
+            if parsed_data.salary and parsed_data.salary.currency
+            else None
+        )
+        logger.info(
+            "Resume salary parsed: source=%s, amount=%s, currency=%s, evidence=%s",
+            salary_source,
+            amount,
+            currency,
+            self._truncate_text(salary_evidence),
+        )
+
+        return parsed_data
+
+    async def _run_salary_agent(self, pdf_text: str) -> OutResumeSalaryParse:
+        result = await self._salary_agent.run(
+            user_prompt=f"Текст резюме:\n{pdf_text}",
+            metadata={"pipeline": "resume_salary_pass"},
+        )
         return result.output
+
+    async def _try_fill_salary(
+        self, parsed_data: OutResumeParse, pdf_text: str
+    ) -> tuple[str, str | None]:
+        try:
+            salary_result = await self._run_salary_agent(pdf_text)
+        except Exception:
+            logger.exception("Salary second pass failed")
+            return "none", None
+
+        if salary_result.amount is None:
+            return "none", salary_result.evidence
+
+        currency = salary_result.currency.value if salary_result.currency else None
+        parsed_data.salary = Salary.create(amount=salary_result.amount, currency=currency)
+        return "salary_pass", salary_result.evidence
+
+    @staticmethod
+    def _truncate_text(value: str | None, max_len: int = 140) -> str | None:
+        if value is None:
+            return None
+        cleaned = " ".join(value.split())
+        if len(cleaned) <= max_len:
+            return cleaned
+        return f"{cleaned[:max_len]}..."

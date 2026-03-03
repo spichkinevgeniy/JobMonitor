@@ -5,7 +5,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from app.core.config import config
 from app.infrastructure.db import async_session_factory
-from app.infrastructure.llm_provider import GoogleLLMExtractor
+from app.infrastructure.extractors.vacancy_extractor import GoogleVacancyLLMExtractor
 from app.infrastructure.observability import (
     build_observability_service,
     init_logfire,
@@ -22,7 +22,7 @@ from app.telegram.scrapper.handlers import TelegramScraper
 async def build_scraper(bot: Bot) -> tuple[TelegramScraper, TelethonClientProvider]:
     provider = TelethonClientProvider()
     client = await provider.start()
-    extractor = GoogleLLMExtractor()
+    extractor = GoogleVacancyLLMExtractor()
     observability = build_observability_service()
     return TelegramScraper(client, bot, async_session_factory, extractor, observability), provider
 
@@ -37,6 +37,7 @@ def build_bot() -> tuple[Dispatcher, Bot]:
 
 
 async def main() -> None:
+    config.validate_runtime()
     init_sentry()
     init_logfire()
     init_metrics_server()

@@ -25,6 +25,7 @@ wheels/
 
 # Environment variables
 .env
+
 .env.local
 .env.*.local
 
@@ -32,4 +33,3 @@ wheels/
 .session
 *.session
 
-docs/
