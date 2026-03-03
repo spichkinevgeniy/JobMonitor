@@ -45,7 +45,7 @@ help:
 	@echo "  dev-ps            - Show dev services status"
 	@echo "  dev-logs          - Follow dev logs (use SERVICE=app|db|pgadmin)"
 	@echo "  dev-restart       - Restart dev stack"
-	@echo "  prod-up           - Start prod stack (app + db), build if needed"
+	@echo "  prod-up           - Recreate prod stack (down + up --build)"
 	@echo "  prod-down         - Stop prod stack (keep volumes)"
 	@echo "  prod-destroy      - Stop prod stack and remove volumes/orphans"
 	@echo "  prod-ps           - Show prod services status"
@@ -141,6 +141,7 @@ dev-restart:
 	$(DEV_COMPOSE) restart
 
 prod-up:
+	$(PROD_COMPOSE) down --remove-orphans
 	$(PROD_COMPOSE) up -d --build
 
 prod-down:
