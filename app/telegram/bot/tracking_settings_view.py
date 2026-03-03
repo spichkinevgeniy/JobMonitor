@@ -91,7 +91,7 @@ def build_tracking_intro_and_available_steps(user: User) -> tuple[str, list[str]
         "не соответствуют вашим ожиданиям."
     )
     lines.append(
-        "🚀 Включите нужные фильтры, чтобы получать меньше шума и больше подходящих вакансий."
+        "🚀 Включите нужные фильтры, чтобы отсеять для вас неподходящие вакансии."
     )
 
     available_steps: list[str] = []
