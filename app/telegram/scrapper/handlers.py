@@ -105,6 +105,24 @@ class TelegramScraper:
         logger.info("Scraper started.")
         await self.client.run_until_disconnected()
 
+    @staticmethod
+    def _source_channel_name(event: events.NewMessage.Event) -> str:
+        chat = event.chat
+        username = getattr(chat, "username", None)
+        title = getattr(chat, "title", None)
+        if username:
+            return f"@{username}"
+        if title:
+            return str(title)
+        return "unknown"
+
+    @staticmethod
+    def _message_preview(text: str, limit: int = 300) -> str:
+        normalized = " ".join(text.split())
+        if len(normalized) <= limit:
+            return normalized
+        return f"{normalized[:limit]}..."
+
     async def _send_to_mirror(self, event: events.NewMessage.Event) -> InfoRawVacancy | None:
         message: Message = event.message
         text = message.text or ""
@@ -122,12 +140,15 @@ class TelegramScraper:
                 message,
             )
         except Exception:
+            source_channel = self._source_channel_name(event)
+            preview = self._message_preview(text)
             logger.exception(
-                "Failed to forward message to mirror",
-                extra={
-                    "source_chat": event.chat_id,
-                    "source_message_id": message.id,
-                },
+                "Failed to forward message to mirror (source_chat_id=%s, source_channel=%s, "
+                "source_message_id=%s, source_message_preview=%r)",
+                event.chat_id,
+                source_channel,
+                message.id,
+                preview,
             )
             return None
 
