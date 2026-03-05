@@ -8,14 +8,16 @@ on:
       - refactor-v2
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  format-check:
+  auto-format:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v6
@@ -28,5 +30,13 @@ jobs:
       - name: Sync dependencies
         run: uv sync --dev --frozen
 
-      - name: Ruff format check
-        run: uv run ruff format --check .
+      - name: Ruff format
+        run: uv run ruff format .
+
+      - name: Commit formatting changes
+        if: github.actor != 'github-actions[bot]' && github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: auto-format with ruff"
+          commit_user_name: github-actions[bot]
+          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
