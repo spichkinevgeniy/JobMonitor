@@ -26,6 +26,5 @@ async def cmd_help(message: Message) -> None:
         "3. Настройте фильтры через «Настроить отслеживание».\n\n"
         "Сейчас доступны вакансии для профессий:\n"
         f"{available_professions}\n\n"
-        "Если вашей нету, напишите: скоро добавим."
     )
     await message.answer(help_text, parse_mode="HTML")
