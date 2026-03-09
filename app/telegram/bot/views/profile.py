@@ -1,12 +1,11 @@
-from app.domain.user.entities import User
+﻿from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode
-from app.telegram.bot.tracking_settings_view import format_salary, format_work_format
+from app.telegram.bot.views.tracking_settings import format_salary, format_work_format
 
 
 def build_search_profile_text(user: User) -> str:
     specializations = _format_specializations(user)
     languages = _format_languages(user)
-    stack = _format_stack(user)
 
     salary = format_salary(user.cv_salary)
     work_format = format_work_format(user.cv_work_format)
@@ -93,8 +92,3 @@ def _format_languages(user: User) -> str | None:
         return None
     return ", ".join(values)
 
-
-def _format_stack(user: User) -> str | None:
-    if user.cv_tech_stack is None or not user.cv_tech_stack.items:
-        return None
-    return ", ".join(sorted(user.cv_tech_stack.items))

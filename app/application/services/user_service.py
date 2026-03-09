@@ -21,11 +21,18 @@ class UserService:
         async with self._uow:
             return await self._uow.users.get_by_tg_id(UserId(tg_id))
 
-    async def upsert_user(self, tg_id: int, username: str | None) -> User:
-        user = User.create(tg_id=tg_id, username=username)
+    async def get_or_create_user(self, tg_id: int, username: str | None) -> User:
         async with self._uow:
-            await self._uow.users.upsert(user)
-        return user
+            user = await self._uow.users.get_by_tg_id(UserId(tg_id))
+            if user is None:
+                user = User.create(tg_id=tg_id, username=username)
+                await self._uow.users.add(user)
+                return user
+
+            if user.username != username:
+                user.username = username
+                await self._uow.users.update(user)
+            return user
 
     async def update_filters(
         self,

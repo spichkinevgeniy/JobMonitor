@@ -28,7 +28,7 @@ from app.telegram.bot.keyboards import (
     get_start_kb,
 )
 from app.telegram.bot.states import BotStates
-from app.telegram.bot.tracking_settings_view import (
+from app.telegram.bot.views.tracking_settings import (
     EXPERIENCE_STEP,
     FORMAT_STEP,
     SALARY_STEP,

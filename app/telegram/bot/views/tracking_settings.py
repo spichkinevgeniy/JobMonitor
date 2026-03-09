@@ -1,4 +1,4 @@
-from app.domain.shared.value_objects import Salary, WorkFormat
+﻿from app.domain.shared.value_objects import Salary, WorkFormat
 from app.domain.user.entities import User
 
 EXPERIENCE_STEP = "experience"

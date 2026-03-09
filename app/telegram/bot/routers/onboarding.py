@@ -26,7 +26,7 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
     uow = UserUnitOfWork(async_session_factory)
     service = UserService(uow)
     try:
-        user = await service.upsert_user(
+        user = await service.get_or_create_user(
             tg_id=user_id,
             username=message.from_user.username,
         )

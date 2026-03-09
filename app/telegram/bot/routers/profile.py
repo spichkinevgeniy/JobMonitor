@@ -5,8 +5,8 @@ from aiogram.types import Message
 from app.application.services.user_service import UserService
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
 from app.telegram.bot.keyboards import PROFILE_BUTTON_TEXT, get_start_kb
-from app.telegram.bot.search_profile_view import build_search_profile_text
 from app.telegram.bot.states import BotStates
+from app.telegram.bot.views.profile import build_search_profile_text
 
 router = Router()
 
