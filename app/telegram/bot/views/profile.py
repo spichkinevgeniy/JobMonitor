@@ -22,6 +22,7 @@ def build_search_profile_text(user: User) -> str:
             field_name="Зарплата",
             value=salary,
             mode=user.filter_salary_mode,
+            any_value="Любая",
             soft_hint="Не учитываем 🟢",
             strict_hint="Скрываем всё, что меньше 🔴",
         ),
@@ -29,6 +30,7 @@ def build_search_profile_text(user: User) -> str:
             field_name="Формат",
             value=work_format,
             mode=user.filter_work_format_mode,
+            any_value="Любой",
             soft_hint="Не учитываем 🟢",
             strict_hint="Только этот формат 🔴",
         ),
@@ -40,11 +42,12 @@ def _format_mode_filter_line(
     field_name: str,
     value: str | None,
     mode: FilterMode,
+    any_value: str,
     soft_hint: str,
     strict_hint: str,
 ) -> str:
     if value is None:
-        return f"• {field_name}: не найдено в резюме"
+        value = any_value
     hint = strict_hint if mode == FilterMode.STRICT else soft_hint
     return f"• {field_name}: {value} ({hint})"
 
