@@ -29,8 +29,8 @@ class OutResumeParse(BaseModel):
     salary: Salary | None = Field(
         default=None,
         description=(
-            "Желаемая зарплата. Если указан диапазон, бери минимальное значение. "
-            "Если зарплата не указана, верни null. Валюта может быть null."
+            "Желаемая зарплата в RUB. Если указан диапазон, бери минимальное значение. "
+            "Если зарплата не указана, указана в другой валюте или RUB нельзя надежно определить, верни null."
         ),
     )
     work_format: WorkFormat = Field(
@@ -49,7 +49,7 @@ class OutResumeSalaryParse(BaseModel):
     )
     currency: CurrencyType | None = Field(
         default=None,
-        description="Валюта зарплаты: RUB, USD, EUR или null.",
+        description="Валюта зарплаты: RUB или null.",
     )
     evidence: str | None = Field(
         default=None,

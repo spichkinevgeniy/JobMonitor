@@ -32,3 +32,4 @@ wheels/
 # Session files
 .session
 *.session
+data/

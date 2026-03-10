@@ -14,19 +14,14 @@ def evaluate_match(vacancy: Vacancy, user: User) -> MatchDecision:
         return MatchDecision(accepted=False, reason=MatchRejectionReason.FORMAT)
 
     return MatchDecision(accepted=True)
+
+
 def _rejected_by_salary(vacancy: Vacancy, user: User) -> bool:
     if user.filter_salary_mode != FilterMode.STRICT:
         return False
     if user.cv_salary is None or user.cv_salary.amount is None:
         return False
     if vacancy.salary.amount is None:
-        return False
-
-    user_currency = user.cv_salary.currency
-    vacancy_currency = vacancy.salary.currency
-    if user_currency is None or vacancy_currency is None:
-        return False
-    if user_currency != vacancy_currency:
         return False
 
     return vacancy.salary.amount < user.cv_salary.amount

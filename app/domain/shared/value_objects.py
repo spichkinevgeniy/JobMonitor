@@ -93,12 +93,19 @@ class Salary:
         if amount is not None and amount < 0:
             raise ValueError("Salary cannot be negative")
 
+        if amount is None:
+            return cls(amount=None, currency=None)
+
         if currency is None or not currency.strip():
-            return cls(amount=amount, currency=None)
+            return cls(amount=amount, currency=CurrencyType.RUB)
+
+        normalized_currency = currency.upper().strip()
+        if normalized_currency != CurrencyType.RUB.value:
+            return cls(amount=None, currency=None)
 
         return cls(
             amount=amount,
-            currency=CurrencyType(currency.upper().strip()),
+            currency=CurrencyType.RUB,
         )
 
 

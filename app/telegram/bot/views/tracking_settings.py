@@ -18,13 +18,4 @@ def format_salary(salary: Salary | None) -> str | None:
         return None
 
     amount = f"{salary.amount:,}".replace(",", " ")
-    if salary.currency is None:
-        return f"от {amount} (валюта не указана)"
-
-    symbols = {
-        "RUB": "₽",
-        "USD": "$",
-        "EUR": "€",
-    }
-    suffix = symbols.get(salary.currency.value, salary.currency.value)
-    return f"от {amount} {suffix}"
+    return f"от {amount} ₽"
