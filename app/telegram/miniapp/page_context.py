@@ -56,6 +56,13 @@ def _validate_skill_option_views() -> None:
 
 _validate_skill_option_views()
 
+_WORK_FORMAT_LABELS = {
+    WorkFormatChoice.ANY.value: "Любой",
+    WorkFormat.REMOTE.value: "Удаленка",
+    WorkFormat.HYBRID.value: "Гибрид",
+    WorkFormat.ONSITE.value: "Офис",
+}
+
 
 def build_specialization_options() -> list[str]:
     return [item.value for item in SpecializationType]
@@ -76,9 +83,14 @@ def build_skill_sections() -> list[SkillSectionView]:
 
 
 def build_work_format_options() -> list[ChoiceOptionDto]:
-    options = [ChoiceOptionDto(value=WorkFormatChoice.ANY.value, label=WorkFormatChoice.ANY.value)]
+    options = [
+        ChoiceOptionDto(
+            value=WorkFormatChoice.ANY.value,
+            label=_WORK_FORMAT_LABELS[WorkFormatChoice.ANY.value],
+        )
+    ]
     options.extend(
-        ChoiceOptionDto(value=item.value, label=item.value)
+        ChoiceOptionDto(value=item.value, label=_WORK_FORMAT_LABELS[item.value])
         for item in WorkFormat
         if item is not WorkFormat.UNDEFINED
     )

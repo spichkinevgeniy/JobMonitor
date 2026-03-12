@@ -81,12 +81,13 @@ class User:
     @staticmethod
     def _normalize_work_format(raw: WorkFormat | str | None) -> WorkFormat | None:
         if isinstance(raw, WorkFormat):
-            return raw
+            return None if raw == WorkFormat.UNDEFINED else raw
         if raw is None:
             return None
         if isinstance(raw, str):
             cleaned = raw.strip()
             if not cleaned:
                 return None
-            return WorkFormat(cleaned.upper())
+            normalized = WorkFormat(cleaned.upper())
+            return None if normalized == WorkFormat.UNDEFINED else normalized
         return None

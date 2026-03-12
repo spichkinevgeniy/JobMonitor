@@ -1,5 +1,7 @@
 from uuid import uuid4
 
+import logfire
+
 from app.application.dto import InfoRawVacancy, OutVacancyParse
 from app.application.ports.llm_port import IVacancyLLMExtractor
 from app.application.ports.observability_port import IObservabilityService
@@ -9,6 +11,7 @@ from app.domain.vacancy.entities import Vacancy
 from app.domain.vacancy.value_objects import VacancyId
 
 logger = get_app_logger(__name__)
+application_logfire = logfire.with_tags("application")
 
 
 class VacancyService:
@@ -27,21 +30,37 @@ class VacancyService:
         if not text:
             return None
 
-        logger.debug(
-            f"LLM request (text_len={len(text)}, chat_id={raw_vacancy_info.chat_id}, "
-            f"message_id={raw_vacancy_info.message_id})"
-        )
-        result = await self._extractor.parse_vacancy(text)
-        if not result.is_vacancy:
-            logger.info("Message is not a vacancy")
-            self._observability.observe_not_vacancy_detected(1)
-            return None
+        with application_logfire.span(
+            "vacancy.parse_message",
+            chat_id=raw_vacancy_info.chat_id,
+            message_id=raw_vacancy_info.message_id,
+            text_len=len(text),
+        ):
+            logger.debug(
+                "LLM request (text_len=%s, chat_id=%s, message_id=%s)",
+                len(text),
+                raw_vacancy_info.chat_id,
+                raw_vacancy_info.message_id,
+            )
+            result = await self._extractor.parse_vacancy(text)
+            if not result.is_vacancy:
+                application_logfire.info(
+                    "Message is not a vacancy",
+                    chat_id=raw_vacancy_info.chat_id,
+                    message_id=raw_vacancy_info.message_id,
+                    text_len=len(text),
+                )
+                self._observability.observe_not_vacancy_detected(1)
+                return None
 
-        logger.info(
-            f"LLM parsed vacancy (specializations={[s.value for s in result.specializations]}, "
-            f"skills={[skill.value for skill in result.skills]})"
-        )
-        return result
+            application_logfire.info(
+                "Vacancy parsed",
+                chat_id=raw_vacancy_info.chat_id,
+                message_id=raw_vacancy_info.message_id,
+                specializations=[item.value for item in result.specializations],
+                skills=[item.value for item in result.skills],
+            )
+            return result
 
     async def save_vacancy(
         self,
@@ -54,23 +73,30 @@ class VacancyService:
         if raw_vacancy_info.mirror_chat_id is None or raw_vacancy_info.mirror_message_id is None:
             raise ValueError("Mirror chat/message ids are required")
 
-        vacancy = Vacancy.create(
-            vacancy_id=uuid4(),
-            text=text,
-            specializations_raw=[s.value for s in parse_result.specializations],
-            skills_raw=[skill.value for skill in parse_result.skills],
+        with application_logfire.span(
+            "vacancy.save",
+            chat_id=raw_vacancy_info.chat_id,
+            message_id=raw_vacancy_info.message_id,
             mirror_chat_id=raw_vacancy_info.mirror_chat_id,
             mirror_message_id=raw_vacancy_info.mirror_message_id,
-            work_format=parse_result.work_format,
-            salary_amount=parse_result.salary.amount if parse_result.salary else None,
-            salary_currency=(
-                parse_result.salary.currency.value
-                if parse_result.salary and parse_result.salary.currency
-                else None
-            ),
-        )
-        async with self._uow:
-            await self._uow.vacancies.upsert(vacancy)
+        ):
+            vacancy = Vacancy.create(
+                vacancy_id=uuid4(),
+                text=text,
+                specializations_raw=[s.value for s in parse_result.specializations],
+                skills_raw=[skill.value for skill in parse_result.skills],
+                mirror_chat_id=raw_vacancy_info.mirror_chat_id,
+                mirror_message_id=raw_vacancy_info.mirror_message_id,
+                work_format=parse_result.work_format,
+                salary_amount=parse_result.salary.amount if parse_result.salary else None,
+                salary_currency=(
+                    parse_result.salary.currency.value
+                    if parse_result.salary and parse_result.salary.currency
+                    else None
+                ),
+            )
+            async with self._uow:
+                await self._uow.vacancies.upsert(vacancy)
         self._observability.observe_vacancy_collected(1)
 
         return vacancy.id

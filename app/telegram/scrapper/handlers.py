@@ -1,3 +1,4 @@
+import logfire
 from aiogram import Bot
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
@@ -14,10 +15,12 @@ from app.core.logger import get_app_logger
 from app.domain.vacancy.entities import Vacancy
 from app.domain.vacancy.value_objects import ContentHash
 from app.infrastructure.db import MatchingUnitOfWork, VacancyUnitOfWork
+from app.infrastructure.llm_runtime import TemporaryLLMUnavailableError
 from app.infrastructure.notifications import TelegramNotificationService
 from app.telegram.scrapper.channels import normalized_channels
 
 logger = get_app_logger(__name__)
+scraper_logfire = logfire.with_tags("scraper")
 
 
 class TelegramScraper:
@@ -36,63 +39,87 @@ class TelegramScraper:
         self._notification_service = TelegramNotificationService(bot)
 
     async def _message_handler(self, event: events.NewMessage.Event) -> None:
+        message = event.message
+        content_hash: str | None = None
+        vacancy_id: str | None = None
+
         try:
-            logger.info(
-                f"Received message (chat_id={event.chat_id}, message_id={event.message.id})"
+            with scraper_logfire.span(
+                "scraper.handle_message",
+                chat_id=event.chat_id,
+                message_id=message.id,
+            ):
+                scraper_logfire.info(
+                    "Message received",
+                    chat_id=event.chat_id,
+                    message_id=message.id,
+                )
+                message_info = await self._send_to_mirror(event)
+                if not message_info:
+                    return
+
+                content_hash = Vacancy.compute_content_hash(message_info.text).value
+                check_uow = VacancyUnitOfWork(self._session_factory)
+                async with check_uow:
+                    exists = await check_uow.vacancies.exists_by_content_hash(
+                        ContentHash(content_hash)
+                    )
+                if exists:
+                    scraper_logfire.info(
+                        "Duplicate vacancy skipped",
+                        chat_id=event.chat_id,
+                        message_id=message.id,
+                        content_hash=content_hash,
+                        source="prefilter",
+                    )
+                    return
+
+                uow = VacancyUnitOfWork(self._session_factory)
+                v_service = VacancyService(uow, self._extractor, self._observability)
+                parse_result = await v_service.parse_message(message_info)
+                if not parse_result:
+                    return
+
+                saved_vacancy_id = await v_service.save_vacancy(message_info, parse_result)
+                vacancy_id = str(saved_vacancy_id.value)
+                scraper_logfire.info(
+                    "Vacancy saved",
+                    chat_id=event.chat_id,
+                    message_id=message.id,
+                    content_hash=content_hash,
+                    vacancy_id=vacancy_id,
+                )
+
+                matcher = MatcherService(
+                    MatchingUnitOfWork(self._session_factory),
+                    self._notification_service,
+                    self._observability,
+                )
+                await matcher.match_vacancy(saved_vacancy_id)
+        except IntegrityError:
+            scraper_logfire.info(
+                "Duplicate vacancy skipped",
+                chat_id=event.chat_id,
+                message_id=message.id,
+                content_hash=content_hash,
+                source="save",
             )
-            message_info = await self._send_to_mirror(event)
-            if not message_info:
-                return
-
-            content_hash = Vacancy.compute_content_hash(message_info.text).value
-            check_uow = VacancyUnitOfWork(self._session_factory)
-            async with check_uow:
-                exists = await check_uow.vacancies.exists_by_content_hash(ContentHash(content_hash))
-            if exists:
-                logger.info(
-                    f"Duplicate vacancy skipped before parse (content_hash={content_hash}, "
-                    f"chat_id={event.chat_id}, message_id={event.message.id})"
-                )
-                return
-
-            uow = VacancyUnitOfWork(self._session_factory)
-            v_service = VacancyService(uow, self._extractor, self._observability)
-            parse_result = await v_service.parse_message(message_info)
-            if not parse_result:
-                return
-            try:
-                vacancy_id = await v_service.save_vacancy(message_info, parse_result)
-                logger.info(
-                    f"Vacancy saved (content_hash={content_hash}, "
-                    f"chat_id={event.chat_id}, message_id={event.message.id})"
-                )
-                try:
-                    matcher = MatcherService(
-                        MatchingUnitOfWork(self._session_factory),
-                        self._notification_service,
-                        self._observability,
-                    )
-                    matched_user_ids = await matcher.match_vacancy(vacancy_id)
-                    logger.info(
-                        "Matching completed for vacancy %s: %s users ready for dispatch",
-                        vacancy_id.value,
-                        len(matched_user_ids),
-                    )
-                except Exception:
-                    logger.exception(
-                        "Matching failed (vacancy_id=%s, chat_id=%s, message_id=%s)",
-                        vacancy_id.value,
-                        event.chat_id,
-                        event.message.id,
-                    )
-            except IntegrityError:
-                logger.info(
-                    f"Duplicate vacancy skipped (content_hash={content_hash}, "
-                    f"chat_id={event.chat_id}, message_id={event.message.id})"
-                )
+        except TemporaryLLMUnavailableError:
+            scraper_logfire.warning(
+                "Message skipped: llm temporarily unavailable",
+                chat_id=event.chat_id,
+                message_id=message.id,
+                content_hash=content_hash,
+                vacancy_id=vacancy_id,
+            )
         except Exception:
             logger.exception(
-                f"Handler failed (chat_id={event.chat_id}, message_id={event.message.id})"
+                "Scraper message handling failed (chat_id=%s, message_id=%s, content_hash=%s, "
+                "vacancy_id=%s)",
+                event.chat_id,
+                message.id,
+                content_hash,
+                vacancy_id,
             )
 
     async def start(self) -> None:
@@ -128,9 +155,10 @@ class TelegramScraper:
         text = message.text or ""
 
         if not text:
-            logger.info(
-                f"Skipping message with empty text (chat_id={event.chat_id}, "
-                f"message_id={message.id})"
+            scraper_logfire.info(
+                "Message skipped: empty text",
+                chat_id=event.chat_id,
+                message_id=message.id,
             )
             return None
 
@@ -151,12 +179,6 @@ class TelegramScraper:
                 preview,
             )
             return None
-
-        logger.info(
-            f"Message forwarded to mirror (source_chat_id={event.chat_id}, "
-            f"source_message_id={message.id}, mirror_chat_id={mirror_msg.chat_id}, "
-            f"mirror_message_id={mirror_msg.id})"
-        )
 
         return InfoRawVacancy(
             mirror_chat_id=mirror_msg.chat_id,

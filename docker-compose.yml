@@ -48,7 +48,7 @@ services:
       LOGFIRE_SERVICE_NAME: ${LOGFIRE_SERVICE_NAME:-smartjobmonitor}
       LOGFIRE_ENV: ${LOGFIRE_ENV:-production}
       MINI_APP_SERVER_HOST: 0.0.0.0
-      MINI_APP_SERVER_PORT: ${MINI_APP_SERVER_PORT:-8081}
+      MINI_APP_SERVER_PORT: ${MINI_APP_SERVER_PORT:-8080}
       METRICS_ENABLED: ${METRICS_ENABLED:-true}
       METRICS_ADDR: ${METRICS_ADDR:-0.0.0.0}
       METRICS_PORT: ${METRICS_PORT:-8000}
@@ -57,7 +57,7 @@ services:
         condition: service_healthy
     ports:
       - "127.0.0.1:8000:8000"
-      - "127.0.0.1:${MINI_APP_SERVER_PORT:-8081}:${MINI_APP_SERVER_PORT:-8081}"
+      - "127.0.0.1:${MINI_APP_SERVER_PORT:-8080}:${MINI_APP_SERVER_PORT:-8080}"
     volumes:
       - telethon_session:/app/data
       - ./channels_map.json:/app/channels_map.json:ro

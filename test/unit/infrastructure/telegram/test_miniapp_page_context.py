@@ -5,10 +5,10 @@ from app.domain.shared import SkillType, SpecializationType, WorkFormat
 from app.telegram.miniapp.page_context import (
     build_format_page_context,
     build_salary_page_context,
-    build_skill_sections,
     build_skill_options,
-    build_specialty_page_context,
+    build_skill_sections,
     build_specialization_options,
+    build_specialty_page_context,
     build_work_format_options,
 )
 
@@ -41,8 +41,10 @@ def test_build_work_format_options_uses_domain_values_without_undefined() -> Non
     options = build_work_format_options()
 
     assert [(item.value, item.label) for item in options] == [
-        (WorkFormatChoice.ANY.value, WorkFormatChoice.ANY.value),
-        *[(item.value, item.value) for item in WorkFormat if item is not WorkFormat.UNDEFINED],
+        (WorkFormatChoice.ANY.value, "Любой"),
+        (WorkFormat.REMOTE.value, "Удаленка"),
+        (WorkFormat.HYBRID.value, "Гибрид"),
+        (WorkFormat.ONSITE.value, "Офис"),
     ]
 
 

@@ -8,6 +8,6 @@ async def setup_bot_commands(bot: Bot) -> None:
             BotCommand(command="start", description="Открыть главное меню"),
             BotCommand(command="profile", description="Открыть профиль поиска"),
             BotCommand(command="settings", description="Настроить профиль и фильтры"),
-            BotCommand(command="help", description="Как бот подбирает вакансии"),
+            BotCommand(command="help", description="Как это работает?"),
         ]
     )

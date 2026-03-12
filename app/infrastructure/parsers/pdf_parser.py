@@ -9,6 +9,7 @@ from app.application.dto import OutResumeParse, OutResumeSalaryParse
 from app.core.logger import get_app_logger
 from app.domain.shared.value_objects import Salary
 from app.infrastructure.llm import get_resume_parse_agent, get_resume_salary_agent
+from app.infrastructure.llm_runtime import run_with_llm_retry
 from app.infrastructure.parsers.base import BaseResumeParser, ParserInput
 from app.infrastructure.parsers.exceptions import NotAResumeError, ParserError, TooManyPagesError
 
@@ -62,10 +63,10 @@ class PDFParser(BaseResumeParser):
                     if img:
                         images.append(img)
                     text_parts.append(page.get_text("text"))
-        except (fitz.FileDataError, fitz.EmptyFileError) as exc:
-            logger.error("Invalid PDF file: %s", exc)
-        except Exception as exc:
-            logger.error("Unexpected error during PDF rendering: %s", exc)
+        except (fitz.FileDataError, fitz.EmptyFileError):
+            logger.exception("Invalid PDF file")
+        except Exception:
+            logger.exception("Unexpected error during PDF rendering")
 
         return images, "\n".join(part for part in text_parts if part)
 
@@ -76,8 +77,8 @@ class PDFParser(BaseResumeParser):
             img = Image.open(io.BytesIO(img_bytes))
             img.load()
             return img
-        except Exception as exc:
-            logger.error("Error rendering page %d: %s", page.number, exc)
+        except Exception:
+            logger.exception("Error rendering page %d", page.number)
             return None
 
     async def _run_agent(self, images: list[Image.Image], pdf_text: str) -> OutResumeParse:
@@ -110,9 +111,12 @@ class PDFParser(BaseResumeParser):
             if image_to_use is not img:
                 image_to_use.close()
 
-        result = await self._resume_agent.run(
-            user_prompt=prompt_parts,
-            metadata={"pipeline": "resume_parse"},
+        result = await run_with_llm_retry(
+            "resume_parse",
+            lambda: self._resume_agent.run(
+                user_prompt=prompt_parts,
+                metadata={"pipeline": "resume_parse"},
+            ),
         )
         parsed_data = result.output
 
@@ -138,9 +142,12 @@ class PDFParser(BaseResumeParser):
         return parsed_data
 
     async def _run_salary_agent(self, pdf_text: str) -> OutResumeSalaryParse:
-        result = await self._salary_agent.run(
-            user_prompt=f"Текст резюме:\n{pdf_text}",
-            metadata={"pipeline": "resume_salary_pass"},
+        result = await run_with_llm_retry(
+            "resume_salary_pass",
+            lambda: self._salary_agent.run(
+                user_prompt=f"Текст резюме:\n{pdf_text}",
+                metadata={"pipeline": "resume_salary_pass"},
+            ),
         )
         return result.output
 

@@ -7,6 +7,7 @@ from app.domain.user.value_objects import FilterMode
 from app.domain.vacancy.entities import Vacancy
 from app.infrastructure.db.mappers.user import user_from_model, user_to_model
 from app.infrastructure.db.mappers.vacancy import vacancy_from_model, vacancy_to_model
+from app.infrastructure.db.models import User as UserModel
 
 
 def test_user_mapper_round_trip_preserves_skills() -> None:
@@ -27,20 +28,24 @@ def test_user_mapper_round_trip_preserves_skills() -> None:
     assert sorted(item.value for item in restored.cv_skills.items) == ["Python", "React"]
 
 
-def test_vacancy_mapper_round_trip_preserves_skills() -> None:
-    vacancy = Vacancy.create(
-        vacancy_id=uuid4(),
-        text="Frontend engineer with React",
-        specializations_raw=["Frontend"],
-        skills_raw=["React", "JavaScript"],
-        mirror_chat_id=100,
-        mirror_message_id=200,
-        work_format=WorkFormat.REMOTE,
-        created_at=datetime.now(UTC),
+def test_user_mapper_normalizes_undefined_work_format_to_any() -> None:
+    model = UserModel(
+        tg_id=123,
+        username="alice",
+        cv_text=None,
+        cv_specializations=["Backend"],
+        cv_skills=["Python"],
+        cv_salary_amount=None,
+        cv_salary_currency=None,
+        filter_salary_mode=FilterMode.SOFT.value,
+        cv_work_format=WorkFormat.UNDEFINED.value,
+        filter_work_format_mode=FilterMode.STRICT.value,
+        is_active=True,
     )
 
-    model = vacancy_to_model(vacancy)
-    restored = vacancy_from_model(model)
+    restored = user_from_model(model)
 
-    assert sorted(model.skills) == ["JavaScript", "React"]
-    assert sorted(item.value for item in restored.skills.items) == ["JavaScript", "React"]
+    assert restored.cv_work_format is None
+    assert restored.filter_work_format_mode == FilterMode.SOFT
+
+

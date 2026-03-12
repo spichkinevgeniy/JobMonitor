@@ -74,7 +74,7 @@ body {
 .choice-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
 }
 
 .choice-sections {
@@ -99,8 +99,9 @@ body {
 
 .choice-chip {
   position: relative;
-  display: inline-flex;
-  max-width: calc((100% - 20px) / 3);
+  display: flex;
+  flex: 1 1 140px;
+  min-width: 0;
 }
 
 .choice-chip__input {
@@ -112,12 +113,14 @@ body {
 .choice-chip__label {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 10px;
+  width: 100%;
   min-height: 44px;
   padding: 11px 18px;
   border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--surface);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
   color: var(--text);
   font-size: 16px;
   line-height: 1.2;
@@ -150,11 +153,11 @@ body {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
-  box-shadow: 0 6px 18px rgba(47, 97, 245, 0.28);
+  box-shadow: 0 10px 24px rgba(47, 97, 245, 0.26);
 }
 
 .choice-chip__input:checked + .choice-chip__label::before {
-  content: "✓";
+  content: "\2713";
   border-color: rgba(255, 255, 255, 0.35);
   background: transparent;
   color: #fff;
@@ -212,22 +215,22 @@ body {
   position: sticky;
   bottom: 0;
   margin: auto -20px 0;
-  padding: 16px 20px 24px;
-  background: var(--surface);
-  box-shadow: 0 -10px 28px rgba(8, 8, 8, 0.08);
+  padding: 20px 20px 24px;
+  background: transparent;
 }
 
 .save-button {
   width: 100%;
   min-height: 60px;
   border: 0;
-  border-radius: 10px;
+  border-radius: 16px;
   background: #050505;
   color: #fff;
   font: inherit;
   font-size: 18px;
   font-weight: 800;
   cursor: pointer;
+  box-shadow: 0 16px 32px rgba(5, 5, 5, 0.18);
 }
 
 .save-button:disabled {
@@ -253,12 +256,11 @@ body {
   }
 
   .choice-chip {
-    max-width: calc((100% - 10px) / 2);
+    flex-basis: calc((100% - 12px) / 2);
   }
 
   .choice-chip__label {
     justify-content: flex-start;
-    max-width: 100%;
     padding-inline: 14px;
   }
 
@@ -270,6 +272,6 @@ body {
 
 @media (max-width: 340px) {
   .choice-chip {
-    max-width: 100%;
+    flex-basis: 100%;
   }
 }

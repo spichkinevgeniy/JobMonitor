@@ -49,6 +49,15 @@ def user_from_model(model: UserModel) -> User:
     )
 
     work_format = UserWorkFormat(model.cv_work_format) if model.cv_work_format else None
+    if work_format == UserWorkFormat.UNDEFINED:
+        work_format = None
+    work_format_mode = (
+        FilterMode(model.filter_work_format_mode)
+        if model.filter_work_format_mode
+        else FilterMode.SOFT
+    )
+    if work_format is None:
+        work_format_mode = FilterMode.SOFT
 
     return User(
         tg_id=UserId(model.tg_id),
@@ -61,10 +70,6 @@ def user_from_model(model: UserModel) -> User:
             FilterMode(model.filter_salary_mode) if model.filter_salary_mode else FilterMode.SOFT
         ),
         cv_work_format=work_format,
-        filter_work_format_mode=(
-            FilterMode(model.filter_work_format_mode)
-            if model.filter_work_format_mode
-            else FilterMode.SOFT
-        ),
+        filter_work_format_mode=work_format_mode,
         is_active=model.is_active,
     )

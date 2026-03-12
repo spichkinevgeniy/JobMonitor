@@ -88,8 +88,11 @@ class UserService:
             if user is None:
                 return False
 
-            user.cv_work_format = work_format
-            user.filter_work_format_mode = work_format_mode
+            normalized_work_format = None if work_format == WorkFormat.UNDEFINED else work_format
+            user.cv_work_format = normalized_work_format
+            user.filter_work_format_mode = (
+                work_format_mode if normalized_work_format is not None else FilterMode.SOFT
+            )
             await self._uow.users.update(user)
         return True
 

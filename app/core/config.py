@@ -44,6 +44,8 @@ class BaseAppSettings(BaseSettings):
     SENTRY_ENV: str
     SENTRY_TRACES_SAMPLE_RATE: float = 0.0
 
+    LOG_LEVEL: Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"] = "INFO"
+
     LOGFIRE_ENABLED: bool = True
     LOGFIRE_TOKEN: str | None = None
     LOGFIRE_SERVICE_NAME: str
@@ -148,6 +150,7 @@ class LocalAppSettings(BaseAppSettings):
     POSTGRES_SERVER: str = "localhost"
     POSTGRES_PORT: int = 5433
     SENTRY_ENV: str = "development"
+    LOG_LEVEL: Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"] = "DEBUG"
     LOGFIRE_ENV: str = "development"
 
 
@@ -155,6 +158,7 @@ class DockerAppSettings(BaseAppSettings):
     POSTGRES_SERVER: str = "db"
     POSTGRES_PORT: int = 5432
     SENTRY_ENV: str = "production"
+    LOG_LEVEL: Literal["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"] = "INFO"
     LOGFIRE_ENV: str = "production"
 
 

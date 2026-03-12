@@ -11,6 +11,9 @@ strict = true
 warn_unused_configs = true
 exclude = ['^\.venv/']
 
+[tool.logfire]
+ignore_no_config = true
+
 [project]
 name = "jobmonitor"
 version = "0.1.0"
@@ -32,7 +35,7 @@ dependencies = [
     "pydantic-ai>=1.63.0",
     "pydantic-settings>=2.13.1",
     "qrcode>=8.2",
-    "logfire[system-metrics]>=4.25.0",
+    "logfire[fastapi,sqlalchemy,system-metrics]>=4.25.0",
     "sentry-sdk>=2.53.0",
     "sqlalchemy>=2.0.47",
     "telethon>=1.42.0",

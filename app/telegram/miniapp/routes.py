@@ -191,7 +191,11 @@ async def save_salary(
 
 
 def _work_format_choice(user: User) -> str:
-    if user.filter_work_format_mode != FilterMode.STRICT or user.cv_work_format is None:
+    if (
+        user.filter_work_format_mode != FilterMode.STRICT
+        or user.cv_work_format is None
+        or user.cv_work_format == WorkFormat.UNDEFINED
+    ):
         return WorkFormatChoice.ANY.value
     return user.cv_work_format.value
 

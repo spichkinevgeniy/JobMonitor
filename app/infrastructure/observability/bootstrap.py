@@ -4,6 +4,7 @@ from prometheus_client import start_http_server
 from app.application.ports.observability_port import IObservabilityService
 from app.core.config import config
 from app.core.logger import get_app_logger
+from app.infrastructure.db.session import engine
 from app.infrastructure.observability.service import (
     NoOpObservabilityService,
     PrometheusObservabilityService,
@@ -15,6 +16,13 @@ logger = get_app_logger(__name__)
 def _has_logfire_token() -> bool:
     token = config.LOGFIRE_TOKEN
     return bool(token and token.strip())
+
+
+def _get_logfire_min_level() -> str:
+    level = config.LOG_LEVEL.strip().lower()
+    if level == "critical":
+        return "fatal"
+    return "warning" if level == "warning" else level
 
 
 def init_logfire() -> None:
@@ -38,11 +46,14 @@ def init_logfire() -> None:
             token=config.LOGFIRE_TOKEN,
             service_name=config.LOGFIRE_SERVICE_NAME,
             environment=config.LOGFIRE_ENV,
+            min_level=_get_logfire_min_level(),
+            distributed_tracing=True,
         )
         logfire.instrument_pydantic_ai(
             include_content=False,
             include_binary_content=False,
         )
+        logfire.instrument_sqlalchemy(engine)
         logfire.instrument_system_metrics()
         logger.info("Logfire initialized")
     except Exception:
