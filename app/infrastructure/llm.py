@@ -1,7 +1,8 @@
 from functools import lru_cache
 
 from pydantic_ai import Agent
-from pydantic_ai.models.google import GoogleModel, Model
+from pydantic_ai.models import Model
+from pydantic_ai.models.google import GoogleModel
 from pydantic_ai.providers.google import GoogleProvider
 
 from app.application.dto import OutResumeParse, OutResumeSalaryParse, OutVacancyParse

@@ -1,3 +1,5 @@
+from typing import Literal, cast
+
 import logfire
 from prometheus_client import start_http_server
 
@@ -11,6 +13,7 @@ from app.infrastructure.observability.service import (
 )
 
 logger = get_app_logger(__name__)
+LevelName = Literal["trace", "debug", "info", "notice", "warn", "warning", "error", "fatal"]
 
 
 def _has_logfire_token() -> bool:
@@ -18,11 +21,13 @@ def _has_logfire_token() -> bool:
     return bool(token and token.strip())
 
 
-def _get_logfire_min_level() -> str:
+def _get_logfire_min_level() -> LevelName:
     level = config.LOG_LEVEL.strip().lower()
     if level == "critical":
         return "fatal"
-    return "warning" if level == "warning" else level
+    if level in ("trace", "debug", "info", "notice", "warn", "warning", "error", "fatal"):
+        return cast(LevelName, level)
+    return "info"
 
 
 def init_logfire() -> None:

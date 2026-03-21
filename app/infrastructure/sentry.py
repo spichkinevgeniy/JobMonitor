@@ -22,5 +22,5 @@ def init_sentry() -> None:
         environment=config.SENTRY_ENV,
         traces_sample_rate=config.SENTRY_TRACES_SAMPLE_RATE,
         integrations=[logging_integration, FastApiIntegration()],
-        disabled_integrations=[PydanticAIIntegration],
+        disabled_integrations=[PydanticAIIntegration()],
     )

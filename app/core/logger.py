@@ -11,7 +11,7 @@ def _resolve_log_level(raw_level: str) -> int:
     return level if isinstance(level, int) else DEFAULT_LOG_LEVEL
 
 
-def setup_root_logger():
+def setup_root_logger() -> logging.Logger:
     logger = logging.getLogger(ROOT_LOGGER_NAME)
     logger.setLevel(_resolve_log_level(config.LOG_LEVEL))
     logger.propagate = False
@@ -34,5 +34,5 @@ def setup_root_logger():
 setup_root_logger()
 
 
-def get_app_logger(module_name: str):
+def get_app_logger(module_name: str) -> logging.Logger:
     return logging.getLogger(f"{ROOT_LOGGER_NAME}.{module_name}")

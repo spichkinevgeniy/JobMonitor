@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from uuid import uuid4
+from datetime import datetime
+from uuid import UUID, uuid4
 
 from sqlalchemy import BigInteger, Boolean, DateTime, Integer, String, Text, func
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -15,7 +17,7 @@ class Base(AsyncAttrs, DeclarativeBase):
 class Vacancy(Base):
     __tablename__ = "vacancies"
 
-    id: Mapped[str] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
     text: Mapped[str] = mapped_column(Text)
 
     specializations: Mapped[list[str]] = mapped_column(JSONB, default=list)
@@ -31,7 +33,7 @@ class Vacancy(Base):
 
     work_format: Mapped[str] = mapped_column(String, default="UNDEFINED")
 
-    created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
 

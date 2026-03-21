@@ -44,3 +44,5 @@ async def run_with_llm_retry[T](
                 delay_seconds,
             )
             await asyncio.sleep(delay_seconds)
+
+    raise TemporaryLLMUnavailableError(f"LLM temporarily unavailable during {operation_name}")

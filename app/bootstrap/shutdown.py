@@ -2,8 +2,11 @@ import asyncio
 import signal
 from contextlib import suppress
 
+from aiogram import Bot, Dispatcher
+
 from app.bootstrap.models import RuntimeComponents, RuntimeTasks
 from app.core.logger import get_app_logger
+from app.infrastructure.telegram.telethon_client import TelethonClientProvider
 
 logger = get_app_logger(__name__)
 
@@ -63,14 +66,14 @@ async def graceful_shutdown(
     await await_task_shutdown(tasks)
 
 
-async def _stop_scraper(provider) -> None:
+async def _stop_scraper(provider: TelethonClientProvider) -> None:
     try:
         await provider.stop()
     except Exception:
         logger.exception("Failed to stop Telethon provider during shutdown")
 
 
-async def _stop_bot(dp) -> None:
+async def _stop_bot(dp: Dispatcher) -> None:
     try:
         await dp.stop_polling()
     except RuntimeError:
@@ -79,7 +82,7 @@ async def _stop_bot(dp) -> None:
         logger.exception("Failed to stop bot polling during shutdown")
 
 
-async def _close_bot_session(bot) -> None:
+async def _close_bot_session(bot: Bot) -> None:
     try:
         await bot.session.close()
     except Exception:

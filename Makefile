@@ -95,6 +95,7 @@ quality:
 	@echo "Starting quality gate..."
 	uv run python -m ruff check $(PROJECT_DIR) $(TEST_DIR)
 	uv run python -m ruff format --check $(PROJECT_DIR) $(TEST_DIR)
+	uv run python -m mypy $(PROJECT_DIR)
 	uv run -m pytest -q
 	@echo "Quality gate completed!"
 

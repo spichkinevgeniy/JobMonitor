@@ -197,7 +197,7 @@ def _work_format_choice(user: User) -> str:
         or user.cv_work_format == WorkFormat.UNDEFINED
     ):
         return WorkFormatChoice.ANY.value
-    return user.cv_work_format.value
+    return str(user.cv_work_format.value)
 
 
 def _salary_mode_choice(user: User) -> str:

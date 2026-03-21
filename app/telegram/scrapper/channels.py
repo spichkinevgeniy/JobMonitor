@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 
 def normalize_chat_ref(chat: str | int) -> str | int:
     if isinstance(chat, int):
@@ -18,5 +20,5 @@ def normalize_chat_ref(chat: str | int) -> str | int:
     return f"@{value}"
 
 
-def normalized_channels(channels: list[str | int]) -> list[str | int]:
+def normalized_channels(channels: Sequence[str | int]) -> list[str | int]:
     return [normalize_chat_ref(chat) for chat in channels]

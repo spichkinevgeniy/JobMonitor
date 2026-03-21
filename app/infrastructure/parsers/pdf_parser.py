@@ -1,7 +1,7 @@
 import io
 from datetime import datetime
 
-import fitz
+import fitz  # type: ignore[import-untyped]
 from PIL import Image
 from pydantic_ai import BinaryContent
 

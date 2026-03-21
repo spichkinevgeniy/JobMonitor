@@ -1,3 +1,5 @@
+from types import TracebackType
+
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.application.ports.unit_of_work import UnitOfWork
@@ -12,7 +14,12 @@ class SQLAlchemyUnitOfWork(UnitOfWork):
         self.session = self._session_factory()
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
         try:
             if exc_type is None:
                 await self.commit()

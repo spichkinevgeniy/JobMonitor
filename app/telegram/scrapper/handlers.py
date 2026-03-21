@@ -2,8 +2,8 @@ import logfire
 from aiogram import Bot
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-from telethon import TelegramClient, events
-from telethon.tl.custom.message import Message
+from telethon import TelegramClient, events  # type: ignore[import-untyped]
+from telethon.tl.custom.message import Message  # type: ignore[import-untyped]
 
 from app.application.dto import InfoRawVacancy
 from app.application.ports.llm_port import IVacancyLLMExtractor

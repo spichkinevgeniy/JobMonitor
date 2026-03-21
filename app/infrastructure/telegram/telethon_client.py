@@ -1,8 +1,12 @@
 import sys
 from pathlib import Path
 
-from telethon import TelegramClient
-from telethon.errors import FloodWaitError, PhoneNumberInvalidError, SessionPasswordNeededError
+from telethon import TelegramClient  # type: ignore[import-untyped]
+from telethon.errors import (  # type: ignore[import-untyped]
+    FloodWaitError,
+    PhoneNumberInvalidError,
+    SessionPasswordNeededError,
+)
 
 from app.core.config import config
 from app.core.logger import get_app_logger
@@ -81,7 +85,7 @@ class TelethonClientProvider:
     @staticmethod
     def _print_qr_to_terminal(url: str) -> None:
         try:
-            import qrcode
+            import qrcode  # type: ignore[import-untyped]
         except ImportError:
             logger.warning("Install 'qrcode': pip install qrcode")
             return

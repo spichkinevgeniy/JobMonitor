@@ -55,7 +55,7 @@ class BaseAppSettings(BaseSettings):
     METRICS_ADDR: str = "0.0.0.0"
     METRICS_PORT: int = 8000
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def ASYNC_SQLALCHEMY_DATABASE_URI(self) -> str:
         return str(
@@ -69,7 +69,6 @@ class BaseAppSettings(BaseSettings):
             )
         )
 
-    @property
     def _channels_groups(self) -> dict[str, list[str]]:
         path = Path(self.CHANNELS_MAP_PATH)
         if not path.exists():
@@ -97,17 +96,17 @@ class BaseAppSettings(BaseSettings):
 
         return parsed
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def CHANNELS_GROUPS(self) -> dict[str, list[str]]:
-        return self._channels_groups
+        return self._channels_groups()
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def CHANNELS(self) -> list[str]:
         seen: set[str] = set()
         flattened: list[str] = []
-        for channels in self._channels_groups.values():
+        for channels in self._channels_groups().values():
             for channel in channels:
                 if channel in seen:
                     continue
@@ -180,9 +179,9 @@ def _is_missing_or_placeholder(value: str) -> bool:
 
 
 def load_settings() -> BaseAppSettings:
-    settings = LocalAppSettings()
+    settings = LocalAppSettings()  # type: ignore[call-arg]
     if settings.APP_ENV == "production":
-        return DockerAppSettings()
+        return DockerAppSettings()  # type: ignore[call-arg]
     return settings
 
 
