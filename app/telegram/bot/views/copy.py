@@ -104,9 +104,7 @@ def build_resume_processed_text() -> str:
 
 
 def build_resume_success_text() -> str:
-    return (
-        "Профиль обновлен по резюме. Теперь бот будет присылать более точные совпадения."
-    )
+    return "Профиль обновлен по резюме. Теперь бот будет присылать более точные совпадения."
 
 
 def build_resume_processing_cancel_text() -> str:

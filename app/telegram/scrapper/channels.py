@@ -11,7 +11,7 @@ def normalize_chat_ref(chat: str | int) -> str | int:
         value = value[len("http://") :]
     if value.startswith("t.me/"):
         value = value[len("t.me/") :]
-    if value.startswith("@") or value.startswith("-100"):
+    if value.startswith(("@", "-100")):
         return value
     if value.lstrip("-").isdigit():
         return value

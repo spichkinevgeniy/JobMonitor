@@ -58,9 +58,7 @@ class UserRepository(IUserRepository):
                 UserModel.cv_specializations.bool_op("?|")(array(sorted(specializations)))
             )
         if skills:
-            query = query.where(
-                UserModel.cv_skills.bool_op("?|")(array(sorted(skills)))
-            )
+            query = query.where(UserModel.cv_skills.bool_op("?|")(array(sorted(skills))))
 
         result = await self._session.execute(query)
         models = result.scalars().all()

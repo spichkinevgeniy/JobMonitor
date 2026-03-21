@@ -32,9 +32,7 @@ def init_logfire() -> None:
 
     token_present = _has_logfire_token()
     if config.APP_ENV == "production" and not token_present:
-        raise RuntimeError(
-            "LOGFIRE_TOKEN must be set when LOGFIRE_ENABLED=true in production."
-        )
+        raise RuntimeError("LOGFIRE_TOKEN must be set when LOGFIRE_ENABLED=true in production.")
     if not token_present:
         logger.warning(
             "LOGFIRE_TOKEN is empty; Logfire telemetry will not be sent to Logfire Cloud."

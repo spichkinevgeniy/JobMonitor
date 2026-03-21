@@ -1,7 +1,7 @@
 IMAGE_NAME = job_monitor
 PYTHON_MAIN = app.main
 PROJECT_DIR = app
-TEST_DIR = test
+TEST_DIR = tests
 VENV_DIR = .venv
 LOGFIRE_PROJECT = jobmonitor
 DEV_COMPOSE = docker-compose -f docker-compose.yml -f docker-compose.override.yml
@@ -9,7 +9,7 @@ PROD_COMPOSE = docker-compose -f docker-compose.yml
 OBS_COMPOSE = docker-compose -f docker-compose.observability.yml
 BACKUP_DIR ?= /opt/backups
 
-.PHONY: help venv install run run-miniapp lint format test test-unit test-integration clean \
+.PHONY: help venv install run run-miniapp quality lint format test test-unit test-integration clean \
 	docker-build \
 	dev-up dev-down dev-destroy dev-logs dev-ps dev-restart \
 	prod-up prod-down prod-destroy prod-logs prod-ps prod-restart prod-migrate \
@@ -29,8 +29,9 @@ help:
 	@echo "  install           - Install project dependencies (uv sync)"
 	@echo "  run               - Run the app locally (bot + scraper + mini-app)"
 	@echo "  run-miniapp       - Run only the mini-app server locally"
-	@echo "  lint              - Run ruff + mypy"
-	@echo "  format            - Auto-format with ruff"
+	@echo "  quality           - Run CI gate (ruff + format check + tests)"
+	@echo "  lint              - Run ruff checks + format check + mypy"
+	@echo "  format            - Auto-fix with ruff and apply formatting"
 	@echo "  test              - Run all tests"
 	@echo "  test-unit         - Run unit tests"
 	@echo "  test-integration  - Run integration tests"
@@ -89,13 +90,23 @@ install:
 
 run:
 	uv run -m $(PYTHON_MAIN)
+
+quality:
+	@echo "Starting quality gate..."
+	uv run python -m ruff check $(PROJECT_DIR) $(TEST_DIR)
+	uv run python -m ruff format --check $(PROJECT_DIR) $(TEST_DIR)
+	uv run -m pytest -q
+	@echo "Quality gate completed!"
+
 lint:
 	@echo "Starting checks..."
 	uv run python -m ruff check $(PROJECT_DIR) $(TEST_DIR)
+	uv run python -m ruff format --check $(PROJECT_DIR) $(TEST_DIR)
 	uv run python -m mypy $(PROJECT_DIR)
 	@echo "Checks completed!"
 
 format:
+	uv run python -m ruff check $(PROJECT_DIR) $(TEST_DIR) --fix
 	uv run python -m ruff format $(PROJECT_DIR) $(TEST_DIR)
 
 test:

@@ -13,8 +13,7 @@ class GoogleVacancyLLMExtractor(IVacancyLLMExtractor):
             "vacancy_parse",
             lambda: self._agent.run(
                 user_prompt=(
-                    "Проанализируй текст и сначала определи, является ли он вакансией:\n"
-                    f"{text}"
+                    f"Проанализируй текст и сначала определи, является ли он вакансией:\n{text}"
                 ),
                 metadata={"pipeline": "vacancy_ingest"},
             ),

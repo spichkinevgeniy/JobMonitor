@@ -1,6 +1,7 @@
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
+from app.bootstrap.models import RuntimeComponents
 from app.core.config import config
 from app.infrastructure.db import async_session_factory
 from app.infrastructure.extractors.vacancy_extractor import GoogleVacancyLLMExtractor
@@ -16,8 +17,6 @@ from app.telegram.bot import get_router as get_bot_router
 from app.telegram.bot.commands import setup_bot_commands
 from app.telegram.bot.middlewares import UserGuardMiddleware
 from app.telegram.scrapper.handlers import TelegramScraper
-
-from app.bootstrap.models import RuntimeComponents
 
 
 def init_infrastructure() -> None:

@@ -1,36 +1,102 @@
 <p align="center">
-  <a href="https://github.com/Popachka/JobMonitor">
-    <img loading="lazy" alt="JobMonitor" src="docs/img/jobmonitorlogo.png" width="240"/> 
+  <a href="https://t.me/JobMonitorIT_BOT">
+    <img loading="lazy" alt="JobMonitor" src="docs/img/jobmonitorlogo.png" width="240"/>
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://t.me/JobMonitorIT_BOT">
+    <img alt="Open in Telegram" src="https://img.shields.io/badge/Open%20in-Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white"/>
   </a>
 </p>
 
 # JobMonitor
 
-JobMonitor - Telegram-сервис для автоматического мониторинга IT-вакансий и персонального отбора под профиль кандидата.
-Проект снижает шум в вакансиях: собирает сообщения из каналов, извлекает структуру и отправляет только релевантные предложения.
+JobMonitor is an open source Telegram service for IT vacancy monitoring, AI-assisted parsing, and personalized delivery of relevant job posts.
 
-**Ссылка на бота:** [Открыть бота](https://t.me/JobMonitorIT_BOT)
+The project watches selected Telegram channels, detects vacancy posts, extracts structured data, and filters results against a candidate profile so users receive a cleaner and more relevant feed.
 
-## Зачем?
+**Bot link:** [Open the bot](https://t.me/JobMonitorIT_BOT)
 
-**Цель** JobMonitor экономит время IT-кандидата: бот сам мониторит Telegram-каналы и присылает только релевантные вакансии по резюме и фильтрам.
+All tracked source channels are listed in [channels_map.json](channels_map.json).
+If your channel or technology niche is missing, you can contribute by updating `channels_map.json`. See [docs/CHANNELS.md](docs/CHANNELS.md) for channel grouping and contribution rules.
 
-JobMonitor помогает кандидатам в IT не просматривать вручную десятки Telegram-каналов.
+## Features
 
-### Для кого
-- разработчики и инженеры, ищущие вакансии через Telegram;
-- кандидаты, которым нужен персональный поток релевантных предложений.
+- monitor Telegram channels with Telethon;
+- detect whether a message is a vacancy;
+- parse vacancy content and candidate preferences with AI;
+- match vacancies against user profile and filters;
+- deliver relevant jobs through a Telegram bot;
+- expose a mini-app and observability stack for operations.
 
-### Ключевые возможности
-- сбор вакансий из Telegram-каналов;
-- определение, является ли сообщение вакансией;
-- AI-парсинг вакансии и профиля кандидата;
-- фильтрация по профилю и настройкам пользователя;
-- доставка подходящих вакансий через бота.
+## Demo
 
-## Telegram-каналы:
-Все каналы, которые мониторит бот, перечислены в файле \channels_map.json
+<p align="center">
+  <a href="https://t.me/JobMonitorIT_BOT">
+    <img src="docs/img/jobmonitor-demo.gif" alt="JobMonitor demo" width="900"/>
+  </a>
+</p>
 
-## Контакты и доступ
+## Tech Stack
 
-- Telegram-бот: [https://t.me/JobMonitorIT_BOT](https://t.me/JobMonitorIT_BOT)
+- Python 3.12+ with `uv`
+- Aiogram, Telethon, FastAPI
+- Pydantic, PydanticAI, Google Gemini
+- PostgreSQL, SQLAlchemy, Alembic
+- Pytest, Ruff, MyPy
+- Docker Compose, Prometheus, Grafana
+
+## Quick Start
+
+### Local development
+
+```bash
+cp .env.sample .env
+uv sync --dev
+uv run alembic upgrade head
+uv run -m app.main
+```
+
+### Docker
+
+```bash
+cp .env.sample .env
+docker compose -f docker-compose.yml -f docker-compose.override.yml up -d --build
+```
+
+Detailed setup instructions are in [docs/INSTALL.md](docs/INSTALL.md).
+
+If you want to run a similar vacancy-monitoring bot for your own needs, this repository is designed to be a practical starting point: you can fork it, configure your own Telegram bot and channel sources, and adapt the filters, prompts, and delivery flow to your use case.
+
+## Development
+
+Useful commands:
+
+```bash
+make install
+make quality
+make lint
+make test
+make dev-up
+make obs-up
+```
+
+The tracked Telegram channels are configured in [channels_map.json](channels_map.json).
+If the current bot does not cover enough useful Telegram channels, you can help by opening a pull request that adds relevant sources to `channels_map.json`. This is one of the simplest and most high-impact ways to contribute, and these updates are especially welcome.
+
+## Contributing
+
+For guidance on setting up a development environment and how to contribute to JobMonitor, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Reporting a Security Vulnerability
+
+See our [security policy](SECURITY.md).
+
+## Security Notes
+
+Do not commit real `.env` files, Telegram session files, API tokens, or production credentials. Use `.env.sample` as the template for local configuration.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE).

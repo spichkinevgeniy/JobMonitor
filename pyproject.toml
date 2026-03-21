@@ -3,7 +3,23 @@ line-length = 100
 target-version = "py312"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B"]
+select = [
+    "E",
+    "F",
+    "I",
+    "UP",
+    "B",
+    "YTT",
+    "T10",
+    "T20",
+    "C4",
+    "PERF",
+    "PIE",
+]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["T20"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -20,6 +36,7 @@ version = "0.1.0"
 description = "Telegram bot for personalized IT vacancy monitoring, AI parsing, and delivery of relevant offers."
 readme = "README.md"
 requires-python = ">=3.12"
+license = { text = "MIT" }
 dependencies = [
     "aiogram>=3.25.0",
     "alembic>=1.18.4",

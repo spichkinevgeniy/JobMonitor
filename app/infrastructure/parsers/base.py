@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
 from io import BytesIO
-from typing import Union
 
 from app.application.dto import OutResumeParse
 
-ParserInput = Union[BytesIO, str]
+ParserInput = BytesIO | str
 
 
 class BaseResumeParser(ABC):

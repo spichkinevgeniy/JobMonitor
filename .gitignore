@@ -1,5 +1,9 @@
 # Python
 __pycache__/
+.venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
 *.py[cod]
 *$py.class
 *.so
@@ -32,4 +36,9 @@ wheels/
 # Session files
 .session
 *.session
+job_monitor.session
+job_monitor.session-journal
+
+# Local tooling
+.logfire/
 data/

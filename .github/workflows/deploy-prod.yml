@@ -35,8 +35,8 @@ jobs:
       - name: Sync dependencies
         run: uv sync --dev --frozen
 
-      - name: Run tests gate
-        run: uv run -m pytest -q
+      - name: Run quality gate
+        run: make quality
 
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.0.3

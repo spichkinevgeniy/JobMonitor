@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 from telethon import TelegramClient
@@ -87,6 +88,8 @@ class TelethonClientProvider:
         qr = qrcode.QRCode(border=1)
         qr.add_data(url)
         qr.make(fit=True)
-        print("\nScan this QR in Telegram -> Settings -> Devices -> Link Desktop Device:\n")
+        sys.stdout.write(
+            "\nScan this QR in Telegram -> Settings -> Devices -> Link Desktop Device:\n\n"
+        )
         qr.print_ascii(invert=True)
-        print()
+        sys.stdout.write("\n")

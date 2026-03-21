@@ -2,9 +2,8 @@ import asyncio
 import signal
 from contextlib import suppress
 
-from app.core.logger import get_app_logger
-
 from app.bootstrap.models import RuntimeComponents, RuntimeTasks
+from app.core.logger import get_app_logger
 
 logger = get_app_logger(__name__)
 
