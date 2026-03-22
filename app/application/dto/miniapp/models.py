@@ -5,6 +5,7 @@ from enum import StrEnum
 from pydantic import BaseModel
 
 from app.domain.shared.value_objects import ExperienceLevel, Grade, SkillType, SpecializationType
+from app.domain.user.value_objects import LevelFilterMode
 
 
 class WorkFormatChoice(StrEnum):
@@ -36,6 +37,12 @@ class ExperienceLevelChoice(StrEnum):
     SIX_PLUS_YEARS = ExperienceLevel.SIX_PLUS_YEARS.value
 
 
+class LevelModeChoice(StrEnum):
+    IGNORE = LevelFilterMode.IGNORE.value
+    UP_TO = LevelFilterMode.UP_TO.value
+    EXACT = LevelFilterMode.EXACT.value
+
+
 @dataclass(frozen=True, slots=True)
 class ChoiceOptionDto:
     value: str
@@ -61,7 +68,9 @@ class SalarySaveRequest(BaseModel):
 
 class LevelSaveRequest(BaseModel):
     init_data: str
+    grade_mode: LevelModeChoice = LevelModeChoice.IGNORE
     grade_choice: GradeChoice = GradeChoice.ANY
+    experience_mode: LevelModeChoice = LevelModeChoice.IGNORE
     experience_level_choice: ExperienceLevelChoice = ExperienceLevelChoice.ANY
 
 
@@ -80,7 +89,9 @@ class SalaryReadResponse(BaseModel):
 
 
 class LevelReadResponse(BaseModel):
+    grade_mode: str
     grade_choice: str
+    experience_mode: str
     experience_level_choice: str
 
 
@@ -96,7 +107,9 @@ class MiniAppPayload:
     work_format_choice: WorkFormatChoice
     salary_mode: SalaryModeChoice
     salary_amount_rub: int | None
+    grade_mode: LevelModeChoice
     grade_choice: GradeChoice
+    experience_mode: LevelModeChoice
     experience_level_choice: ExperienceLevelChoice
 
 
@@ -115,7 +128,9 @@ def parse_miniapp_payload(raw_payload: str) -> MiniAppPayload:
         work_format_choice=_parse_choice(payload.get("work_format_choice"), WorkFormatChoice),
         salary_mode=_parse_choice(payload.get("salary_mode"), SalaryModeChoice),
         salary_amount_rub=_parse_salary_amount(payload.get("salary_amount_rub")),
+        grade_mode=_parse_choice(payload.get("grade_mode"), LevelModeChoice),
         grade_choice=_parse_choice(payload.get("grade_choice"), GradeChoice),
+        experience_mode=_parse_choice(payload.get("experience_mode"), LevelModeChoice),
         experience_level_choice=_parse_choice(
             payload.get("experience_level_choice"),
             ExperienceLevelChoice,

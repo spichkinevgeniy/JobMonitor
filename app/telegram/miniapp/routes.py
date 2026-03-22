@@ -8,6 +8,7 @@ from app.application.dto.miniapp import (
     FormatReadResponse,
     FormatSaveRequest,
     GradeChoice,
+    LevelModeChoice,
     LevelReadResponse,
     LevelSaveRequest,
     SalaryModeChoice,
@@ -21,7 +22,7 @@ from app.application.dto.miniapp import (
 from app.application.services.user_service import UserService
 from app.domain.shared.value_objects import ExperienceLevel, Grade, WorkFormat
 from app.domain.user.entities import User
-from app.domain.user.value_objects import FilterMode
+from app.domain.user.value_objects import FilterMode, LevelFilterMode
 from app.telegram.miniapp.deps import get_current_user, get_user_service, parse_user_context
 from app.telegram.miniapp.page_context import (
     build_format_page_context,
@@ -209,7 +210,9 @@ async def read_level(
     user: Annotated[User, Depends(get_current_user)],
 ) -> LevelReadResponse:
     return LevelReadResponse(
+        grade_mode=_level_mode_choice(user.filter_grade_mode),
         grade_choice=_grade_choice(user),
+        experience_mode=_level_mode_choice(user.filter_experience_mode),
         experience_level_choice=_experience_level_choice(user),
     )
 
@@ -225,9 +228,10 @@ async def save_level(
 ) -> SaveResponse:
     user_context = parse_user_context(payload.init_data)
 
-    grade, grade_mode = _grade_from_choice(payload.grade_choice)
-    experience_level, experience_mode = _experience_level_from_choice(
-        payload.experience_level_choice
+    grade, grade_mode = _grade_filter_from_payload(payload.grade_choice, payload.grade_mode)
+    experience_level, experience_mode = _experience_filter_from_payload(
+        payload.experience_level_choice,
+        payload.experience_mode,
     )
 
     updated = await service.update_profile_level_filters(
@@ -271,27 +275,35 @@ def _salary_amount_value(user: User) -> int | None:
     return user.cv_salary.amount
 
 
+def _level_mode_choice(mode: LevelFilterMode) -> str:
+    return mode.value
+
+
 def _grade_choice(user: User) -> str:
-    if user.filter_grade_mode != FilterMode.STRICT or user.cv_grade is None:
+    if user.cv_grade is None:
         return GradeChoice.ANY.value
     return user.cv_grade.value
 
 
 def _experience_level_choice(user: User) -> str:
-    if user.filter_experience_mode != FilterMode.STRICT or user.cv_experience_level is None:
+    if user.cv_experience_level is None:
         return ExperienceLevelChoice.ANY.value
     return user.cv_experience_level.value
 
 
-def _grade_from_choice(choice: GradeChoice) -> tuple[Grade | None, FilterMode]:
-    if choice == GradeChoice.ANY:
-        return None, FilterMode.SOFT
-    return Grade(choice.value), FilterMode.STRICT
+def _grade_filter_from_payload(
+    choice: GradeChoice,
+    mode: LevelModeChoice,
+) -> tuple[Grade | None, LevelFilterMode]:
+    if mode == LevelModeChoice.IGNORE or choice == GradeChoice.ANY:
+        return None, LevelFilterMode.IGNORE
+    return Grade(choice.value), LevelFilterMode(mode.value)
 
 
-def _experience_level_from_choice(
+def _experience_filter_from_payload(
     choice: ExperienceLevelChoice,
-) -> tuple[ExperienceLevel | None, FilterMode]:
-    if choice == ExperienceLevelChoice.ANY:
-        return None, FilterMode.SOFT
-    return ExperienceLevel(choice.value), FilterMode.STRICT
+    mode: LevelModeChoice,
+) -> tuple[ExperienceLevel | None, LevelFilterMode]:
+    if mode == LevelModeChoice.IGNORE or choice == ExperienceLevelChoice.ANY:
+        return None, LevelFilterMode.IGNORE
+    return ExperienceLevel(choice.value), LevelFilterMode(mode.value)

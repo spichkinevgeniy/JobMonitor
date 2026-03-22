@@ -8,7 +8,7 @@ from app.domain.shared.value_objects import (
     Specializations,
     WorkFormat,
 )
-from app.domain.user.value_objects import FilterMode, UserId
+from app.domain.user.value_objects import FilterMode, LevelFilterMode, UserId
 
 
 @dataclass(slots=True)
@@ -24,10 +24,10 @@ class User:
     filter_salary_mode: FilterMode
 
     cv_grade: Grade | None
-    filter_grade_mode: FilterMode
+    filter_grade_mode: LevelFilterMode
 
     cv_experience_level: ExperienceLevel | None
-    filter_experience_mode: FilterMode
+    filter_experience_mode: LevelFilterMode
 
     cv_work_format: WorkFormat | None
     filter_work_format_mode: FilterMode
@@ -46,9 +46,9 @@ class User:
         cv_salary_currency: str | None = None,
         filter_salary_mode: FilterMode | str | None = None,
         cv_grade: Grade | str | None = None,
-        filter_grade_mode: FilterMode | str | None = None,
+        filter_grade_mode: LevelFilterMode | str | None = None,
         cv_experience_level: ExperienceLevel | str | None = None,
-        filter_experience_mode: FilterMode | str | None = None,
+        filter_experience_mode: LevelFilterMode | str | None = None,
         cv_work_format: WorkFormat | str | None = None,
         filter_work_format_mode: FilterMode | str | None = None,
         is_active: bool = True,
@@ -65,14 +65,14 @@ class User:
             salary_mode = FilterMode.SOFT
 
         grade = cls._normalize_grade(cv_grade)
-        grade_mode = cls._normalize_mode(filter_grade_mode)
+        grade_mode = cls._normalize_level_mode(filter_grade_mode)
         if grade is None:
-            grade_mode = FilterMode.SOFT
+            grade_mode = LevelFilterMode.IGNORE
 
         experience_level = cls._normalize_experience_level(cv_experience_level)
-        experience_mode = cls._normalize_mode(filter_experience_mode)
+        experience_mode = cls._normalize_level_mode(filter_experience_mode)
         if experience_level is None:
-            experience_mode = FilterMode.SOFT
+            experience_mode = LevelFilterMode.IGNORE
 
         work_format = cls._normalize_work_format(cv_work_format)
         work_format_mode = cls._normalize_mode(filter_work_format_mode)
@@ -122,6 +122,24 @@ class User:
             normalized = WorkFormat(cleaned.upper())
             return None if normalized == WorkFormat.UNDEFINED else normalized
         return None
+
+    @staticmethod
+    def _normalize_level_mode(raw: LevelFilterMode | str | None) -> LevelFilterMode:
+        if isinstance(raw, LevelFilterMode):
+            return raw
+        if raw is None:
+            return LevelFilterMode.IGNORE
+        if isinstance(raw, str):
+            cleaned = raw.strip()
+            if not cleaned:
+                return LevelFilterMode.IGNORE
+            normalized = cleaned.upper()
+            if normalized == "SOFT":
+                return LevelFilterMode.IGNORE
+            if normalized == "STRICT":
+                return LevelFilterMode.UP_TO
+            return LevelFilterMode(normalized)
+        return LevelFilterMode.IGNORE
 
     @staticmethod
     def _normalize_grade(raw: Grade | str | None) -> Grade | None:

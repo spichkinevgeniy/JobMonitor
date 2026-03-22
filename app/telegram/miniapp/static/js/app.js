@@ -19,6 +19,8 @@
   const salaryAmountField = form.querySelector("[data-salary-amount-field]");
   const salaryAmountInput = form.querySelector("input[name='salary_amount_rub']");
   const salaryModeInputs = form.querySelectorAll("input[name='salary_mode']");
+  const gradeModeInputs = form.querySelectorAll("input[name='grade_mode']");
+  const experienceModeInputs = form.querySelectorAll("input[name='experience_mode']");
   let isLoaded = false;
 
   function setStatus(message, state) {
@@ -78,6 +80,46 @@
     }
   }
 
+  function toggleLevelValueSection(sectionKey, modeName) {
+    const section = form.querySelector(`[data-level-values-section="${sectionKey}"]`);
+    if (!section) {
+      return;
+    }
+
+    const shouldHide = getCheckedValue(modeName) === "IGNORE";
+    section.hidden = shouldHide;
+    section.classList.toggle("is-hidden", shouldHide);
+    section
+      .querySelectorAll('input[type="radio"]')
+      .forEach((input) => {
+        input.disabled = shouldHide;
+      });
+  }
+
+  function ensureLevelChoice(name) {
+    const checkedInput = form.querySelector(`input[name="${name}"]:checked`);
+    if (checkedInput && checkedInput.value !== "ANY") {
+      return;
+    }
+
+    const firstRealOption = form.querySelector(`input[name="${name}"]:not([value="ANY"])`);
+    if (firstRealOption) {
+      firstRealOption.checked = true;
+    }
+  }
+
+  function toggleLevelValueSections() {
+    if (getCheckedValue("grade_mode") !== "IGNORE") {
+      ensureLevelChoice("grade_choice");
+    }
+    if (getCheckedValue("experience_mode") !== "IGNORE") {
+      ensureLevelChoice("experience_level_choice");
+    }
+
+    toggleLevelValueSection("grade", "grade_mode");
+    toggleLevelValueSection("experience", "experience_mode");
+  }
+
   function applyCheckedValues(name, values) {
     const checkedValues = new Set(Array.isArray(values) ? values : []);
     form.querySelectorAll(`input[name="${name}"]`).forEach((input) => {
@@ -120,11 +162,12 @@
     }
 
     if (pageKind === "level") {
+      applyCheckedValue("grade_mode", payload.grade_mode || "IGNORE");
       applyCheckedValue("grade_choice", payload.grade_choice || "ANY");
+      applyCheckedValue("experience_mode", payload.experience_mode || "IGNORE");
       applyCheckedValue("experience_level_choice", payload.experience_level_choice || "ANY");
-      return;
+      toggleLevelValueSections();
     }
-
   }
 
   function buildPayload() {
@@ -153,7 +196,9 @@
 
     if (pageKind === "level") {
       return {
+        grade_mode: getCheckedValue("grade_mode") || "IGNORE",
         grade_choice: getCheckedValue("grade_choice") || "ANY",
+        experience_mode: getCheckedValue("experience_mode") || "IGNORE",
         experience_level_choice: getCheckedValue("experience_level_choice") || "ANY",
       };
     }
@@ -265,6 +310,13 @@
   salaryModeInputs.forEach((input) => {
     input.addEventListener("change", toggleSalaryAmountField);
   });
+  gradeModeInputs.forEach((input) => {
+    input.addEventListener("change", toggleLevelValueSections);
+  });
+  experienceModeInputs.forEach((input) => {
+    input.addEventListener("change", toggleLevelValueSections);
+  });
   toggleSalaryAmountField();
+  toggleLevelValueSections();
   loadCurrentState();
 })();

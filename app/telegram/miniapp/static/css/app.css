@@ -66,6 +66,50 @@ body {
   gap: 14px;
 }
 
+.filter-card {
+  gap: 18px;
+  padding: 18px;
+  border: 1px solid rgba(32, 36, 45, 0.08);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 249, 253, 0.92));
+  box-shadow: var(--shadow);
+}
+
+.filter-card__group {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(32, 36, 45, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.filter-card__group.is-muted {
+  opacity: 0.52;
+}
+
+.filter-card__heading-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-card__badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(47, 97, 245, 0.08);
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
 .section-title {
   margin: 0;
   font-size: 1.6rem;
@@ -222,6 +266,7 @@ body {
 }
 
 .input-caption {
+  margin: 0;
   color: var(--text-soft);
   font-size: 14px;
   line-height: 1.4;
@@ -321,6 +366,22 @@ body {
   .choice-grid--crumbs .choice-chip__label {
     font-size: 14px;
     padding: 10px 14px;
+  }
+
+  .filter-card {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .filter-card__group {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .filter-card__heading-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .choice-grid--compact .choice-chip {

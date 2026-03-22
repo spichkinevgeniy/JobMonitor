@@ -1,7 +1,7 @@
 """add grade and experience filters
 
 Revision ID: f7c1d2e3a4b5
-Revises: 89d7ab44d1f2
+Revises: b1a2c3d4e5f6
 Create Date: 2026-03-22 12:00:00.000000
 
 """
@@ -14,7 +14,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "f7c1d2e3a4b5"
-down_revision: str | Sequence[str] | None = "89d7ab44d1f2"
+down_revision: str | Sequence[str] | None = "b1a2c3d4e5f6"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
@@ -32,12 +32,12 @@ def upgrade() -> None:
     op.add_column("users", sa.Column("cv_grade", sa.String(), nullable=True))
     op.add_column(
         "users",
-        sa.Column("filter_grade_mode", sa.String(), nullable=False, server_default="SOFT"),
+        sa.Column("filter_grade_mode", sa.String(), nullable=False, server_default="IGNORE"),
     )
     op.add_column("users", sa.Column("cv_experience_level", sa.String(), nullable=True))
     op.add_column(
         "users",
-        sa.Column("filter_experience_mode", sa.String(), nullable=False, server_default="SOFT"),
+        sa.Column("filter_experience_mode", sa.String(), nullable=False, server_default="IGNORE"),
     )
 
 def downgrade() -> None:

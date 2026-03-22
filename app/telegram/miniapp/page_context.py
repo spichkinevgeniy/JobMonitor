@@ -6,6 +6,7 @@ from app.application.dto.miniapp import (
     ChoiceOptionDto,
     ExperienceLevelChoice,
     GradeChoice,
+    LevelModeChoice,
     WorkFormatChoice,
 )
 from app.domain.shared.value_objects import (
@@ -165,7 +166,6 @@ _WORK_FORMAT_LABELS = {
     WorkFormat.ONSITE.value: "Офис",
 }
 _GRADE_LABELS = {
-    GradeChoice.ANY.value: "Любой",
     Grade.INTERN.value: "Intern",
     Grade.JUNIOR.value: "Junior",
     Grade.MIDDLE.value: "Middle",
@@ -173,12 +173,18 @@ _GRADE_LABELS = {
     Grade.LEAD.value: "Lead",
 }
 _EXPERIENCE_LEVEL_LABELS = {
-    ExperienceLevelChoice.ANY.value: "Любой опыт",
     ExperienceLevel.NO_EXPERIENCE.value: "Без опыта",
     ExperienceLevel.ONE_TO_THREE_YEARS.value: "1-3 года",
     ExperienceLevel.THREE_TO_SIX_YEARS.value: "3-6 лет",
     ExperienceLevel.SIX_PLUS_YEARS.value: "6+ лет",
 }
+_LEVEL_MODE_LABELS = {
+    LevelModeChoice.IGNORE.value: "Не учитывать",
+    LevelModeChoice.UP_TO.value: "Не выше",
+    LevelModeChoice.EXACT.value: "Только этот",
+}
+
+
 def _validate_skill_option_views() -> None:
     mapped_values = [item.value for item in _SKILL_OPTION_VIEWS]
     expected_values = [item.value for item in SkillType]
@@ -231,28 +237,26 @@ def build_work_format_options() -> list[ChoiceOptionDto]:
 
 
 def build_grade_options() -> list[ChoiceOptionDto]:
-    options = [ChoiceOptionDto(value=GradeChoice.ANY.value, label=_GRADE_LABELS[GradeChoice.ANY.value])]
-    options.extend(
+    return [
         ChoiceOptionDto(value=item.value, label=_GRADE_LABELS[item.value])
-        for item in Grade
-        if item is not Grade.UNDEFINED
-    )
-    return options
+        for item in GradeChoice
+        if item is not GradeChoice.ANY
+    ]
 
 
 def build_experience_level_options() -> list[ChoiceOptionDto]:
-    options = [
-        ChoiceOptionDto(
-            value=ExperienceLevelChoice.ANY.value,
-            label=_EXPERIENCE_LEVEL_LABELS[ExperienceLevelChoice.ANY.value],
-        )
-    ]
-    options.extend(
+    return [
         ChoiceOptionDto(value=item.value, label=_EXPERIENCE_LEVEL_LABELS[item.value])
-        for item in ExperienceLevel
-        if item is not ExperienceLevel.UNDEFINED
-    )
-    return options
+        for item in ExperienceLevelChoice
+        if item is not ExperienceLevelChoice.ANY
+    ]
+
+
+def build_level_mode_options() -> list[ChoiceOptionDto]:
+    return [
+        ChoiceOptionDto(value=item.value, label=_LEVEL_MODE_LABELS[item.value])
+        for item in LevelModeChoice
+    ]
 
 
 def _path_for(request: Request, name: str, **path_params: object) -> str:
@@ -303,10 +307,13 @@ def build_salary_page_context(request: Request) -> dict[str, object]:
 def build_level_page_context(request: Request) -> dict[str, object]:
     return {
         "page_title": "Грейд и опыт",
-        "page_description": "Выберите ваш текущий уровень и подтвержденный опыт.",
+        "page_description": "Для каждого фильтра выберите режим и одно значение.",
         "active_page": "level",
-        "grade_choice": "",
-        "experience_level_choice": "",
+        "grade_mode": LevelModeChoice.IGNORE.value,
+        "grade_choice": GradeChoice.ANY.value,
+        "experience_mode": LevelModeChoice.IGNORE.value,
+        "experience_level_choice": ExperienceLevelChoice.ANY.value,
+        "level_mode_options": build_level_mode_options(),
         "grade_options": build_grade_options(),
         "experience_level_options": build_experience_level_options(),
         "action_label": "Сохранить",

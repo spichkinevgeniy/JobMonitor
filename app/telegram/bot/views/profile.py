@@ -1,6 +1,6 @@
 from app.domain.shared.value_objects import ExperienceLevel, Grade
 from app.domain.user.entities import User
-from app.domain.user.value_objects import FilterMode
+from app.domain.user.value_objects import FilterMode, LevelFilterMode
 from app.telegram.bot.views.tracking_settings import format_salary, format_work_format
 
 _GRADE_LABELS = {
@@ -16,6 +16,11 @@ _EXPERIENCE_LABELS = {
     ExperienceLevel.THREE_TO_SIX_YEARS: "3-6 лет",
     ExperienceLevel.SIX_PLUS_YEARS: "6+ лет",
 }
+_LEVEL_MODE_HINTS = {
+    LevelFilterMode.IGNORE: "не учитываем 🟢",
+    LevelFilterMode.UP_TO: "показываем этот уровень и ниже 🔴",
+    LevelFilterMode.EXACT: "показываем только точное совпадение 🔴",
+}
 
 
 def build_search_profile_text(user: User) -> str:
@@ -26,6 +31,7 @@ def build_search_profile_text(user: User) -> str:
     grade = _format_grade(user)
     experience = _format_experience(user)
     work_format = format_work_format(user.cv_work_format)
+
     lines = [
         "👤 Профиль поиска",
         "",
@@ -39,32 +45,26 @@ def build_search_profile_text(user: User) -> str:
             value=salary,
             mode=user.filter_salary_mode,
             any_value="Любая",
-            soft_hint="Не учитываем 🟢",
-            strict_hint="Скрываем всё, что меньше 🔴",
+            soft_hint="не учитываем 🟢",
+            strict_hint="скрываем всё, что меньше 🔴",
         ),
-        _format_mode_filter_line(
+        _format_level_filter_line(
             field_name="Грейд",
             value=grade,
             mode=user.filter_grade_mode,
-            any_value="Любой",
-            soft_hint="Не учитываем 🟢",
-            strict_hint="Скрываем вакансии выше уровня 🔴",
         ),
-        _format_mode_filter_line(
+        _format_level_filter_line(
             field_name="Опыт",
             value=experience,
             mode=user.filter_experience_mode,
-            any_value="Любой",
-            soft_hint="Не учитываем 🟢",
-            strict_hint="Скрываем вакансии с большим требованием 🔴",
         ),
         _format_mode_filter_line(
             field_name="Формат",
             value=work_format,
             mode=user.filter_work_format_mode,
             any_value="Любой",
-            soft_hint="Не учитываем 🟢",
-            strict_hint="Только этот формат 🔴",
+            soft_hint="не учитываем 🟢",
+            strict_hint="только этот формат 🔴",
         ),
     ]
     return "\n".join(lines)
@@ -82,6 +82,16 @@ def _format_mode_filter_line(
         value = any_value
     hint = strict_hint if mode == FilterMode.STRICT else soft_hint
     return f"• {field_name}: {value} ({hint})"
+
+
+def _format_level_filter_line(
+    field_name: str,
+    value: str | None,
+    mode: LevelFilterMode,
+) -> str:
+    if mode == LevelFilterMode.IGNORE or value is None:
+        return f"• {field_name}: не учитываем 🟢"
+    return f"• {field_name}: {value} ({_LEVEL_MODE_HINTS[mode]})"
 
 
 def _format_search_line(

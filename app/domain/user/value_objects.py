@@ -10,3 +10,9 @@ class UserId:
 class FilterMode(StrEnum):
     STRICT = "STRICT"
     SOFT = "SOFT"
+
+
+class LevelFilterMode(StrEnum):
+    IGNORE = "IGNORE"
+    UP_TO = "UP_TO"
+    EXACT = "EXACT"

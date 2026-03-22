@@ -5,8 +5,22 @@ from app.domain.shared.value_objects import ExperienceLevel as UserExperienceLev
 from app.domain.shared.value_objects import Grade as UserGrade
 from app.domain.shared.value_objects import WorkFormat as UserWorkFormat
 from app.domain.user.entities import User
-from app.domain.user.value_objects import FilterMode, UserId
+from app.domain.user.value_objects import FilterMode, LevelFilterMode, UserId
 from app.infrastructure.db.models import User as UserModel
+
+
+def _parse_level_mode(raw: str | None) -> LevelFilterMode:
+    if not raw:
+        return LevelFilterMode.IGNORE
+
+    normalized = raw.strip().upper()
+    if not normalized:
+        return LevelFilterMode.IGNORE
+    if normalized == "SOFT":
+        return LevelFilterMode.IGNORE
+    if normalized == "STRICT":
+        return LevelFilterMode.UP_TO
+    return LevelFilterMode(normalized)
 
 
 def user_to_model(user: User) -> UserModel:
@@ -74,22 +88,18 @@ def user_from_model(model: UserModel) -> User:
     grade = UserGrade(model.cv_grade) if model.cv_grade else None
     if grade == UserGrade.UNDEFINED:
         grade = None
-    grade_mode = FilterMode(model.filter_grade_mode) if model.filter_grade_mode else FilterMode.SOFT
+    grade_mode = _parse_level_mode(model.filter_grade_mode)
     if grade is None:
-        grade_mode = FilterMode.SOFT
+        grade_mode = LevelFilterMode.IGNORE
 
     experience_level = (
         UserExperienceLevel(model.cv_experience_level) if model.cv_experience_level else None
     )
     if experience_level == UserExperienceLevel.UNDEFINED:
         experience_level = None
-    experience_mode = (
-        FilterMode(model.filter_experience_mode)
-        if model.filter_experience_mode
-        else FilterMode.SOFT
-    )
+    experience_mode = _parse_level_mode(model.filter_experience_mode)
     if experience_level is None:
-        experience_mode = FilterMode.SOFT
+        experience_mode = LevelFilterMode.IGNORE
 
     return User(
         tg_id=UserId(model.tg_id),

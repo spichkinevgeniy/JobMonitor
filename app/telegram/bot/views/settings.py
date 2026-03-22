@@ -5,7 +5,7 @@ from urllib.parse import urlsplit, urlunsplit
 from app.core.config import config
 from app.domain.shared.value_objects import ExperienceLevel, Grade
 from app.domain.user.entities import User
-from app.domain.user.value_objects import FilterMode
+from app.domain.user.value_objects import FilterMode, LevelFilterMode
 from app.telegram.bot.views.copy import build_settings_intro_text
 from app.telegram.bot.views.tracking_settings import format_work_format
 
@@ -34,8 +34,6 @@ _EXPERIENCE_LABELS = {
     ExperienceLevel.THREE_TO_SIX_YEARS: "3-6 лет",
     ExperienceLevel.SIX_PLUS_YEARS: "6+ лет",
 }
-
-
 @dataclass(frozen=True, slots=True)
 class SettingsMenuView:
     specialty_label: str
@@ -99,11 +97,31 @@ def _salary_label(user: User) -> str:
 
 def _level_label(user: User) -> str:
     parts: list[str] = []
-    if user.filter_grade_mode == FilterMode.STRICT and user.cv_grade is not None:
-        parts.append(_GRADE_LABELS.get(user.cv_grade, user.cv_grade.value))
-    if user.filter_experience_mode == FilterMode.STRICT and user.cv_experience_level is not None:
-        parts.append(_EXPERIENCE_LABELS.get(user.cv_experience_level, user.cv_experience_level.value))
-    return ", ".join(parts) if parts else "Любой"
+    grade_part = _single_level_label(
+        mode=user.filter_grade_mode,
+        value=_GRADE_LABELS.get(user.cv_grade, user.cv_grade.value) if user.cv_grade else None,
+    )
+    experience_part = _single_level_label(
+        mode=user.filter_experience_mode,
+        value=(
+            _EXPERIENCE_LABELS.get(user.cv_experience_level, user.cv_experience_level.value)
+            if user.cv_experience_level
+            else None
+        ),
+    )
+    if grade_part:
+        parts.append(grade_part)
+    if experience_part:
+        parts.append(experience_part)
+    return " · ".join(parts) if parts else "не учитывать"
+
+
+def _single_level_label(mode: LevelFilterMode, value: str | None) -> str | None:
+    if mode == LevelFilterMode.IGNORE or value is None:
+        return None
+    if mode == LevelFilterMode.UP_TO:
+        return f"до {value}"
+    return f"точно {value}"
 
 
 def _build_entry_url(entry: str) -> str:

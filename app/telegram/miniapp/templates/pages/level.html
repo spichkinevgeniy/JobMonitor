@@ -8,39 +8,97 @@
   data-save-url="{{ save_url }}"
   data-success-text="{{ success_text }}"
 >
-  <section class="form-section">
+  <section class="form-section filter-card">
     <h2 class="section-title">Грейд</h2>
-    <div class="choice-grid choice-grid--compact">
-      {% for option in grade_options %}
-      <label class="choice-chip">
-        <input
-          class="choice-chip__input"
-          type="radio"
-          name="grade_choice"
-          value="{{ option.value }}"
-          {% if option.value == grade_choice %}checked{% endif %}
-        />
-        <span class="choice-chip__label">{{ option.label }}</span>
-      </label>
-      {% endfor %}
+    <div class="filter-card__group">
+      <div class="filter-card__heading-row">
+        <h3 class="choice-section__title">Режим</h3>
+        <span class="filter-card__badge">Как фильтруем</span>
+      </div>
+      <p class="input-caption">Сначала выберите правило фильтрации вакансий.</p>
+      <div class="choice-grid choice-grid--crumbs">
+        {% for option in level_mode_options %}
+        <label class="choice-chip">
+          <input
+            class="choice-chip__input"
+            type="radio"
+            name="grade_mode"
+            value="{{ option.value }}"
+            {% if option.value == grade_mode %}checked{% endif %}
+          />
+          <span class="choice-chip__label">{{ option.label }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="filter-card__group" data-level-values-section="grade">
+      <div class="filter-card__heading-row">
+        <h3 class="choice-section__title">Значение</h3>
+        <span class="filter-card__badge">Какой уровень нужен</span>
+      </div>
+      <p class="input-caption">При режиме «Не выше» покажем этот уровень и ниже. При «Только этот» оставим только точное совпадение.</p>
+      <div class="choice-grid choice-grid--compact">
+        {% for option in grade_options %}
+        <label class="choice-chip">
+          <input
+            class="choice-chip__input"
+            type="radio"
+            name="grade_choice"
+            value="{{ option.value }}"
+            {% if option.value == grade_choice %}checked{% endif %}
+          />
+          <span class="choice-chip__label">{{ option.label }}</span>
+        </label>
+        {% endfor %}
+      </div>
     </div>
   </section>
 
-  <section class="form-section">
+  <section class="form-section filter-card">
     <h2 class="section-title">Опыт</h2>
-    <div class="choice-grid choice-grid--compact">
-      {% for option in experience_level_options %}
-      <label class="choice-chip">
-        <input
-          class="choice-chip__input"
-          type="radio"
-          name="experience_level_choice"
-          value="{{ option.value }}"
-          {% if option.value == experience_level_choice %}checked{% endif %}
-        />
-        <span class="choice-chip__label">{{ option.label }}</span>
-      </label>
-      {% endfor %}
+    <div class="filter-card__group">
+      <div class="filter-card__heading-row">
+        <h3 class="choice-section__title">Режим</h3>
+        <span class="filter-card__badge">Как фильтруем</span>
+      </div>
+      <p class="input-caption">Сначала выберите правило фильтрации вакансий.</p>
+      <div class="choice-grid choice-grid--crumbs">
+        {% for option in level_mode_options %}
+        <label class="choice-chip">
+          <input
+            class="choice-chip__input"
+            type="radio"
+            name="experience_mode"
+            value="{{ option.value }}"
+            {% if option.value == experience_mode %}checked{% endif %}
+          />
+          <span class="choice-chip__label">{{ option.label }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="filter-card__group" data-level-values-section="experience">
+      <div class="filter-card__heading-row">
+        <h3 class="choice-section__title">Значение</h3>
+        <span class="filter-card__badge">Какой опыт нужен</span>
+      </div>
+      <p class="input-caption">При режиме «Не выше» покажем этот опыт и ниже. При «Только этот» оставим только точное совпадение.</p>
+      <div class="choice-grid choice-grid--compact">
+        {% for option in experience_level_options %}
+        <label class="choice-chip">
+          <input
+            class="choice-chip__input"
+            type="radio"
+            name="experience_level_choice"
+            value="{{ option.value }}"
+            {% if option.value == experience_level_choice %}checked{% endif %}
+          />
+          <span class="choice-chip__label">{{ option.label }}</span>
+        </label>
+        {% endfor %}
+      </div>
     </div>
   </section>
 

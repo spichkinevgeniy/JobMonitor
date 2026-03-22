@@ -54,10 +54,10 @@ class User(Base):
     filter_salary_mode: Mapped[str] = mapped_column(String, default="SOFT")
 
     cv_grade: Mapped[str | None] = mapped_column(String, nullable=True)
-    filter_grade_mode: Mapped[str] = mapped_column(String, default="SOFT")
+    filter_grade_mode: Mapped[str] = mapped_column(String, default="IGNORE")
 
     cv_experience_level: Mapped[str | None] = mapped_column(String, nullable=True)
-    filter_experience_mode: Mapped[str] = mapped_column(String, default="SOFT")
+    filter_experience_mode: Mapped[str] = mapped_column(String, default="IGNORE")
 
     cv_work_format: Mapped[str | None] = mapped_column(String, nullable=True)
     filter_work_format_mode: Mapped[str] = mapped_column(String, default="SOFT")

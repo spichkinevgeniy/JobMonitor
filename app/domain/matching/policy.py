@@ -7,7 +7,7 @@ from app.domain.shared.value_objects import (
     WorkFormat,
 )
 from app.domain.user.entities import User
-from app.domain.user.value_objects import FilterMode
+from app.domain.user.value_objects import FilterMode, LevelFilterMode
 from app.domain.vacancy.entities import Vacancy
 
 
@@ -40,23 +40,29 @@ def _rejected_by_salary(vacancy: Vacancy, user: User) -> bool:
 
 
 def _rejected_by_grade(vacancy: Vacancy, user: User) -> bool:
-    if user.filter_grade_mode != FilterMode.STRICT:
+    if user.filter_grade_mode == LevelFilterMode.IGNORE:
         return False
     if user.cv_grade is None:
         return False
     if vacancy.grade == Grade.UNDEFINED:
         return False
 
+    if user.filter_grade_mode == LevelFilterMode.EXACT:
+        return vacancy.grade != user.cv_grade
+
     return GRADE_ORDER[vacancy.grade] > GRADE_ORDER[user.cv_grade]
 
 
 def _rejected_by_experience(vacancy: Vacancy, user: User) -> bool:
-    if user.filter_experience_mode != FilterMode.STRICT:
+    if user.filter_experience_mode == LevelFilterMode.IGNORE:
         return False
     if user.cv_experience_level is None:
         return False
     if vacancy.experience_level == ExperienceLevel.UNDEFINED:
         return False
+
+    if user.filter_experience_mode == LevelFilterMode.EXACT:
+        return vacancy.experience_level != user.cv_experience_level
 
     return (
         EXPERIENCE_LEVEL_ORDER[vacancy.experience_level]

@@ -10,7 +10,7 @@ from app.domain.shared.value_objects import (
     WorkFormat,
 )
 from app.domain.user.entities import User
-from app.domain.user.value_objects import FilterMode, UserId
+from app.domain.user.value_objects import FilterMode, LevelFilterMode, UserId
 
 
 class UserService:
@@ -55,7 +55,7 @@ class UserService:
 
             user.cv_grade = None if dto.grade == Grade.UNDEFINED else dto.grade
             user.filter_grade_mode = (
-                FilterMode.STRICT if user.cv_grade is not None else FilterMode.SOFT
+                LevelFilterMode.UP_TO if user.cv_grade is not None else LevelFilterMode.IGNORE
             )
 
             user.cv_experience_level = (
@@ -64,7 +64,9 @@ class UserService:
                 else dto.experience_level
             )
             user.filter_experience_mode = (
-                FilterMode.STRICT if user.cv_experience_level is not None else FilterMode.SOFT
+                LevelFilterMode.UP_TO
+                if user.cv_experience_level is not None
+                else LevelFilterMode.IGNORE
             )
 
             work_format = dto.work_format
@@ -116,9 +118,9 @@ class UserService:
         self,
         tg_id: int,
         grade: Grade | None,
-        grade_mode: FilterMode,
+        grade_mode: LevelFilterMode,
         experience_level: ExperienceLevel | None,
-        experience_mode: FilterMode,
+        experience_mode: LevelFilterMode,
     ) -> bool:
         async with self._uow:
             user = await self._uow.users.get_by_tg_id(UserId(tg_id))
@@ -128,7 +130,7 @@ class UserService:
             normalized_grade = None if grade == Grade.UNDEFINED else grade
             user.cv_grade = normalized_grade
             user.filter_grade_mode = (
-                grade_mode if normalized_grade is not None else FilterMode.SOFT
+                grade_mode if normalized_grade is not None else LevelFilterMode.IGNORE
             )
 
             normalized_experience = (
@@ -136,7 +138,9 @@ class UserService:
             )
             user.cv_experience_level = normalized_experience
             user.filter_experience_mode = (
-                experience_mode if normalized_experience is not None else FilterMode.SOFT
+                experience_mode
+                if normalized_experience is not None
+                else LevelFilterMode.IGNORE
             )
 
             await self._uow.users.update(user)
