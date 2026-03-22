@@ -50,6 +50,7 @@ class SkillType(StrEnum):
     C_SHARP = "C#"
     C_PLUSPLUS = "C++"
     GO = "Go"
+    RUST = "Rust"
     C = "C"
     RUBY = "Ruby"
     PHP = "PHP"

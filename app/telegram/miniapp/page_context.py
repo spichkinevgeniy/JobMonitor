@@ -55,6 +55,7 @@ _SKILL_OPTION_VIEWS: tuple[SkillOptionView, ...] = (
         SpecializationType.BACKEND,
     ),
     SkillOptionView(SkillType.GO.value, SkillType.GO.value, SpecializationType.BACKEND),
+    SkillOptionView(SkillType.RUST.value, SkillType.RUST.value, SpecializationType.BACKEND),
     SkillOptionView(SkillType.C.value, SkillType.C.value, SpecializationType.BACKEND),
     SkillOptionView(SkillType.RUBY.value, SkillType.RUBY.value, SpecializationType.BACKEND),
     SkillOptionView(SkillType.PHP.value, SkillType.PHP.value, SpecializationType.BACKEND),
