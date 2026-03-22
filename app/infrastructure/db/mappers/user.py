@@ -1,8 +1,8 @@
+from app.domain.shared.value_objects import ExperienceLevel as UserExperienceLevel
+from app.domain.shared.value_objects import Grade as UserGrade
 from app.domain.shared.value_objects import Salary as UserSalary
 from app.domain.shared.value_objects import Skills as UserSkills
 from app.domain.shared.value_objects import Specializations as UserSpecializations
-from app.domain.shared.value_objects import ExperienceLevel as UserExperienceLevel
-from app.domain.shared.value_objects import Grade as UserGrade
 from app.domain.shared.value_objects import WorkFormat as UserWorkFormat
 from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode, LevelFilterMode, UserId
@@ -57,9 +57,7 @@ def apply_user(model: UserModel, user: User) -> None:
     model.filter_salary_mode = user.filter_salary_mode.value
     model.cv_grade = user.cv_grade.value if user.cv_grade else None
     model.filter_grade_mode = user.filter_grade_mode.value
-    model.cv_experience_level = (
-        user.cv_experience_level.value if user.cv_experience_level else None
-    )
+    model.cv_experience_level = user.cv_experience_level.value if user.cv_experience_level else None
     model.filter_experience_mode = user.filter_experience_mode.value
     model.cv_work_format = user.cv_work_format.value if user.cv_work_format else None
     model.filter_work_format_mode = user.filter_work_format_mode.value

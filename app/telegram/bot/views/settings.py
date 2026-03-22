@@ -34,6 +34,8 @@ _EXPERIENCE_LABELS = {
     ExperienceLevel.THREE_TO_SIX_YEARS: "3-6 лет",
     ExperienceLevel.SIX_PLUS_YEARS: "6+ лет",
 }
+
+
 @dataclass(frozen=True, slots=True)
 class SettingsMenuView:
     specialty_label: str

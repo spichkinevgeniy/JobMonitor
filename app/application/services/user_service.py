@@ -59,9 +59,7 @@ class UserService:
             )
 
             user.cv_experience_level = (
-                None
-                if dto.experience_level == ExperienceLevel.UNDEFINED
-                else dto.experience_level
+                None if dto.experience_level == ExperienceLevel.UNDEFINED else dto.experience_level
             )
             user.filter_experience_mode = (
                 LevelFilterMode.UP_TO
@@ -138,9 +136,7 @@ class UserService:
             )
             user.cv_experience_level = normalized_experience
             user.filter_experience_mode = (
-                experience_mode
-                if normalized_experience is not None
-                else LevelFilterMode.IGNORE
+                experience_mode if normalized_experience is not None else LevelFilterMode.IGNORE
             )
 
             await self._uow.users.update(user)

@@ -1,10 +1,10 @@
 from .domain_errors import DomainError
 from .value_objects import (
+    EXPERIENCE_LEVEL_ORDER,
+    GRADE_ORDER,
     CurrencyType,
     ExperienceLevel,
     Grade,
-    EXPERIENCE_LEVEL_ORDER,
-    GRADE_ORDER,
     Salary,
     Skills,
     SkillType,
