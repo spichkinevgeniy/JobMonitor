@@ -1,9 +1,11 @@
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
+from app.application.ports.observability_port import IObservabilityService
+from app.application.services.user_service import UserService
 from app.bootstrap.models import RuntimeComponents
 from app.core.config import config
-from app.infrastructure.db import async_session_factory
+from app.infrastructure.db import UserUnitOfWork, async_session_factory
 from app.infrastructure.extractors.vacancy_extractor import GoogleVacancyLLMExtractor
 from app.infrastructure.observability import (
     build_observability_service,
@@ -34,11 +36,13 @@ def build_bot() -> tuple[Dispatcher, Bot]:
     return dp, bot
 
 
-async def build_scraper(bot: Bot) -> tuple[TelegramScraper, TelethonClientProvider]:
+async def build_scraper(
+    bot: Bot,
+    observability: IObservabilityService,
+) -> tuple[TelegramScraper, TelethonClientProvider]:
     provider = TelethonClientProvider()
     client = await provider.start()
     extractor = GoogleVacancyLLMExtractor()
-    observability = build_observability_service()
     scraper = TelegramScraper(
         client,
         bot,
@@ -52,7 +56,9 @@ async def build_scraper(bot: Bot) -> tuple[TelegramScraper, TelethonClientProvid
 async def build_runtime_components() -> RuntimeComponents:
     dp, bot = build_bot()
     await setup_bot_commands(bot)
-    scraper, provider = await build_scraper(bot)
+    observability = build_observability_service()
+    await UserService(UserUnitOfWork(async_session_factory), observability).sync_user_metrics()
+    scraper, provider = await build_scraper(bot, observability)
     miniapp_server = build_miniapp_server()
     return RuntimeComponents(
         dp=dp,

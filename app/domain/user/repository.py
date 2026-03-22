@@ -14,6 +14,10 @@ class IUserRepository(Protocol):
 
     async def upsert(self, user: User) -> None: ...
 
+    async def count_total(self) -> int: ...
+
+    async def count_active(self) -> int: ...
+
     async def find_prefiltered_candidates(
         self,
         specializations: set[str],

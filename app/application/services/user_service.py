@@ -1,4 +1,5 @@
 from app.application.dto import OutResumeParse
+from app.application.ports.observability_port import IObservabilityService
 from app.application.ports.unit_of_work import UserUnitOfWork
 from app.domain.shared.value_objects import (
     CurrencyType,
@@ -14,8 +15,13 @@ from app.domain.user.value_objects import FilterMode, LevelFilterMode, UserId
 
 
 class UserService:
-    def __init__(self, uow: UserUnitOfWork) -> None:
+    def __init__(
+        self,
+        uow: UserUnitOfWork,
+        observability: IObservabilityService | None = None,
+    ) -> None:
         self._uow = uow
+        self._observability = observability
 
     async def get_user_by_tg_id(self, tg_id: int) -> User | None:
         async with self._uow:
@@ -25,14 +31,35 @@ class UserService:
         async with self._uow:
             user = await self._uow.users.get_by_tg_id(UserId(tg_id))
             if user is None:
+                total_users = await self._uow.users.count_total()
+                active_users = await self._uow.users.count_active()
                 user = User.create(tg_id=tg_id, username=username)
                 await self._uow.users.add(user)
+                if self._observability is not None:
+                    self._observability.observe_users_registered(1)
+                    self._observability.observe_users_snapshot(
+                        total_users=total_users + 1,
+                        active_users=active_users + (1 if user.is_active else 0),
+                    )
                 return user, True
 
             if user.username != username:
                 user.username = username
                 await self._uow.users.update(user)
             return user, False
+
+    async def sync_user_metrics(self) -> None:
+        if self._observability is None:
+            return
+
+        async with self._uow:
+            total_users = await self._uow.users.count_total()
+            active_users = await self._uow.users.count_active()
+
+        self._observability.observe_users_snapshot(
+            total_users=total_users,
+            active_users=active_users,
+        )
 
     async def update_resume(self, tg_id: int, dto: OutResumeParse) -> bool:
         async with self._uow:

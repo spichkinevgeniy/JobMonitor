@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -43,6 +43,16 @@ class UserRepository(IUserRepository):
             self._session.add(user_to_model(user))
             return
         apply_user(model, user)
+
+    async def count_total(self) -> int:
+        result = await self._session.execute(select(func.count()).select_from(UserModel))
+        return int(result.scalar_one())
+
+    async def count_active(self) -> int:
+        result = await self._session.execute(
+            select(func.count()).select_from(UserModel).where(UserModel.is_active.is_(True))
+        )
+        return int(result.scalar_one())
 
     async def find_prefiltered_candidates(
         self,

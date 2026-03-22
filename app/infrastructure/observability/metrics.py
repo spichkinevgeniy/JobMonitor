@@ -17,6 +17,21 @@ SKILL_MATCHES_TOTAL = Counter(
     ["skill"],
 )
 
+USERS_REGISTERED_TOTAL = Counter(
+    "job_monitor_users_registered_total",
+    "Total number of newly registered users since process start.",
+)
+
+USERS_TOTAL = Gauge(
+    "job_monitor_users_total",
+    "Current total number of users in the database.",
+)
+
+ACTIVE_USERS_TOTAL = Gauge(
+    "job_monitor_active_users_total",
+    "Current number of active users in the database.",
+)
+
 PROCESS_RSS_BYTES = Gauge(
     "job_monitor_process_rss_bytes",
     "Resident set size (RSS) memory used by the current process in bytes.",
