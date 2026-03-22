@@ -2,6 +2,8 @@ from app.application.dto import OutResumeParse
 from app.application.ports.unit_of_work import UserUnitOfWork
 from app.domain.shared.value_objects import (
     CurrencyType,
+    ExperienceLevel,
+    Grade,
     Salary,
     Skills,
     Specializations,
@@ -51,6 +53,20 @@ class UserService:
                 user.cv_salary = None
                 user.filter_salary_mode = FilterMode.SOFT
 
+            user.cv_grade = None if dto.grade == Grade.UNDEFINED else dto.grade
+            user.filter_grade_mode = (
+                FilterMode.STRICT if user.cv_grade is not None else FilterMode.SOFT
+            )
+
+            user.cv_experience_level = (
+                None
+                if dto.experience_level == ExperienceLevel.UNDEFINED
+                else dto.experience_level
+            )
+            user.filter_experience_mode = (
+                FilterMode.STRICT if user.cv_experience_level is not None else FilterMode.SOFT
+            )
+
             work_format = dto.work_format
             user.cv_work_format = None if work_format == WorkFormat.UNDEFINED else work_format
             if user.cv_work_format is not None:
@@ -93,6 +109,36 @@ class UserService:
             user.filter_work_format_mode = (
                 work_format_mode if normalized_work_format is not None else FilterMode.SOFT
             )
+            await self._uow.users.update(user)
+        return True
+
+    async def update_profile_level_filters(
+        self,
+        tg_id: int,
+        grade: Grade | None,
+        grade_mode: FilterMode,
+        experience_level: ExperienceLevel | None,
+        experience_mode: FilterMode,
+    ) -> bool:
+        async with self._uow:
+            user = await self._uow.users.get_by_tg_id(UserId(tg_id))
+            if user is None:
+                return False
+
+            normalized_grade = None if grade == Grade.UNDEFINED else grade
+            user.cv_grade = normalized_grade
+            user.filter_grade_mode = (
+                grade_mode if normalized_grade is not None else FilterMode.SOFT
+            )
+
+            normalized_experience = (
+                None if experience_level == ExperienceLevel.UNDEFINED else experience_level
+            )
+            user.cv_experience_level = normalized_experience
+            user.filter_experience_mode = (
+                experience_mode if normalized_experience is not None else FilterMode.SOFT
+            )
+
             await self._uow.users.update(user)
         return True
 

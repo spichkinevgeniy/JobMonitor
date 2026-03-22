@@ -87,6 +87,8 @@ class VacancyService:
                 skills_raw=[skill.value for skill in parse_result.skills],
                 mirror_chat_id=raw_vacancy_info.mirror_chat_id,
                 mirror_message_id=raw_vacancy_info.mirror_message_id,
+                grade=parse_result.grade,
+                experience_level=parse_result.experience_level,
                 work_format=parse_result.work_format,
                 salary_amount=parse_result.salary.amount if parse_result.salary else None,
                 salary_currency=(

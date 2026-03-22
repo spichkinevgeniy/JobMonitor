@@ -116,7 +116,15 @@
             : String(payload.salary_amount_rub);
       }
       toggleSalaryAmountField();
+      return;
     }
+
+    if (pageKind === "level") {
+      applyCheckedValue("grade_choice", payload.grade_choice || "ANY");
+      applyCheckedValue("experience_level_choice", payload.experience_level_choice || "ANY");
+      return;
+    }
+
   }
 
   function buildPayload() {
@@ -140,6 +148,13 @@
       return {
         salary_mode: salaryMode,
         salary_amount_rub: salaryMode === "FROM" ? parsedAmount : null,
+      };
+    }
+
+    if (pageKind === "level") {
+      return {
+        grade_choice: getCheckedValue("grade_choice") || "ANY",
+        experience_level_choice: getCheckedValue("experience_level_choice") || "ANY",
       };
     }
 

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from urllib.parse import urlsplit, urlunsplit
 
 from app.core.config import config
+from app.domain.shared.value_objects import ExperienceLevel, Grade
 from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode
 from app.telegram.bot.views.copy import build_settings_intro_text
@@ -11,11 +12,27 @@ from app.telegram.bot.views.tracking_settings import format_work_format
 SETTINGS_ENTRY_SPECIALTY = "specialty"
 SETTINGS_ENTRY_FORMAT = "format"
 SETTINGS_ENTRY_SALARY = "salary"
+SETTINGS_ENTRY_LEVEL = "level"
 
 ENTRY_TO_PAGE = {
     SETTINGS_ENTRY_SPECIALTY: "specialty",
     SETTINGS_ENTRY_FORMAT: "format",
     SETTINGS_ENTRY_SALARY: "salary",
+    SETTINGS_ENTRY_LEVEL: "level",
+}
+
+_GRADE_LABELS = {
+    Grade.INTERN: "Intern",
+    Grade.JUNIOR: "Junior",
+    Grade.MIDDLE: "Middle",
+    Grade.SENIOR: "Senior",
+    Grade.LEAD: "Lead",
+}
+_EXPERIENCE_LABELS = {
+    ExperienceLevel.NO_EXPERIENCE: "без опыта",
+    ExperienceLevel.ONE_TO_THREE_YEARS: "1-3 года",
+    ExperienceLevel.THREE_TO_SIX_YEARS: "3-6 лет",
+    ExperienceLevel.SIX_PLUS_YEARS: "6+ лет",
 }
 
 
@@ -24,9 +41,11 @@ class SettingsMenuView:
     specialty_label: str
     format_label: str
     salary_label: str
+    level_label: str
     specialty_url: str
     format_url: str
     salary_url: str
+    level_url: str
 
 
 def build_settings_menu_view(user: User) -> SettingsMenuView:
@@ -37,18 +56,22 @@ def build_settings_menu_view(user: User) -> SettingsMenuView:
     specialty_label = f"Направления и стек [Выбрано: {selected_count}]"
     format_label = f"Формат работы [{_format_label(user)}]"
     salary_label = f"Зарплатный ориентир [{_salary_label(user)}]"
+    level_label = f"Грейд и опыт [{_level_label(user)}]"
 
     specialty_url = _build_entry_url(SETTINGS_ENTRY_SPECIALTY)
     format_url = _build_entry_url(SETTINGS_ENTRY_FORMAT)
     salary_url = _build_entry_url(SETTINGS_ENTRY_SALARY)
+    level_url = _build_entry_url(SETTINGS_ENTRY_LEVEL)
 
     return SettingsMenuView(
         specialty_label=specialty_label,
         format_label=format_label,
         salary_label=salary_label,
+        level_label=level_label,
         specialty_url=specialty_url,
         format_url=format_url,
         salary_url=salary_url,
+        level_url=level_url,
     )
 
 
@@ -74,6 +97,15 @@ def _salary_label(user: User) -> str:
     return f"от {amount} RUB/мес"
 
 
+def _level_label(user: User) -> str:
+    parts: list[str] = []
+    if user.filter_grade_mode == FilterMode.STRICT and user.cv_grade is not None:
+        parts.append(_GRADE_LABELS.get(user.cv_grade, user.cv_grade.value))
+    if user.filter_experience_mode == FilterMode.STRICT and user.cv_experience_level is not None:
+        parts.append(_EXPERIENCE_LABELS.get(user.cv_experience_level, user.cv_experience_level.value))
+    return ", ".join(parts) if parts else "Любой"
+
+
 def _build_entry_url(entry: str) -> str:
     raw_base = config.MINI_APP_BASE_URL.strip()
     if not raw_base:
@@ -89,15 +121,7 @@ def _build_entry_url(entry: str) -> str:
     if not target_path.startswith("/"):
         target_path = f"/{target_path}"
 
-    return urlunsplit(
-        (
-            parsed.scheme,
-            parsed.netloc,
-            target_path,
-            "",
-            parsed.fragment,
-        )
-    )
+    return urlunsplit((parsed.scheme, parsed.netloc, target_path, "", parsed.fragment))
 
 
 def _resolve_base_dir(raw_path: str) -> str:

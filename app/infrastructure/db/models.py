@@ -31,6 +31,8 @@ class Vacancy(Base):
     salary_amount: Mapped[int | None] = mapped_column(Integer, nullable=True)
     salary_currency: Mapped[str | None] = mapped_column(String, nullable=True)
 
+    grade: Mapped[str] = mapped_column(String, default="UNDEFINED")
+    experience_level: Mapped[str] = mapped_column(String, default="UNDEFINED")
     work_format: Mapped[str] = mapped_column(String, default="UNDEFINED")
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -50,6 +52,12 @@ class User(Base):
     cv_salary_amount: Mapped[int | None] = mapped_column(Integer, nullable=True)
     cv_salary_currency: Mapped[str | None] = mapped_column(String, nullable=True)
     filter_salary_mode: Mapped[str] = mapped_column(String, default="SOFT")
+
+    cv_grade: Mapped[str | None] = mapped_column(String, nullable=True)
+    filter_grade_mode: Mapped[str] = mapped_column(String, default="SOFT")
+
+    cv_experience_level: Mapped[str | None] = mapped_column(String, nullable=True)
+    filter_experience_mode: Mapped[str] = mapped_column(String, default="SOFT")
 
     cv_work_format: Mapped[str | None] = mapped_column(String, nullable=True)
     filter_work_format_mode: Mapped[str] = mapped_column(String, default="SOFT")

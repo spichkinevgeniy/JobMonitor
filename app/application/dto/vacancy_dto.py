@@ -1,6 +1,13 @@
 from pydantic import BaseModel, Field
 
-from app.domain.shared.value_objects import Salary, SkillType, SpecializationType, WorkFormat
+from app.domain.shared.value_objects import (
+    ExperienceLevel,
+    Grade,
+    Salary,
+    SkillType,
+    SpecializationType,
+    WorkFormat,
+)
 
 
 class InfoRawVacancy(BaseModel):
@@ -29,6 +36,17 @@ class OutVacancyParse(BaseModel):
         description=(
             "Минимальная зарплата в RUB. Если указан диапазон, бери минимальное значение. "
             "Если зарплата не указана, указана в другой валюте или RUB нельзя надежно определить, верни null."
+        ),
+    )
+    grade: Grade = Field(
+        default=Grade.UNDEFINED,
+        description="Уровень вакансии: INTERN, JUNIOR, MIDDLE, SENIOR, LEAD или UNDEFINED.",
+    )
+    experience_level: ExperienceLevel = Field(
+        default=ExperienceLevel.UNDEFINED,
+        description=(
+            "Требуемый опыт: NO_EXPERIENCE, ONE_TO_THREE_YEARS, "
+            "THREE_TO_SIX_YEARS, SIX_PLUS_YEARS или UNDEFINED."
         ),
     )
     work_format: WorkFormat = Field(

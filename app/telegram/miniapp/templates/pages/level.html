@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form
+  class="settings-form"
+  data-miniapp-form
+  data-page-kind="level"
+  data-save-url="{{ save_url }}"
+  data-success-text="{{ success_text }}"
+>
+  <section class="form-section">
+    <h2 class="section-title">Грейд</h2>
+    <div class="choice-grid choice-grid--compact">
+      {% for option in grade_options %}
+      <label class="choice-chip">
+        <input
+          class="choice-chip__input"
+          type="radio"
+          name="grade_choice"
+          value="{{ option.value }}"
+          {% if option.value == grade_choice %}checked{% endif %}
+        />
+        <span class="choice-chip__label">{{ option.label }}</span>
+      </label>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="form-section">
+    <h2 class="section-title">Опыт</h2>
+    <div class="choice-grid choice-grid--compact">
+      {% for option in experience_level_options %}
+      <label class="choice-chip">
+        <input
+          class="choice-chip__input"
+          type="radio"
+          name="experience_level_choice"
+          value="{{ option.value }}"
+          {% if option.value == experience_level_choice %}checked{% endif %}
+        />
+        <span class="choice-chip__label">{{ option.label }}</span>
+      </label>
+      {% endfor %}
+    </div>
+  </section>
+
+  <p class="form-status" data-status aria-live="polite"></p>
+
+  <div class="sticky-action-bar">
+    <button class="save-button" type="submit" data-submit-button>{{ action_label }}</button>
+  </div>
+</form>
+{% endblock %}

@@ -2,6 +2,8 @@ from pydantic import BaseModel, Field
 
 from app.domain.shared.value_objects import (
     CurrencyType,
+    ExperienceLevel,
+    Grade,
     Salary,
     SkillType,
     SpecializationType,
@@ -31,6 +33,17 @@ class OutResumeParse(BaseModel):
         description=(
             "Желаемая зарплата в RUB. Если указан диапазон, бери минимальное значение. "
             "Если зарплата не указана, указана в другой валюте или RUB нельзя надежно определить, верни null."
+        ),
+    )
+    grade: Grade = Field(
+        default=Grade.UNDEFINED,
+        description="Уровень кандидата: INTERN, JUNIOR, MIDDLE, SENIOR, LEAD или UNDEFINED.",
+    )
+    experience_level: ExperienceLevel = Field(
+        default=ExperienceLevel.UNDEFINED,
+        description=(
+            "Подтвержденный коммерческий опыт: NO_EXPERIENCE, ONE_TO_THREE_YEARS, "
+            "THREE_TO_SIX_YEARS, SIX_PLUS_YEARS или UNDEFINED."
         ),
     )
     work_format: WorkFormat = Field(

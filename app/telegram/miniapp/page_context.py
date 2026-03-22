@@ -2,8 +2,19 @@ from dataclasses import dataclass
 
 from fastapi import Request
 
-from app.application.dto.miniapp import ChoiceOptionDto, WorkFormatChoice
-from app.domain.shared.value_objects import SkillType, SpecializationType, WorkFormat
+from app.application.dto.miniapp import (
+    ChoiceOptionDto,
+    ExperienceLevelChoice,
+    GradeChoice,
+    WorkFormatChoice,
+)
+from app.domain.shared.value_objects import (
+    ExperienceLevel,
+    Grade,
+    SkillType,
+    SpecializationType,
+    WorkFormat,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -30,184 +41,144 @@ _SKILL_SECTION_ORDER = (
     SpecializationType.ANALYTICS,
 )
 _SKILL_OPTION_VIEWS: tuple[SkillOptionView, ...] = (
+    SkillOptionView(SkillType.PYTHON.value, SkillType.PYTHON.value, SpecializationType.BACKEND),
     SkillOptionView(
-        value=SkillType.PYTHON.value,
-        label=SkillType.PYTHON.value,
-        section=SpecializationType.BACKEND,
+        SkillType.JAVA_SCALA.value,
+        SkillType.JAVA_SCALA.value,
+        SpecializationType.BACKEND,
+    ),
+    SkillOptionView(SkillType.C_SHARP.value, SkillType.C_SHARP.value, SpecializationType.BACKEND),
+    SkillOptionView(
+        SkillType.C_PLUSPLUS.value,
+        SkillType.C_PLUSPLUS.value,
+        SpecializationType.BACKEND,
+    ),
+    SkillOptionView(SkillType.GO.value, SkillType.GO.value, SpecializationType.BACKEND),
+    SkillOptionView(SkillType.C.value, SkillType.C.value, SpecializationType.BACKEND),
+    SkillOptionView(SkillType.RUBY.value, SkillType.RUBY.value, SpecializationType.BACKEND),
+    SkillOptionView(SkillType.PHP.value, SkillType.PHP.value, SpecializationType.BACKEND),
+    SkillOptionView(
+        SkillType.NODE_JS.value,
+        SkillType.NODE_JS.value,
+        SpecializationType.BACKEND,
     ),
     SkillOptionView(
-        value=SkillType.JAVA_SCALA.value,
-        label=SkillType.JAVA_SCALA.value,
-        section=SpecializationType.BACKEND,
+        SkillType.TYPESCRIPT.value,
+        SkillType.TYPESCRIPT.value,
+        SpecializationType.BACKEND,
     ),
     SkillOptionView(
-        value=SkillType.C_SHARP.value,
-        label=SkillType.C_SHARP.value,
-        section=SpecializationType.BACKEND,
+        SkillType.KOTLIN.value,
+        SkillType.KOTLIN.value,
+        SpecializationType.BACKEND,
+    ),
+    SkillOptionView(SkillType.REACT.value, SkillType.REACT.value, SpecializationType.FRONTEND),
+    SkillOptionView(SkillType.VUE.value, SkillType.VUE.value, SpecializationType.FRONTEND),
+    SkillOptionView(SkillType.ANGULAR.value, SkillType.ANGULAR.value, SpecializationType.FRONTEND),
+    SkillOptionView(
+        SkillType.MACHINE_LEARNING.value,
+        SkillType.MACHINE_LEARNING.value,
+        SpecializationType.DATA_SCIENCE_ML,
+    ),
+    SkillOptionView(SkillType.NLP.value, SkillType.NLP.value, SpecializationType.DATA_SCIENCE_ML),
+    SkillOptionView(
+        SkillType.COMPUTER_VISION.value,
+        SkillType.COMPUTER_VISION.value,
+        SpecializationType.DATA_SCIENCE_ML,
     ),
     SkillOptionView(
-        value=SkillType.C_PLUSPLUS.value,
-        label=SkillType.C_PLUSPLUS.value,
-        section=SpecializationType.BACKEND,
+        SkillType.RECOMMENDER_SYSTEMS.value,
+        SkillType.RECOMMENDER_SYSTEMS.value,
+        SpecializationType.DATA_SCIENCE_ML,
+    ),
+    SkillOptionView(SkillType.IOS.value, SkillType.IOS.value, SpecializationType.MOBILE),
+    SkillOptionView(SkillType.ANDROID.value, SkillType.ANDROID.value, SpecializationType.MOBILE),
+    SkillOptionView(SkillType.FLUTTER.value, SkillType.FLUTTER.value, SpecializationType.MOBILE),
+    SkillOptionView(
+        SkillType.REACT_NATIVE.value,
+        SkillType.REACT_NATIVE.value,
+        SpecializationType.MOBILE,
+    ),
+    SkillOptionView(SkillType.UNITY.value, SkillType.UNITY.value, SpecializationType.GAMEDEV),
+    SkillOptionView(
+        SkillType.UNREAL_ENGINE.value,
+        SkillType.UNREAL_ENGINE.value,
+        SpecializationType.GAMEDEV,
     ),
     SkillOptionView(
-        value=SkillType.GO.value,
-        label=SkillType.GO.value,
-        section=SpecializationType.BACKEND,
+        SkillType.GAMEPLAY_PROGRAMMING.value,
+        SkillType.GAMEPLAY_PROGRAMMING.value,
+        SpecializationType.GAMEDEV,
     ),
     SkillOptionView(
-        value=SkillType.C.value,
-        label=SkillType.C.value,
-        section=SpecializationType.BACKEND,
+        SkillType.GRAPHICS.value,
+        SkillType.GRAPHICS.value,
+        SpecializationType.GAMEDEV,
     ),
     SkillOptionView(
-        value=SkillType.RUBY.value,
-        label=SkillType.RUBY.value,
-        section=SpecializationType.BACKEND,
+        SkillType.MANUAL_QA.value,
+        SkillType.MANUAL_QA.value,
+        SpecializationType.QA,
     ),
     SkillOptionView(
-        value=SkillType.PHP.value,
-        label=SkillType.PHP.value,
-        section=SpecializationType.BACKEND,
+        SkillType.QA_AUTOMATION.value,
+        SkillType.QA_AUTOMATION.value,
+        SpecializationType.QA,
     ),
     SkillOptionView(
-        value=SkillType.NODE_JS.value,
-        label=SkillType.NODE_JS.value,
-        section=SpecializationType.BACKEND,
+        SkillType.PERFORMANCE_TESTING.value,
+        SkillType.PERFORMANCE_TESTING.value,
+        SpecializationType.QA,
     ),
     SkillOptionView(
-        value=SkillType.TYPESCRIPT.value,
-        label=SkillType.TYPESCRIPT.value,
-        section=SpecializationType.BACKEND,
+        SkillType.DEVOPS.value,
+        SkillType.DEVOPS.value,
+        SpecializationType.INFRASTRUCTURE_DEVOPS,
     ),
     SkillOptionView(
-        value=SkillType.KOTLIN.value,
-        label=SkillType.KOTLIN.value,
-        section=SpecializationType.BACKEND,
+        SkillType.SRE.value,
+        SkillType.SRE.value,
+        SpecializationType.INFRASTRUCTURE_DEVOPS,
     ),
     SkillOptionView(
-        value=SkillType.REACT.value,
-        label=SkillType.REACT.value,
-        section=SpecializationType.FRONTEND,
+        SkillType.DBA.value,
+        SkillType.DBA.value,
+        SpecializationType.INFRASTRUCTURE_DEVOPS,
     ),
     SkillOptionView(
-        value=SkillType.VUE.value,
-        label=SkillType.VUE.value,
-        section=SpecializationType.FRONTEND,
+        SkillType.SYSTEM_ADMINISTRATION.value,
+        SkillType.SYSTEM_ADMINISTRATION.value,
+        SpecializationType.INFRASTRUCTURE_DEVOPS,
     ),
+    SkillOptionView(SkillType.SQL.value, SkillType.SQL.value, SpecializationType.ANALYTICS),
     SkillOptionView(
-        value=SkillType.ANGULAR.value,
-        label=SkillType.ANGULAR.value,
-        section=SpecializationType.FRONTEND,
-    ),
-    SkillOptionView(
-        value=SkillType.MACHINE_LEARNING.value,
-        label=SkillType.MACHINE_LEARNING.value,
-        section=SpecializationType.DATA_SCIENCE_ML,
-    ),
-    SkillOptionView(
-        value=SkillType.NLP.value,
-        label=SkillType.NLP.value,
-        section=SpecializationType.DATA_SCIENCE_ML,
-    ),
-    SkillOptionView(
-        value=SkillType.COMPUTER_VISION.value,
-        label=SkillType.COMPUTER_VISION.value,
-        section=SpecializationType.DATA_SCIENCE_ML,
-    ),
-    SkillOptionView(
-        value=SkillType.RECOMMENDER_SYSTEMS.value,
-        label=SkillType.RECOMMENDER_SYSTEMS.value,
-        section=SpecializationType.DATA_SCIENCE_ML,
-    ),
-    SkillOptionView(
-        value=SkillType.IOS.value,
-        label=SkillType.IOS.value,
-        section=SpecializationType.MOBILE,
-    ),
-    SkillOptionView(
-        value=SkillType.ANDROID.value,
-        label=SkillType.ANDROID.value,
-        section=SpecializationType.MOBILE,
-    ),
-    SkillOptionView(
-        value=SkillType.FLUTTER.value,
-        label=SkillType.FLUTTER.value,
-        section=SpecializationType.MOBILE,
-    ),
-    SkillOptionView(
-        value=SkillType.REACT_NATIVE.value,
-        label=SkillType.REACT_NATIVE.value,
-        section=SpecializationType.MOBILE,
-    ),
-    SkillOptionView(
-        value=SkillType.UNITY.value,
-        label=SkillType.UNITY.value,
-        section=SpecializationType.GAMEDEV,
-    ),
-    SkillOptionView(
-        value=SkillType.UNREAL_ENGINE.value,
-        label=SkillType.UNREAL_ENGINE.value,
-        section=SpecializationType.GAMEDEV,
-    ),
-    SkillOptionView(
-        value=SkillType.GAMEPLAY_PROGRAMMING.value,
-        label=SkillType.GAMEPLAY_PROGRAMMING.value,
-        section=SpecializationType.GAMEDEV,
-    ),
-    SkillOptionView(
-        value=SkillType.GRAPHICS.value,
-        label=SkillType.GRAPHICS.value,
-        section=SpecializationType.GAMEDEV,
-    ),
-    SkillOptionView(
-        value=SkillType.MANUAL_QA.value,
-        label=SkillType.MANUAL_QA.value,
-        section=SpecializationType.QA,
-    ),
-    SkillOptionView(
-        value=SkillType.QA_AUTOMATION.value,
-        label=SkillType.QA_AUTOMATION.value,
-        section=SpecializationType.QA,
-    ),
-    SkillOptionView(
-        value=SkillType.PERFORMANCE_TESTING.value,
-        label=SkillType.PERFORMANCE_TESTING.value,
-        section=SpecializationType.QA,
-    ),
-    SkillOptionView(
-        value=SkillType.DEVOPS.value,
-        label=SkillType.DEVOPS.value,
-        section=SpecializationType.INFRASTRUCTURE_DEVOPS,
-    ),
-    SkillOptionView(
-        value=SkillType.SRE.value,
-        label=SkillType.SRE.value,
-        section=SpecializationType.INFRASTRUCTURE_DEVOPS,
-    ),
-    SkillOptionView(
-        value=SkillType.DBA.value,
-        label=SkillType.DBA.value,
-        section=SpecializationType.INFRASTRUCTURE_DEVOPS,
-    ),
-    SkillOptionView(
-        value=SkillType.SYSTEM_ADMINISTRATION.value,
-        label=SkillType.SYSTEM_ADMINISTRATION.value,
-        section=SpecializationType.INFRASTRUCTURE_DEVOPS,
-    ),
-    SkillOptionView(
-        value=SkillType.SQL.value,
-        label=SkillType.SQL.value,
-        section=SpecializationType.ANALYTICS,
-    ),
-    SkillOptionView(
-        value=SkillType.DATA_ANALYSIS.value,
-        label=SkillType.DATA_ANALYSIS.value,
-        section=SpecializationType.ANALYTICS,
+        SkillType.DATA_ANALYSIS.value,
+        SkillType.DATA_ANALYSIS.value,
+        SpecializationType.ANALYTICS,
     ),
 )
 
-
+_WORK_FORMAT_LABELS = {
+    WorkFormatChoice.ANY.value: "Любой",
+    WorkFormat.REMOTE.value: "Удаленка",
+    WorkFormat.HYBRID.value: "Гибрид",
+    WorkFormat.ONSITE.value: "Офис",
+}
+_GRADE_LABELS = {
+    GradeChoice.ANY.value: "Любой",
+    Grade.INTERN.value: "Intern",
+    Grade.JUNIOR.value: "Junior",
+    Grade.MIDDLE.value: "Middle",
+    Grade.SENIOR.value: "Senior",
+    Grade.LEAD.value: "Lead",
+}
+_EXPERIENCE_LEVEL_LABELS = {
+    ExperienceLevelChoice.ANY.value: "Любой опыт",
+    ExperienceLevel.NO_EXPERIENCE.value: "Без опыта",
+    ExperienceLevel.ONE_TO_THREE_YEARS.value: "1-3 года",
+    ExperienceLevel.THREE_TO_SIX_YEARS.value: "3-6 лет",
+    ExperienceLevel.SIX_PLUS_YEARS.value: "6+ лет",
+}
 def _validate_skill_option_views() -> None:
     mapped_values = [item.value for item in _SKILL_OPTION_VIEWS]
     expected_values = [item.value for item in SkillType]
@@ -224,13 +195,6 @@ def _validate_skill_option_views() -> None:
 
 
 _validate_skill_option_views()
-
-_WORK_FORMAT_LABELS = {
-    WorkFormatChoice.ANY.value: "Любой",
-    WorkFormat.REMOTE.value: "Удаленка",
-    WorkFormat.HYBRID.value: "Гибрид",
-    WorkFormat.ONSITE.value: "Офис",
-}
 
 
 def build_specialization_options() -> list[str]:
@@ -262,6 +226,31 @@ def build_work_format_options() -> list[ChoiceOptionDto]:
         ChoiceOptionDto(value=item.value, label=_WORK_FORMAT_LABELS[item.value])
         for item in WorkFormat
         if item is not WorkFormat.UNDEFINED
+    )
+    return options
+
+
+def build_grade_options() -> list[ChoiceOptionDto]:
+    options = [ChoiceOptionDto(value=GradeChoice.ANY.value, label=_GRADE_LABELS[GradeChoice.ANY.value])]
+    options.extend(
+        ChoiceOptionDto(value=item.value, label=_GRADE_LABELS[item.value])
+        for item in Grade
+        if item is not Grade.UNDEFINED
+    )
+    return options
+
+
+def build_experience_level_options() -> list[ChoiceOptionDto]:
+    options = [
+        ChoiceOptionDto(
+            value=ExperienceLevelChoice.ANY.value,
+            label=_EXPERIENCE_LEVEL_LABELS[ExperienceLevelChoice.ANY.value],
+        )
+    ]
+    options.extend(
+        ChoiceOptionDto(value=item.value, label=_EXPERIENCE_LEVEL_LABELS[item.value])
+        for item in ExperienceLevel
+        if item is not ExperienceLevel.UNDEFINED
     )
     return options
 
@@ -308,4 +297,19 @@ def build_salary_page_context(request: Request) -> dict[str, object]:
         "action_label": "Сохранить",
         "save_url": _path_for(request, "miniapp-save-salary"),
         "success_text": "Зарплата сохранена.",
+    }
+
+
+def build_level_page_context(request: Request) -> dict[str, object]:
+    return {
+        "page_title": "Грейд и опыт",
+        "page_description": "Выберите ваш текущий уровень и подтвержденный опыт.",
+        "active_page": "level",
+        "grade_choice": "",
+        "experience_level_choice": "",
+        "grade_options": build_grade_options(),
+        "experience_level_options": build_experience_level_options(),
+        "action_label": "Сохранить",
+        "save_url": _path_for(request, "miniapp-save-level"),
+        "success_text": "Грейд и опыт сохранены.",
     }

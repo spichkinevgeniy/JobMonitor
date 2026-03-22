@@ -3,7 +3,14 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from uuid import UUID
 
-from app.domain.shared.value_objects import Salary, Skills, Specializations, WorkFormat
+from app.domain.shared.value_objects import (
+    ExperienceLevel,
+    Grade,
+    Salary,
+    Skills,
+    Specializations,
+    WorkFormat,
+)
 from app.domain.vacancy.exceptions import ValidationError
 from app.domain.vacancy.value_objects import ContentHash, VacancyId
 
@@ -19,6 +26,8 @@ class Vacancy:
     mirror_message_id: int
 
     salary: Salary
+    grade: Grade
+    experience_level: ExperienceLevel
     work_format: WorkFormat
     content_hash: ContentHash
 
@@ -35,6 +44,8 @@ class Vacancy:
         mirror_chat_id: int,
         mirror_message_id: int,
         work_format: WorkFormat,
+        grade: Grade = Grade.UNDEFINED,
+        experience_level: ExperienceLevel = ExperienceLevel.UNDEFINED,
         salary_amount: int | None = None,
         salary_currency: str | None = None,
         created_at: datetime | None = None,
@@ -61,6 +72,8 @@ class Vacancy:
             mirror_chat_id=mirror_chat_id,
             mirror_message_id=mirror_message_id,
             salary=salary_vo,
+            grade=grade,
+            experience_level=experience_level,
             work_format=work_format,
             content_hash=cls.compute_content_hash(text),
             created_at=created_at or now,

@@ -53,9 +53,11 @@ def get_settings_menu_kb(
     specialty_and_skills_label: str,
     format_label: str,
     salary_label: str,
+    level_label: str,
     specialty_url: str,
     format_url: str,
     salary_url: str,
+    level_url: str,
 ) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.button(
@@ -71,8 +73,12 @@ def get_settings_menu_kb(
         web_app=WebAppInfo(url=salary_url),
     )
     builder.button(
+        text=f"📈 {level_label}",
+        web_app=WebAppInfo(url=level_url),
+    )
+    builder.button(
         text=SETTINGS_DONE_BUTTON_TEXT,
         callback_data=SETTINGS_DONE_CALLBACK,
     )
-    builder.adjust(1, 1, 1, 1)
+    builder.adjust(1, 1, 1, 1, 1)
     return builder.as_markup()

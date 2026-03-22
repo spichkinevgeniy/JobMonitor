@@ -7,7 +7,7 @@ from pydantic_ai.providers.google import GoogleProvider
 
 from app.application.dto import OutResumeParse, OutResumeSalaryParse, OutVacancyParse
 from app.core.config import config
-from app.domain.shared.value_objects import SkillType
+from app.domain.shared.value_objects import ExperienceLevel, Grade, SkillType
 
 
 def get_google_model() -> Model:
@@ -18,6 +18,8 @@ def get_google_model() -> Model:
 @lru_cache(maxsize=1)
 def get_vacancy_parse_agent() -> Agent[None, OutVacancyParse]:
     allowed_skills = ", ".join(skill.value for skill in SkillType)
+    allowed_grades = ", ".join(grade.value for grade in Grade)
+    allowed_experience_levels = ", ".join(level.value for level in ExperienceLevel)
     system_prompt = (
         "Ты — строгий фильтр IT-вакансий. Ошибка классификации опаснее в сторону false positive, "
         "чем false negative.\n"
@@ -63,7 +65,12 @@ def get_vacancy_parse_agent() -> Agent[None, OutVacancyParse]:
         "   - Не придумывай skills вне списка.\n"
         "3. salary: извлекай только зарплату в RUB; если указан диапазон, бери минимум. "
         "Если валюта другая или надежно определить RUB нельзя, верни null.\n"
-        "4. work_format: REMOTE, HYBRID, ONSITE или UNDEFINED.\n"
+        f"4. grade: только одно значение из {allowed_grades}. "
+        "Определи уровень вакансии по названию роли и формулировкам требований. "
+        "Если уровень не ясен, верни UNDEFINED.\n"
+        f"5. experience_level: только одно значение из {allowed_experience_levels}. "
+        "Ориентируйся на требуемый коммерческий опыт. Если опыт не указан или неоднозначен, верни UNDEFINED.\n"
+        "6. work_format: REMOTE, HYBRID, ONSITE или UNDEFINED.\n"
     )
 
     return Agent[None, OutVacancyParse](
@@ -79,6 +86,8 @@ def get_vacancy_parse_agent() -> Agent[None, OutVacancyParse]:
 @lru_cache(maxsize=1)
 def get_resume_parse_agent() -> Agent[None, OutResumeParse]:
     allowed_skills = ", ".join(skill.value for skill in SkillType)
+    allowed_grades = ", ".join(grade.value for grade in Grade)
+    allowed_experience_levels = ", ".join(level.value for level in ExperienceLevel)
     system_prompt = (
         "Ты — эксперт по разбору технических резюме.\n"
         "Преобразуй резюме в структурированные поля.\n\n"
@@ -115,8 +124,12 @@ def get_resume_parse_agent() -> Agent[None, OutResumeParse]:
         "   - Если есть сомнение, выбирай меньше skills.\n"
         "4. salary — желаемая зарплата только в RUB; если указан диапазон, бери минимум. "
         "Если валюта другая или надежно определить RUB нельзя, верни null.\n"
-        "5. work_format — одно из REMOTE, HYBRID, ONSITE, UNDEFINED.\n"
-        "6. full_relevant_text_from_resume сохраняй без искажений.\n"
+        f"5. grade — только одно значение из {allowed_grades}. "
+        "Ориентируйся на последний подтвержденный уровень кандидата. Если уровень не ясен, верни UNDEFINED.\n"
+        f"6. experience_level — только одно значение из {allowed_experience_levels}. "
+        "Ориентируйся на подтвержденный коммерческий опыт. Если опыт не ясен, верни UNDEFINED.\n"
+        "7. work_format — одно из REMOTE, HYBRID, ONSITE, UNDEFINED.\n"
+        "8. full_relevant_text_from_resume сохраняй без искажений.\n"
     )
 
     return Agent[None, OutResumeParse](

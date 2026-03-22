@@ -1,6 +1,21 @@
+from app.domain.shared.value_objects import ExperienceLevel, Grade
 from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode
 from app.telegram.bot.views.tracking_settings import format_salary, format_work_format
+
+_GRADE_LABELS = {
+    Grade.INTERN: "Intern",
+    Grade.JUNIOR: "Junior",
+    Grade.MIDDLE: "Middle",
+    Grade.SENIOR: "Senior",
+    Grade.LEAD: "Lead",
+}
+_EXPERIENCE_LABELS = {
+    ExperienceLevel.NO_EXPERIENCE: "без опыта",
+    ExperienceLevel.ONE_TO_THREE_YEARS: "1-3 года",
+    ExperienceLevel.THREE_TO_SIX_YEARS: "3-6 лет",
+    ExperienceLevel.SIX_PLUS_YEARS: "6+ лет",
+}
 
 
 def build_search_profile_text(user: User) -> str:
@@ -8,8 +23,9 @@ def build_search_profile_text(user: User) -> str:
     skills = _format_skills(user)
 
     salary = format_salary(user.cv_salary)
+    grade = _format_grade(user)
+    experience = _format_experience(user)
     work_format = format_work_format(user.cv_work_format)
-
     lines = [
         "👤 Профиль поиска",
         "",
@@ -25,6 +41,22 @@ def build_search_profile_text(user: User) -> str:
             any_value="Любая",
             soft_hint="Не учитываем 🟢",
             strict_hint="Скрываем всё, что меньше 🔴",
+        ),
+        _format_mode_filter_line(
+            field_name="Грейд",
+            value=grade,
+            mode=user.filter_grade_mode,
+            any_value="Любой",
+            soft_hint="Не учитываем 🟢",
+            strict_hint="Скрываем вакансии выше уровня 🔴",
+        ),
+        _format_mode_filter_line(
+            field_name="Опыт",
+            value=experience,
+            mode=user.filter_experience_mode,
+            any_value="Любой",
+            soft_hint="Не учитываем 🟢",
+            strict_hint="Скрываем вакансии с большим требованием 🔴",
         ),
         _format_mode_filter_line(
             field_name="Формат",
@@ -79,3 +111,15 @@ def _format_skills(user: User) -> str | None:
     if not values:
         return None
     return ", ".join(values)
+
+
+def _format_grade(user: User) -> str | None:
+    if user.cv_grade is None:
+        return None
+    return _GRADE_LABELS.get(user.cv_grade, user.cv_grade.value)
+
+
+def _format_experience(user: User) -> str | None:
+    if user.cv_experience_level is None:
+        return None
+    return _EXPERIENCE_LABELS.get(user.cv_experience_level, user.cv_experience_level.value)

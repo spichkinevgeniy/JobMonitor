@@ -19,6 +19,7 @@ class TelethonClientProvider:
 
     def __init__(self, session_name: str | None = None) -> None:
         self._session_name = session_name or "data/job_monitor"
+        Path(self._session_name).parent.mkdir(parents=True, exist_ok=True)
         self._client = TelegramClient(self._session_name, config.API_ID, config.API_HASH)
 
     @property

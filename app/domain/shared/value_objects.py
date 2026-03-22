@@ -9,6 +9,23 @@ class WorkFormat(Enum):
     UNDEFINED = "UNDEFINED"
 
 
+class Grade(StrEnum):
+    INTERN = "INTERN"
+    JUNIOR = "JUNIOR"
+    MIDDLE = "MIDDLE"
+    SENIOR = "SENIOR"
+    LEAD = "LEAD"
+    UNDEFINED = "UNDEFINED"
+
+
+class ExperienceLevel(StrEnum):
+    NO_EXPERIENCE = "NO_EXPERIENCE"
+    ONE_TO_THREE_YEARS = "ONE_TO_THREE_YEARS"
+    THREE_TO_SIX_YEARS = "THREE_TO_SIX_YEARS"
+    SIX_PLUS_YEARS = "SIX_PLUS_YEARS"
+    UNDEFINED = "UNDEFINED"
+
+
 class CurrencyType(StrEnum):
     RUB = "RUB"
     USD = "USD"
@@ -140,12 +157,35 @@ class Salary:
         )
 
 
+GRADE_ORDER: dict[Grade, int] = {
+    Grade.INTERN: 0,
+    Grade.JUNIOR: 1,
+    Grade.MIDDLE: 2,
+    Grade.SENIOR: 3,
+    Grade.LEAD: 4,
+    Grade.UNDEFINED: -1,
+}
+
+
+EXPERIENCE_LEVEL_ORDER: dict[ExperienceLevel, int] = {
+    ExperienceLevel.NO_EXPERIENCE: 0,
+    ExperienceLevel.ONE_TO_THREE_YEARS: 1,
+    ExperienceLevel.THREE_TO_SIX_YEARS: 2,
+    ExperienceLevel.SIX_PLUS_YEARS: 3,
+    ExperienceLevel.UNDEFINED: -1,
+}
+
+
 __all__ = [
     "WorkFormat",
+    "Grade",
+    "ExperienceLevel",
     "CurrencyType",
     "SpecializationType",
     "SkillType",
     "Specializations",
     "Skills",
     "Salary",
+    "GRADE_ORDER",
+    "EXPERIENCE_LEVEL_ORDER",
 ]

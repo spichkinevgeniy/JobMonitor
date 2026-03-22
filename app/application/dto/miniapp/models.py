@@ -4,7 +4,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel
 
-from app.domain.shared.value_objects import SkillType, SpecializationType
+from app.domain.shared.value_objects import ExperienceLevel, Grade, SkillType, SpecializationType
 
 
 class WorkFormatChoice(StrEnum):
@@ -17,6 +17,23 @@ class WorkFormatChoice(StrEnum):
 class SalaryModeChoice(StrEnum):
     ANY = "ANY"
     FROM = "FROM"
+
+
+class GradeChoice(StrEnum):
+    ANY = "ANY"
+    INTERN = Grade.INTERN.value
+    JUNIOR = Grade.JUNIOR.value
+    MIDDLE = Grade.MIDDLE.value
+    SENIOR = Grade.SENIOR.value
+    LEAD = Grade.LEAD.value
+
+
+class ExperienceLevelChoice(StrEnum):
+    ANY = "ANY"
+    NO_EXPERIENCE = ExperienceLevel.NO_EXPERIENCE.value
+    ONE_TO_THREE_YEARS = ExperienceLevel.ONE_TO_THREE_YEARS.value
+    THREE_TO_SIX_YEARS = ExperienceLevel.THREE_TO_SIX_YEARS.value
+    SIX_PLUS_YEARS = ExperienceLevel.SIX_PLUS_YEARS.value
 
 
 @dataclass(frozen=True, slots=True)
@@ -42,6 +59,12 @@ class SalarySaveRequest(BaseModel):
     salary_amount_rub: int | None = None
 
 
+class LevelSaveRequest(BaseModel):
+    init_data: str
+    grade_choice: GradeChoice = GradeChoice.ANY
+    experience_level_choice: ExperienceLevelChoice = ExperienceLevelChoice.ANY
+
+
 class SpecialtyReadResponse(BaseModel):
     specializations: list[str]
     skills: list[str]
@@ -56,6 +79,11 @@ class SalaryReadResponse(BaseModel):
     salary_amount_rub: int | None
 
 
+class LevelReadResponse(BaseModel):
+    grade_choice: str
+    experience_level_choice: str
+
+
 class SaveResponse(BaseModel):
     status: str = "ok"
     message: str
@@ -68,6 +96,8 @@ class MiniAppPayload:
     work_format_choice: WorkFormatChoice
     salary_mode: SalaryModeChoice
     salary_amount_rub: int | None
+    grade_choice: GradeChoice
+    experience_level_choice: ExperienceLevelChoice
 
 
 def parse_miniapp_payload(raw_payload: str) -> MiniAppPayload:
@@ -82,9 +112,14 @@ def parse_miniapp_payload(raw_payload: str) -> MiniAppPayload:
     return MiniAppPayload(
         specializations=_parse_specializations(payload.get("specializations")),
         skills=_parse_skills(payload.get("skills")),
-        work_format_choice=_parse_work_format_choice(payload.get("work_format_choice")),
-        salary_mode=_parse_salary_mode(payload.get("salary_mode")),
+        work_format_choice=_parse_choice(payload.get("work_format_choice"), WorkFormatChoice),
+        salary_mode=_parse_choice(payload.get("salary_mode"), SalaryModeChoice),
         salary_amount_rub=_parse_salary_amount(payload.get("salary_amount_rub")),
+        grade_choice=_parse_choice(payload.get("grade_choice"), GradeChoice),
+        experience_level_choice=_parse_choice(
+            payload.get("experience_level_choice"),
+            ExperienceLevelChoice,
+        ),
     )
 
 
@@ -116,24 +151,17 @@ def _parse_enum_list[EnumChoice: StrEnum](
     return items
 
 
-def _parse_work_format_choice(raw_value: object) -> WorkFormatChoice:
+def _parse_choice[EnumChoice: StrEnum](
+    raw_value: object,
+    enum_type: type[EnumChoice],
+) -> EnumChoice:
+    default_value = next(iter(enum_type))
     if raw_value is None:
-        return WorkFormatChoice.ANY
+        return default_value
     if not isinstance(raw_value, str):
         raise ValueError("Invalid mini-app payload")
     try:
-        return WorkFormatChoice(raw_value.strip())
-    except ValueError as exc:
-        raise ValueError("Invalid mini-app payload") from exc
-
-
-def _parse_salary_mode(raw_value: object) -> SalaryModeChoice:
-    if raw_value is None:
-        return SalaryModeChoice.ANY
-    if not isinstance(raw_value, str):
-        raise ValueError("Invalid mini-app payload")
-    try:
-        return SalaryModeChoice(raw_value.strip())
+        return enum_type(raw_value.strip())
     except ValueError as exc:
         raise ValueError("Invalid mini-app payload") from exc
 

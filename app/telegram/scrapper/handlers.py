@@ -123,14 +123,34 @@ class TelegramScraper:
             )
 
     async def start(self) -> None:
-        channels = normalized_channels(config.CHANNELS)
+        channels = await self._resolve_valid_channels(normalized_channels(config.CHANNELS))
         logger.info("Scraper listens channels: %s", channels)
+        if not channels:
+            logger.warning("Scraper start skipped: no valid Telegram channels were resolved.")
+            return
         self.client.add_event_handler(
             self._message_handler,
             events.NewMessage(chats=channels),
         )
         logger.info("Scraper started.")
         await self.client.run_until_disconnected()
+
+    async def _resolve_valid_channels(self, channels: list[str | int]) -> list[str | int]:
+        valid_channels: list[str | int] = []
+
+        for channel in channels:
+            try:
+                await self.client.get_input_entity(channel)
+            except Exception:
+                logger.warning(
+                    "Scraper channel skipped: failed to resolve Telegram entity %r",
+                    channel,
+                    exc_info=True,
+                )
+                continue
+            valid_channels.append(channel)
+
+        return valid_channels
 
     @staticmethod
     def _source_channel_name(event: events.NewMessage.Event) -> str:

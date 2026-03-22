@@ -4,8 +4,12 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.application.dto.miniapp import (
+    ExperienceLevelChoice,
     FormatReadResponse,
     FormatSaveRequest,
+    GradeChoice,
+    LevelReadResponse,
+    LevelSaveRequest,
     SalaryModeChoice,
     SalaryReadResponse,
     SalarySaveRequest,
@@ -15,16 +19,13 @@ from app.application.dto.miniapp import (
     WorkFormatChoice,
 )
 from app.application.services.user_service import UserService
-from app.domain.shared.value_objects import WorkFormat
+from app.domain.shared.value_objects import ExperienceLevel, Grade, WorkFormat
 from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode
-from app.telegram.miniapp.deps import (
-    get_current_user,
-    get_user_service,
-    parse_user_context,
-)
+from app.telegram.miniapp.deps import get_current_user, get_user_service, parse_user_context
 from app.telegram.miniapp.page_context import (
     build_format_page_context,
+    build_level_page_context,
     build_salary_page_context,
     build_specialty_page_context,
 )
@@ -62,6 +63,15 @@ async def salary_page(request: Request) -> HTMLResponse:
         request,
         "pages/salary.html",
         build_salary_page_context(request),
+    )
+
+
+@router.get("/miniapp/level", response_class=HTMLResponse, name="miniapp-level")
+async def level_page(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse(
+        request,
+        "pages/level.html",
+        build_level_page_context(request),
     )
 
 
@@ -190,6 +200,49 @@ async def save_salary(
     return SaveResponse(message="Зарплата сохранена.")
 
 
+@router.get(
+    "/miniapp/api/level",
+    name="miniapp-read-level",
+    response_model=LevelReadResponse,
+)
+async def read_level(
+    user: Annotated[User, Depends(get_current_user)],
+) -> LevelReadResponse:
+    return LevelReadResponse(
+        grade_choice=_grade_choice(user),
+        experience_level_choice=_experience_level_choice(user),
+    )
+
+
+@router.post(
+    "/miniapp/api/level",
+    name="miniapp-save-level",
+    response_model=SaveResponse,
+)
+async def save_level(
+    payload: LevelSaveRequest,
+    service: Annotated[UserService, Depends(get_user_service)],
+) -> SaveResponse:
+    user_context = parse_user_context(payload.init_data)
+
+    grade, grade_mode = _grade_from_choice(payload.grade_choice)
+    experience_level, experience_mode = _experience_level_from_choice(
+        payload.experience_level_choice
+    )
+
+    updated = await service.update_profile_level_filters(
+        tg_id=user_context.tg_id,
+        grade=grade,
+        grade_mode=grade_mode,
+        experience_level=experience_level,
+        experience_mode=experience_mode,
+    )
+    if not updated:
+        raise HTTPException(status_code=404, detail="Пользователь не найден.")
+
+    return SaveResponse(message="Грейд и опыт сохранены.")
+
+
 def _work_format_choice(user: User) -> str:
     if (
         user.filter_work_format_mode != FilterMode.STRICT
@@ -216,3 +269,29 @@ def _salary_amount_value(user: User) -> int | None:
     if user.cv_salary is None or user.cv_salary.amount is None:
         return None
     return user.cv_salary.amount
+
+
+def _grade_choice(user: User) -> str:
+    if user.filter_grade_mode != FilterMode.STRICT or user.cv_grade is None:
+        return GradeChoice.ANY.value
+    return user.cv_grade.value
+
+
+def _experience_level_choice(user: User) -> str:
+    if user.filter_experience_mode != FilterMode.STRICT or user.cv_experience_level is None:
+        return ExperienceLevelChoice.ANY.value
+    return user.cv_experience_level.value
+
+
+def _grade_from_choice(choice: GradeChoice) -> tuple[Grade | None, FilterMode]:
+    if choice == GradeChoice.ANY:
+        return None, FilterMode.SOFT
+    return Grade(choice.value), FilterMode.STRICT
+
+
+def _experience_level_from_choice(
+    choice: ExperienceLevelChoice,
+) -> tuple[ExperienceLevel | None, FilterMode]:
+    if choice == ExperienceLevelChoice.ANY:
+        return None, FilterMode.SOFT
+    return ExperienceLevel(choice.value), FilterMode.STRICT

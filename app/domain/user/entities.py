@@ -1,6 +1,13 @@
 from dataclasses import dataclass
 
-from app.domain.shared.value_objects import Salary, Skills, Specializations, WorkFormat
+from app.domain.shared.value_objects import (
+    ExperienceLevel,
+    Grade,
+    Salary,
+    Skills,
+    Specializations,
+    WorkFormat,
+)
 from app.domain.user.value_objects import FilterMode, UserId
 
 
@@ -15,6 +22,12 @@ class User:
 
     cv_salary: Salary | None
     filter_salary_mode: FilterMode
+
+    cv_grade: Grade | None
+    filter_grade_mode: FilterMode
+
+    cv_experience_level: ExperienceLevel | None
+    filter_experience_mode: FilterMode
 
     cv_work_format: WorkFormat | None
     filter_work_format_mode: FilterMode
@@ -32,6 +45,10 @@ class User:
         cv_salary_amount: int | None = None,
         cv_salary_currency: str | None = None,
         filter_salary_mode: FilterMode | str | None = None,
+        cv_grade: Grade | str | None = None,
+        filter_grade_mode: FilterMode | str | None = None,
+        cv_experience_level: ExperienceLevel | str | None = None,
+        filter_experience_mode: FilterMode | str | None = None,
         cv_work_format: WorkFormat | str | None = None,
         filter_work_format_mode: FilterMode | str | None = None,
         is_active: bool = True,
@@ -47,6 +64,16 @@ class User:
         if salary is None:
             salary_mode = FilterMode.SOFT
 
+        grade = cls._normalize_grade(cv_grade)
+        grade_mode = cls._normalize_mode(filter_grade_mode)
+        if grade is None:
+            grade_mode = FilterMode.SOFT
+
+        experience_level = cls._normalize_experience_level(cv_experience_level)
+        experience_mode = cls._normalize_mode(filter_experience_mode)
+        if experience_level is None:
+            experience_mode = FilterMode.SOFT
+
         work_format = cls._normalize_work_format(cv_work_format)
         work_format_mode = cls._normalize_mode(filter_work_format_mode)
         if work_format is None:
@@ -60,6 +87,10 @@ class User:
             cv_skills=skills,
             cv_salary=salary,
             filter_salary_mode=salary_mode,
+            cv_grade=grade,
+            filter_grade_mode=grade_mode,
+            cv_experience_level=experience_level,
+            filter_experience_mode=experience_mode,
             cv_work_format=work_format,
             filter_work_format_mode=work_format_mode,
             is_active=is_active,
@@ -90,4 +121,34 @@ class User:
                 return None
             normalized = WorkFormat(cleaned.upper())
             return None if normalized == WorkFormat.UNDEFINED else normalized
+        return None
+
+    @staticmethod
+    def _normalize_grade(raw: Grade | str | None) -> Grade | None:
+        if isinstance(raw, Grade):
+            return None if raw == Grade.UNDEFINED else raw
+        if raw is None:
+            return None
+        if isinstance(raw, str):
+            cleaned = raw.strip()
+            if not cleaned:
+                return None
+            normalized = Grade(cleaned.upper())
+            return None if normalized == Grade.UNDEFINED else normalized
+        return None
+
+    @staticmethod
+    def _normalize_experience_level(
+        raw: ExperienceLevel | str | None,
+    ) -> ExperienceLevel | None:
+        if isinstance(raw, ExperienceLevel):
+            return None if raw == ExperienceLevel.UNDEFINED else raw
+        if raw is None:
+            return None
+        if isinstance(raw, str):
+            cleaned = raw.strip()
+            if not cleaned:
+                return None
+            normalized = ExperienceLevel(cleaned.upper())
+            return None if normalized == ExperienceLevel.UNDEFINED else normalized
         return None
