@@ -45,7 +45,7 @@ If your channel or technology niche is missing, you can contribute by updating `
 - Pydantic, PydanticAI, Google Gemini
 - PostgreSQL, SQLAlchemy, Alembic
 - Pytest, Ruff, MyPy
-- Docker Compose, Prometheus, Grafana
+- Docker Compose, Prometheus, Grafana, Loggfire
 
 ## Quick Start
 
