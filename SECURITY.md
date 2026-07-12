@@ -1,41 +1,25 @@
-# Security Policy
+# Безопасность
 
-## Supported Versions
+Исправления безопасности выходят для ветки `main` и последнего релиза.
 
-Security fixes are currently applied to the `main` branch and the latest tagged release.
+## Как сообщить об уязвимости
 
-## Reporting a Vulnerability
+Не создавайте публичный issue. Напишите на `evgeniyspichkin.work@gmail.com` и приложите:
 
-Please do not report security issues in public GitHub issues.
+- краткое описание;
+- шаги для воспроизведения;
+- возможные последствия;
+- затронутую версию или конфигурацию;
+- способ исправления, если он известен.
 
-Instead, contact the maintainer privately and include:
+Мы постараемся подтвердить получение письма за 7 дней и сообщить статус за 14 дней. Срок исправления зависит от серьёзности проблемы и возможности её воспроизвести.
 
-- a short description of the issue;
-- steps to reproduce;
-- impact assessment;
-- affected configuration or version;
-- any suggested mitigation if available.
+## Что нельзя публиковать
 
-Security contact: `evgeniyspichkin.work@gmail.com`
+- содержимое `.env`;
+- файлы сессий Telegram;
+- токены ботов и ключи Telegram API;
+- данные доступа к базе;
+- адреса внутренней инфраструктуры.
 
-## What to avoid publishing publicly
-
-- `.env` contents
-- Telegram session files
-- bot tokens
-- Telegram API credentials
-- production database credentials
-- private infrastructure endpoints
-
-## Response expectations
-
-- initial acknowledgment target: within 7 days;
-- status update target: within 14 days;
-- remediation timeline depends on severity and reproducibility.
-
-## Hardening recommendations for contributors
-
-- use `.env.sample` as the starting point for local setup;
-- rotate secrets immediately if they were exposed;
-- avoid sharing logs with tokens or personal data;
-- review dependency updates and deployment changes carefully.
+Если секрет попал в открытый доступ, сразу замените его. Перед отправкой логов удалите токены и персональные данные.

@@ -1,26 +1,26 @@
-name: Feature Request
-description: Suggest an improvement for JobMonitor
-title: "[Feature]: "
+name: Предложить улучшение
+description: Предложите улучшение для JobMonitor
+title: "[Идея]: "
 labels: ["enhancement"]
 body:
   - type: textarea
     id: problem
     attributes:
-      label: Problem statement
-      description: What problem are you trying to solve?
+      label: Проблема
+      description: Какую проблему вы хотите решить?
     validations:
       required: true
 
   - type: textarea
     id: proposal
     attributes:
-      label: Proposed solution
-      description: Describe the idea or desired behavior.
+      label: Решение
+      description: Опишите идею или желаемое поведение.
     validations:
       required: true
 
   - type: textarea
     id: context
     attributes:
-      label: Additional context
-      description: Links, screenshots, tradeoffs, or related issues.
+      label: Дополнительная информация
+      description: Ссылки, скриншоты, ограничения или связанные issues.

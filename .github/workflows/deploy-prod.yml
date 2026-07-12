@@ -1,10 +1,10 @@
-name: Deploy Production
+name: Выкладка в продакшен
 
 on:
   workflow_dispatch:
     inputs:
       ref:
-        description: "Branch or tag to deploy"
+        description: "Ветка или тег для выкладки"
         required: true
         default: "main"
 
@@ -19,26 +19,26 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Загрузка кода
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.ref }}
 
-      - name: Set up uv
+      - name: Установка uv
         uses: astral-sh/setup-uv@v6
 
-      - name: Set up Python
+      - name: Установка Python
         uses: actions/setup-python@v5
         with:
           python-version-file: .python-version
 
-      - name: Sync dependencies
+      - name: Установка зависимостей
         run: uv sync --dev --frozen
 
-      - name: Run quality gate
+      - name: Проверка качества
         run: make quality
 
-      - name: Deploy over SSH
+      - name: Выкладка по SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}

@@ -1,36 +1,36 @@
-name: Bug Report
-description: Report a reproducible problem in JobMonitor
-title: "[Bug]: "
+name: Сообщить об ошибке
+description: Расскажите об ошибке, которую можно воспроизвести
+title: "[Ошибка]: "
 labels: ["bug"]
 body:
   - type: textarea
     id: description
     attributes:
-      label: What happened?
-      description: Describe the bug and the expected behavior.
+      label: Что произошло?
+      description: Опишите ошибку и ожидаемое поведение.
     validations:
       required: true
 
   - type: textarea
     id: steps
     attributes:
-      label: Steps to reproduce
-      description: Provide a minimal sequence of steps.
+      label: Как воспроизвести?
+      description: Укажите минимальную последовательность действий.
       placeholder: |
-        1. Go to ...
-        2. Run ...
-        3. Observe ...
+        1. Откройте…
+        2. Запустите…
+        3. Проверьте…
     validations:
       required: true
 
   - type: input
     id: version
     attributes:
-      label: Version or commit
-      description: Tag, branch, or commit hash
+      label: Версия или коммит
+      description: Тег, ветка или хеш коммита
 
   - type: textarea
     id: logs
     attributes:
-      label: Logs or screenshots
-      description: Remove secrets and private data before posting.
+      label: Логи или скриншоты
+      description: Перед публикацией удалите секреты и личные данные.
