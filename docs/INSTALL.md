@@ -1,225 +1,159 @@
-# Installation
+# Установка
 
-This guide covers local development and Docker-based setup for JobMonitor.
+JobMonitor можно запустить локально или в Docker.
 
-## Requirements
+## Что понадобится
 
-- Python 3.12 or newer
-- `uv`
-- Docker and Docker Compose for containerized setup
-- PostgreSQL if you run the app locally without Docker
-- Telegram API credentials from `https://my.telegram.org`
-- A bot token from `@BotFather`
-- An LLM API key for vacancy parsing
+- Python 3.12+;
+- `uv`;
+- Docker и Docker Compose для запуска в контейнерах;
+- PostgreSQL для локального запуска без Docker;
+- данные Telegram API с [my.telegram.org](https://my.telegram.org);
+- токен бота от `@BotFather`;
+- ключ API для языковой модели.
 
-## 1. Clone the repository
+## Подготовка проекта
 
 ```bash
-git clone https://github.com/Popachka/JobMonitor.git
+git clone https://github.com/spichkinevgeniy/JobMonitor.git
 cd JobMonitor
-```
-
-## 2. Create local environment
-
-Create a local config from the sample:
-
-```bash
 cp .env.sample .env
 ```
 
-Required values to review before the first run:
+Перед первым запуском заполните в `.env`:
 
-- `API_ID`
-- `API_HASH`
-- `BOT_TOKEN`
-- `MIRROR_CHANNEL`
-- `POSTGRES_*`
-- `GOOGLE_API_KEY`
-- `MINI_APP_BASE_URL` if you use Telegram WebApp buttons
+- `API_ID` и `API_HASH`;
+- `BOT_TOKEN`;
+- `MIRROR_CHANNEL`;
+- переменные `POSTGRES_*`;
+- `GOOGLE_API_KEY`;
+- `MINI_APP_BASE_URL`, если используете кнопки Telegram WebApp.
 
-Never commit `.env` with real secrets.
+Не добавляйте `.env` с настоящими секретами в Git.
 
-## Telegram setup
+## Настройка Telegram
 
-JobMonitor uses two different Telegram actors:
+В JobMonitor работают два участника:
 
-- a regular Telegram user account authorized through Telethon;
-- a Telegram bot created with `@BotFather`.
+- обычный аккаунт Telegram через Telethon читает исходные каналы и пересылает сообщения в канал-зеркало;
+- бот читает канал-зеркало и отправляет подходящие вакансии пользователям.
 
-They have different responsibilities:
+### 1. Создайте бота
 
-- Telethon listens to source channels from `channels_map.json`;
-- Telethon forwards incoming source messages into the mirror channel;
-- the bot forwards matched vacancies from the mirror channel to end users.
-
-### 1. Create a Telegram bot
-
-Create a bot via `@BotFather` and place its token into `.env`:
+Создайте бота через `@BotFather` и добавьте токен в `.env`:
 
 ```bash
 BOT_TOKEN="123456:your_bot_token"
 ```
 
-### 2. Get `API_ID` and `API_HASH` for Telethon
+### 2. Получите данные для Telethon
 
-Telethon does not use the bot token for channel monitoring. It uses Telegram API credentials of a regular user account.
-
-To get them:
-
-1. Open `https://my.telegram.org`
-2. Sign in with the phone number of the Telegram account that will be used by Telethon
-3. Open `API Development Tools`
-4. Create an application
-5. Copy `api_id` and `api_hash` into `.env`
-
-Example:
+1. Откройте [my.telegram.org](https://my.telegram.org).
+2. Войдите по номеру аккаунта, который будет читать каналы.
+3. Откройте `API Development Tools`.
+4. Создайте приложение.
+5. Скопируйте `api_id` и `api_hash` в `.env`.
 
 ```bash
 API_ID="12345678"
 API_HASH="your_api_hash"
 ```
 
-This same Telegram account is the one that will log in on first launch.
+### 3. Выберите способ входа
 
-### 3. Choose Telethon login mode
-
-For QR login:
+По QR-коду:
 
 ```bash
 TELETHON_LOGIN_MODE="qr"
 ```
 
-For phone login:
+По номеру телефона:
 
 ```bash
 TELETHON_LOGIN_MODE="phone"
 TELEGRAM_PHONE="+79990000000"
 ```
 
-If the Telegram account has 2FA enabled, also set:
+Если включена двухфакторная защита:
 
 ```bash
 TELEGRAM_2FA_PASSWORD="your_2fa_password"
 ```
 
-### 4. Create a mirror channel
+При первом запуске подтвердите вход. Telethon сохранит локальную сессию и использует её при следующих запусках.
 
-Create a dedicated Telegram channel that will be used as an internal mirror for all tracked messages.
+### 4. Создайте канал-зеркало
 
-Why it is needed:
+Создайте отдельный Telegram-канал. Telethon будет пересылать туда найденные сообщения, а бот — забирать подходящие вакансии.
 
-- Telethon forwards every new source message into this channel;
-- the bot later forwards matched vacancies from this channel to users.
+Добавьте в канал бота и аккаунт Telethon. Проще всего назначить обоих администраторами: аккаунту нужен доступ на отправку сообщений, а боту — на чтение и пересылку.
 
-### 5. Add the required actors to the mirror channel
+### 5. Узнайте ID канала-зеркала
 
-Add both of these to the mirror channel:
+`MIRROR_CHANNEL` — числовой ID вида `-100...`.
 
-- the Telegram bot created in `@BotFather`;
-- the Telegram user account used by Telethon.
-
-The simplest setup is to make both of them channel administrators.
-
-Why:
-
-- the Telethon user must be able to forward messages into the mirror channel;
-- the bot must be able to access messages in the mirror channel and forward them to users.
-
-### 6. Get the `MIRROR_CHANNEL` id
-
-`MIRROR_CHANNEL` must be the numeric Telegram chat id of the mirror channel, usually in the form `-100...`.
-
-One practical way to get it:
-
-1. Add your bot to the mirror channel as admin
-2. Send a test message into that channel
-3. Run:
+1. Добавьте бота в канал как администратора.
+2. Отправьте в канал тестовое сообщение.
+3. Выполните:
 
 ```bash
 curl https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates
 ```
 
-4. Find `channel_post.chat.id` in the response
-5. Put that value into `.env`
-
-Example:
+4. Найдите `channel_post.chat.id` и запишите значение в `.env`:
 
 ```bash
 MIRROR_CHANNEL="-1001234567890"
 ```
 
-### 7. Configure source channels for monitoring
+### 6. Укажите каналы с вакансиями
 
-Tracked source channels are configured in `channels_map.json`.
+Список хранится в `channels_map.json`. Поддерживаются:
 
-The project accepts channel references in these forms:
+- `https://t.me/channel_name`;
+- `@channel_name`;
+- числовой ID чата.
 
-- `https://t.me/channel_name`
-- `@channel_name`
-- numeric chat id
+Для публичных каналов удобнее ссылки `https://t.me/...`. Аккаунт Telethon должен видеть каждый канал. В приватные каналы нужно заранее вступить вручную. Бот исходные каналы не читает.
 
-Public `https://t.me/...` links are the simplest option and are already used in the repository example.
+Категории и правила описаны в [CHANNELS.md](CHANNELS.md).
 
-Important:
+## Локальный запуск
 
-- the Telethon user account must have access to the channels you want to monitor;
-- for private channels, that account must join them manually before launch;
-- the bot itself does not monitor source channels, only Telethon does.
-
-For channel grouping and contribution rules, see [docs/CHANNELS.md](CHANNELS.md).
-
-### 8. First launch behavior
-
-On first start, Telethon will ask you to authorize the Telegram user account:
-
-- in `qr` mode, scan the QR code in Telegram;
-- in `phone` mode, confirm the login code sent by Telegram.
-
-After successful login, the session is stored locally and reused on the next launches.
-
-## Option A. Local development with uv
-
-### Install dependencies
+Установите зависимости:
 
 ```bash
 uv sync --dev
 ```
 
-### Start PostgreSQL
-
-You can use your local PostgreSQL instance or start only the database via Docker:
+Запустите PostgreSQL локально или поднимите только базу в Docker:
 
 ```bash
 docker compose up -d db
 ```
 
-### Apply migrations
+Примените миграции и запустите приложение:
 
 ```bash
 uv run alembic upgrade head
-```
-
-### Run the application
-
-```bash
 uv run -m app.main
 ```
 
-To run only the mini-app server:
+Только мини-приложение:
 
 ```bash
 make run-miniapp
 ```
 
-## Option B. Docker Compose
+## Запуск в Docker Compose
 
-For a full local stack with app, database, and pgAdmin:
+Приложение, база и pgAdmin:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.override.yml up -d --build
 ```
 
-Useful commands:
+Полезные команды:
 
 ```bash
 make dev-up
@@ -228,44 +162,40 @@ make dev-logs SERVICE=app
 make dev-ps
 ```
 
-## Observability stack
+## Метрики и графики
 
-To run Prometheus and Grafana locally:
+Запуск Prometheus и Grafana:
 
 ```bash
 make obs-up
 ```
 
-Stop it with:
+Остановка:
 
 ```bash
 make obs-down
 ```
 
-## Quality checks
-
-Run linters and tests before opening a pull request:
+## Проверки
 
 ```bash
-make lint
-make test
+make quality
 ```
 
-## Troubleshooting
+## Частые проблемы
 
-### Telegram session or login issues
+### Не работает вход в Telegram
 
-- remove local session artifacts if you want to re-authenticate;
-- confirm `API_ID`, `API_HASH`, and phone number are correct;
-- if 2FA is enabled, set `TELEGRAM_2FA_PASSWORD`.
+- проверьте `API_ID`, `API_HASH` и номер телефона;
+- укажите `TELEGRAM_2FA_PASSWORD`, если включена двухфакторная защита;
+- удалите локальный файл сессии, если хотите войти заново.
 
-### Database connection issues
+### Нет подключения к базе
 
-- make sure PostgreSQL is running;
-- verify `POSTGRES_SERVER`, `POSTGRES_PORT`, `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD`;
-- run migrations after the database becomes available.
+- проверьте, что PostgreSQL запущен;
+- проверьте `POSTGRES_SERVER`, `POSTGRES_PORT`, `POSTGRES_DB`, `POSTGRES_USER` и `POSTGRES_PASSWORD`;
+- примените миграции после запуска базы.
 
-### Mini-app URL issues
+### Не открывается мини-приложение
 
-- Telegram WebApp requires a public HTTPS URL;
-- set `MINI_APP_BASE_URL` to a reachable HTTPS endpoint such as a tunnel or deployed domain.
+Telegram WebApp требует публичный HTTPS-адрес. Укажите доступный адрес в `MINI_APP_BASE_URL`, например адрес туннеля или развёрнутого приложения.

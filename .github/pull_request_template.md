@@ -1,20 +1,19 @@
-## Summary
+## Что изменилось
 
-Describe the change in a few sentences.
-If this PR suggests a new Telegram channel in `channels_map.json`, explain why it fits the selected category.
+Кратко опишите изменение. Если добавили канал в `channels_map.json`, объясните, почему выбрали эту категорию.
 
-## Why
+## Зачем
 
-Explain the problem or motivation.
+Какую проблему решает изменение?
 
-## How To Verify
+## Как проверить
 
 - [ ] `make lint`
 - [ ] `make test`
 
-## Checklist
+## Перед отправкой
 
-- [ ] Docs updated if needed
-- [ ] Tests added or updated if needed
-- [ ] No secrets or sensitive data included
-- [ ] Migration notes included if applicable
+- [ ] Документация обновлена
+- [ ] Тесты добавлены или обновлены
+- [ ] В изменениях нет секретов и личных данных
+- [ ] Миграции описаны, если они есть

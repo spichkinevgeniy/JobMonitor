@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Security vulnerability report
+  - name: Сообщить об уязвимости
     url: mailto:evgeniyspichkin.work@gmail.com
-    about: Please report security issues privately by email instead of opening a public issue.
-  - name: Contribution and setup guide
-    url: https://github.com/Popachka/JobMonitor/blob/main/CONTRIBUTING.md
-    about: Read the contribution workflow and local setup guide before opening an issue.
-  - name: Channel source rules
-    url: https://github.com/Popachka/JobMonitor/blob/main/docs/CHANNELS.md
-    about: See how to classify and add Telegram channels to channels_map.json.
+    about: Об уязвимостях сообщайте лично по почте, а не через публичный issue.
+  - name: Разработка и настройка
+    url: https://github.com/spichkinevgeniy/JobMonitor/blob/main/CONTRIBUTING.md
+    about: Прочитайте руководство перед созданием issue.
+  - name: Правила добавления каналов
+    url: https://github.com/spichkinevgeniy/JobMonitor/blob/main/docs/CHANNELS.md
+    about: Как выбрать категорию и добавить канал в channels_map.json.
