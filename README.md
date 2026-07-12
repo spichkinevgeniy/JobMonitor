@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://t.me/JobMonitorIT_BOT">
-    <img loading="lazy" alt="JobMonitor" src="docs/img/кидаюработу.png" width="240"/>
+    <img loading="lazy" alt="JobMonitor" src="docs/img/logo.png" width="240"/>
   </a>
 </p>
 
@@ -22,7 +22,7 @@ JobMonitor начинался как учебный проект. Поэтому
 
 <p align="center">
   <a href="docs/CHANNELS.md">
-    <img loading="lazy" alt="Добавить Telegram-канал в JobMonitor" src="docs/img/СОБЕРЕМИХВСЕХ.png" width="900"/>
+    <img loading="lazy" alt="Добавить Telegram-канал в JobMonitor" src="docs/img/baner.png" width="900"/>
   </a>
 </p>
 
