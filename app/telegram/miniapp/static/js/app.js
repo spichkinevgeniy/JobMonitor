@@ -1,5 +1,14 @@
 (function () {
   const webApp = window.Telegram && window.Telegram.WebApp;
+  const telegramDebugInfo = () =>
+    JSON.stringify({
+      sdk: Boolean(webApp),
+      initDataLength: webApp && webApp.initData ? webApp.initData.length : 0,
+      hashLength: window.location.hash.length,
+      hasTgWebAppData: new URLSearchParams(window.location.hash.slice(1)).has("tgWebAppData"),
+      platform: webApp ? webApp.platform : null,
+      version: webApp ? webApp.version : null,
+    });
   if (webApp) {
     webApp.ready();
     webApp.expand();
@@ -220,7 +229,7 @@
     }
 
     if (!webApp || !webApp.initData) {
-      setStatus("Откройте mini-app из Telegram.", "error");
+      setStatus(`Откройте mini-app из Telegram. ${telegramDebugInfo()}`, "error");
       return;
     }
 
@@ -271,7 +280,7 @@
     }
 
     if (!webApp || !webApp.initData) {
-      setStatus("Откройте mini-app из Telegram.", "error");
+      setStatus(`Откройте mini-app из Telegram. ${telegramDebugInfo()}`, "error");
       return;
     }
 
