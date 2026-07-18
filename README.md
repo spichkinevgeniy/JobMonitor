@@ -49,7 +49,7 @@ JobMonitor начинался как учебный проект. Поэтому
 
 - Python 3.12+ и `uv`;
 - Aiogram, Telethon и FastAPI;
-- Pydantic, PydanticAI и Google Gemini;
+- Pydantic, PydanticAI и OpenRouter;
 - PostgreSQL, SQLAlchemy и Alembic;
 - Pytest, Ruff и MyPy;
 - Docker Compose, Prometheus, Grafana и Logfire.
