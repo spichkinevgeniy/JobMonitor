@@ -22,6 +22,8 @@ from app.telegram.scrapper.channels import normalized_channels
 logger = get_app_logger(__name__)
 scraper_logfire = logfire.with_tags("scraper")
 
+MIN_VACANCY_TEXT_LENGTH = 120
+
 
 class TelegramScraper:
     def __init__(
@@ -179,6 +181,15 @@ class TelegramScraper:
                 "Message skipped: empty text",
                 chat_id=event.chat_id,
                 message_id=message.id,
+            )
+            return None
+
+        if len(" ".join(text.split())) < MIN_VACANCY_TEXT_LENGTH:
+            scraper_logfire.info(
+                "Message skipped: too short",
+                chat_id=event.chat_id,
+                message_id=message.id,
+                text_length=len(text),
             )
             return None
 
