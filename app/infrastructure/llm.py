@@ -2,17 +2,17 @@ from functools import lru_cache
 
 from pydantic_ai import Agent
 from pydantic_ai.models import Model
-from pydantic_ai.models.google import GoogleModel
-from pydantic_ai.providers.google import GoogleProvider
+from pydantic_ai.models.openai import OpenAIChatModel
+from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 from app.application.dto import OutResumeParse, OutResumeSalaryParse, OutVacancyParse
 from app.core.config import config
 from app.domain.shared.value_objects import ExperienceLevel, Grade, SkillType
 
 
-def get_google_model() -> Model:
-    provider = GoogleProvider(api_key=config.GOOGLE_API_KEY)
-    return GoogleModel(config.GOOGLE_MODEL, provider=provider)
+def get_openrouter_model() -> Model:
+    provider = OpenRouterProvider(api_key=config.OPENROUTER_API_KEY)
+    return OpenAIChatModel(config.OPENROUTER_MODEL, provider=provider)
 
 
 @lru_cache(maxsize=1)
@@ -74,7 +74,7 @@ def get_vacancy_parse_agent() -> Agent[None, OutVacancyParse]:
     )
 
     return Agent[None, OutVacancyParse](
-        model=get_google_model(),
+        model=get_openrouter_model(),
         system_prompt=system_prompt,
         output_type=OutVacancyParse,
         model_settings={"temperature": 0.0},
@@ -133,7 +133,7 @@ def get_resume_parse_agent() -> Agent[None, OutResumeParse]:
     )
 
     return Agent[None, OutResumeParse](
-        model=get_google_model(),
+        model=get_openrouter_model(),
         system_prompt=system_prompt,
         output_type=OutResumeParse,
         model_settings={"temperature": 0.0},
@@ -153,7 +153,7 @@ def get_resume_salary_agent() -> Agent[None, OutResumeSalaryParse]:
     )
 
     return Agent[None, OutResumeSalaryParse](
-        model=get_google_model(),
+        model=get_openrouter_model(),
         system_prompt=system_prompt,
         output_type=OutResumeSalaryParse,
         model_settings={"temperature": 0.0},

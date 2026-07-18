@@ -26,7 +26,7 @@ cp .env.sample .env
 - `BOT_TOKEN`;
 - `MIRROR_CHANNEL`;
 - переменные `POSTGRES_*`;
-- `GOOGLE_API_KEY`;
+- `OPENROUTER_API_KEY`;
 - `MINI_APP_BASE_URL`, если используете кнопки Telegram WebApp.
 
 Не добавляйте `.env` с настоящими секретами в Git.

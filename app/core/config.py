@@ -37,8 +37,8 @@ class BaseAppSettings(BaseSettings):
     POSTGRES_PASSWORD: str = ""
     POSTGRES_DB: str = ""
 
-    GOOGLE_API_KEY: str
-    GOOGLE_MODEL: str = "gemini-2.5-flash"
+    OPENROUTER_API_KEY: str
+    OPENROUTER_MODEL: str = "meta-llama/llama-3.3-70b-instruct:free"
 
     SENTRY_DSN: str | None = None
     SENTRY_ENV: str
@@ -122,7 +122,7 @@ class BaseAppSettings(BaseSettings):
             "API_HASH": self.API_HASH,
             "BOT_TOKEN": self.BOT_TOKEN,
             "MINI_APP_BASE_URL": self.MINI_APP_BASE_URL,
-            "GOOGLE_API_KEY": self.GOOGLE_API_KEY,
+            "OPENROUTER_API_KEY": self.OPENROUTER_API_KEY,
             "POSTGRES_SERVER": self.POSTGRES_SERVER,
             "POSTGRES_USER": self.POSTGRES_USER,
             "POSTGRES_PASSWORD": self.POSTGRES_PASSWORD,
