@@ -1,0 +1,11 @@
+[Unit]
+Description=Ежедневное резервное копирование PostgreSQL для JobMonitor
+
+[Timer]
+OnCalendar=*-*-* 00:30:00 UTC
+Persistent=true
+RandomizedDelaySec=5m
+Unit=jobmonitor-pg-backup.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+backup_dir="${BACKUP_DIR:-/var/backups/jobmonitor/postgres}"
+retention_days="${RETENTION_DAYS:-14}"
+container="${POSTGRES_CONTAINER:-job_monitor_db_prod}"
+timestamp="$(date -u +%Y-%m-%d_%H%M%S)"
+
+install -d -m 700 "$backup_dir"
+
+if [[ "$(docker inspect --format='{{.State.Running}}' "$container")" != "true" ]]; then
+    echo "Контейнер PostgreSQL не запущен: $container" >&2
+    exit 1
+fi
+
+database_name="$(docker exec "$container" sh -ec 'printf %s "$POSTGRES_DB"')"
+safe_database_name="$(printf '%s' "$database_name" | tr -c 'A-Za-z0-9_.-' '_')"
+final_path="$backup_dir/${safe_database_name}_${timestamp}.dump"
+temporary_path="${final_path}.tmp"
+
+cleanup() {
+    rm -f "$temporary_path"
+}
+trap cleanup EXIT
+
+docker exec "$container" sh -ec \
+    'exec pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Fc' \
+    >"$temporary_path"
+
+if [[ ! -s "$temporary_path" ]]; then
+    echo "Резервная копия PostgreSQL пуста: $temporary_path" >&2
+    exit 1
+fi
+
+docker run --rm \
+    -v "$backup_dir:/backups:ro" \
+    postgres:16-alpine \
+    pg_restore --list "/backups/$(basename "$temporary_path")" \
+    >/dev/null
+
+chmod 600 "$temporary_path"
+mv "$temporary_path" "$final_path"
+trap - EXIT
+
+find "$backup_dir" -maxdepth 1 -type f \
+    -name "${safe_database_name}_*.dump" \
+    -mtime "+$retention_days" \
+    -delete
+
+echo "Резервная копия PostgreSQL создана: $final_path ($(stat -c %s "$final_path") байт)"

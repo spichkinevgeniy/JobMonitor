@@ -1,0 +1,14 @@
+[Unit]
+Description=Резервное копирование PostgreSQL для JobMonitor
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+UMask=0077
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+ExecStart=/usr/local/sbin/jobmonitor-pg-backup
