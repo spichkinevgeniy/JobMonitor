@@ -4,8 +4,9 @@ services:
     container_name: job_monitor_prometheus
     restart: unless-stopped
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
     volumes:
+      - prometheus_data:/prometheus
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
       - job_monitor_backend
@@ -15,7 +16,7 @@ services:
     container_name: job_monitor_grafana
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       - prometheus
     volumes:
@@ -26,6 +27,7 @@ services:
       - job_monitor_backend
 
 volumes:
+  prometheus_data:
   grafana_data:
 
 networks:

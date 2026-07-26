@@ -13,7 +13,7 @@ BACKUP_DIR ?= /opt/backups
 	docker-build \
 	dev-up dev-down dev-destroy dev-logs dev-ps dev-restart \
 	prod-up prod-down prod-destroy prod-logs prod-ps prod-restart prod-migrate \
-	prod-db-up prod-app-up prod-backup prod-deploy \
+	prod-db-up prod-app-up prod-backup prod-deploy prod-deploy-all \
 	precommit-install precommit-run \
 	obs-up obs-down obs-destroy obs-logs obs-ps \
 	dev-up-all dev-down-all dev-destroy-all \
@@ -58,6 +58,7 @@ help:
 	@echo "  prod-app-up       - Start only app in prod stack"
 	@echo "  prod-backup       - Dump prod postgres to $(BACKUP_DIR)"
 	@echo "  prod-deploy       - Full prod deploy (up + migrate + ps)"
+	@echo "  prod-deploy-all   - Deploy prod stack + observability"
 	@echo ""
 	@echo "Observability:"
 	@echo "  obs-up            - Start Prometheus + Grafana"
@@ -187,6 +188,8 @@ prod-deploy:
 	$(MAKE) prod-up
 	$(MAKE) prod-migrate
 	$(MAKE) prod-ps
+
+prod-deploy-all: prod-deploy obs-up
 
 obs-up:
 	$(OBS_COMPOSE) up -d

@@ -30,3 +30,6 @@ jobs:
 
       - name: Проверка качества
         run: make quality
+
+      - name: Проверка конфигурации мониторинга
+        run: docker compose -f docker-compose.observability.yml config --quiet
