@@ -58,4 +58,4 @@ jobs:
               echo "Ref '$DEPLOY_REF' is not a remote branch; skipping git pull."
             fi
             echo "Server commit: $(git rev-parse --short HEAD)"
-            make prod-deploy
+            make prod-deploy-all
