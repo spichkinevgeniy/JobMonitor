@@ -32,7 +32,6 @@ services:
       TELEGRAM_2FA_PASSWORD: ${TELEGRAM_2FA_PASSWORD:-}
       BOT_TOKEN: ${BOT_TOKEN?Variable is not set}
       MINI_APP_BASE_URL: ${MINI_APP_BASE_URL?Variable is not set}
-      MINI_APP_SAVE_API_URL: ${MINI_APP_SAVE_API_URL:-}
       CHANNELS_MAP_PATH: ${CHANNELS_MAP_PATH:-channels_map.json}
       MIRROR_CHANNEL: ${MIRROR_CHANNEL?Variable is not set}
       POSTGRES_SERVER: db

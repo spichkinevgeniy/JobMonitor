@@ -24,7 +24,6 @@ class BaseAppSettings(BaseSettings):
     BOT_TOKEN: str
 
     MINI_APP_BASE_URL: str = ""
-    MINI_APP_SAVE_API_URL: str = ""
     MINI_APP_SERVER_HOST: str
     MINI_APP_SERVER_PORT: int
 
