@@ -11,7 +11,9 @@ RUN pip install --no-cache-dir uv
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev
 
-COPY . .
+COPY app ./app
+COPY alembic ./alembic
+COPY alembic.ini channels_map.json ./
 RUN mkdir -p /app/data
 
 CMD ["uv", "run", "-m", "app.main"]
