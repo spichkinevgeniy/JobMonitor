@@ -9,7 +9,7 @@ timestamp="$(date -u +%Y-%m-%d_%H%M%S)"
 install -d -m 700 "$backup_dir"
 
 if [[ "$(docker inspect --format='{{.State.Running}}' "$container")" != "true" ]]; then
-    echo "PostgreSQL container is not running: $container" >&2
+    echo "Контейнер PostgreSQL не запущен: $container" >&2
     exit 1
 fi
 
@@ -28,7 +28,7 @@ docker exec "$container" sh -ec \
     >"$temporary_path"
 
 if [[ ! -s "$temporary_path" ]]; then
-    echo "PostgreSQL backup is empty: $temporary_path" >&2
+    echo "Резервная копия PostgreSQL пуста: $temporary_path" >&2
     exit 1
 fi
 
@@ -47,4 +47,4 @@ find "$backup_dir" -maxdepth 1 -type f \
     -mtime "+$retention_days" \
     -delete
 
-echo "PostgreSQL backup created: $final_path ($(stat -c %s "$final_path") bytes)"
+echo "Резервная копия PostgreSQL создана: $final_path ($(stat -c %s "$final_path") байт)"

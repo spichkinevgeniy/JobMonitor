@@ -1,5 +1,5 @@
 [Unit]
-Description=Run JobMonitor PostgreSQL backup daily
+Description=Ежедневное резервное копирование PostgreSQL для JobMonitor
 
 [Timer]
 OnCalendar=*-*-* 00:30:00 UTC

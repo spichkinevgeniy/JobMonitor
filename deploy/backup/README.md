@@ -1,10 +1,10 @@
-# PostgreSQL backups
+# Резервное копирование PostgreSQL
 
-The production database is dumped daily at approximately 00:30 UTC (03:30
-Moscow time). Backups use PostgreSQL custom format and are retained for 14
-days in `/var/backups/jobmonitor/postgres`.
+Production-база копируется ежедневно примерно в 00:30 UTC (03:30 по Москве).
+Копии создаются в специальном формате PostgreSQL и хранятся 14 дней в каталоге
+`/var/backups/jobmonitor/postgres`.
 
-Install the root-owned units on the server:
+Установка скрипта и systemd units с владельцем `root`:
 
 ```bash
 sudo install -m 0755 deploy/backup/jobmonitor-pg-backup /usr/local/sbin/
@@ -14,7 +14,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now jobmonitor-pg-backup.timer
 ```
 
-Run and inspect a backup manually:
+Ручной запуск и проверка результата:
 
 ```bash
 sudo systemctl start jobmonitor-pg-backup.service
@@ -22,5 +22,5 @@ sudo journalctl -u jobmonitor-pg-backup.service
 sudo ls -lh /var/backups/jobmonitor/postgres
 ```
 
-These backups remain on the VPS. Copy them to encrypted off-site storage to
-protect against disk or server loss.
+Эти копии остаются на VPS. Для защиты от потери диска или всего сервера их
+необходимо дополнительно отправлять в зашифрованное внешнее хранилище.

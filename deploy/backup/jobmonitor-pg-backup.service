@@ -1,5 +1,5 @@
 [Unit]
-Description=JobMonitor PostgreSQL backup
+Description=Резервное копирование PostgreSQL для JobMonitor
 Requires=docker.service
 After=docker.service
 
