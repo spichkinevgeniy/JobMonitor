@@ -1,9 +1,9 @@
 from pydantic import BaseModel, Field
 
 from app.domain.shared.value_objects import (
+    CurrencyType,
     ExperienceLevel,
     Grade,
-    Salary,
     SkillType,
     SpecializationType,
     WorkFormat,
@@ -31,12 +31,17 @@ class OutVacancyParse(BaseModel):
         default_factory=list,
         description="Список ключевых скиллов из фиксированного перечня SkillType.",
     )
-    salary: Salary | None = Field(
+    salary_amount: int | None = Field(
         default=None,
         description=(
-            "Минимальная зарплата в RUB. Если указан диапазон, бери минимальное значение. "
-            "Если зарплата не указана, указана в другой валюте или RUB нельзя надежно определить, верни null."
+            "Минимальная зарплата в RUB числом, без пробелов и знаков валюты. "
+            "Если указан диапазон, бери минимальное значение. "
+            "Если зарплата не указана или указана в другой валюте, верни null."
         ),
+    )
+    salary_currency: CurrencyType | None = Field(
+        default=None,
+        description="Валюта зарплаты: RUB или null.",
     )
     grade: Grade = Field(
         default=Grade.UNDEFINED,

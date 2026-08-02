@@ -120,17 +120,13 @@ class PDFParser(BaseResumeParser):
         )
         parsed_data = result.output
 
-        salary_source = "resume_pass" if parsed_data.salary is not None else "none"
+        salary_source = "resume_pass" if parsed_data.salary_amount is not None else "none"
         salary_evidence: str | None = None
-        if parsed_data.salary is None and pdf_text.strip():
+        if parsed_data.salary_amount is None and pdf_text.strip():
             salary_source, salary_evidence = await self._try_fill_salary(parsed_data, pdf_text)
 
-        amount = parsed_data.salary.amount if parsed_data.salary else None
-        currency = (
-            parsed_data.salary.currency.value
-            if parsed_data.salary and parsed_data.salary.currency
-            else None
-        )
+        amount = parsed_data.salary_amount
+        currency = parsed_data.salary_currency.value if parsed_data.salary_currency else None
         logger.info(
             "Resume salary parsed: source=%s, amount=%s, currency=%s, evidence=%s",
             salary_source,
@@ -163,8 +159,12 @@ class PDFParser(BaseResumeParser):
         if salary_result.amount is None:
             return "none", salary_result.evidence
 
-        currency = salary_result.currency.value if salary_result.currency else None
-        parsed_data.salary = Salary.create(amount=salary_result.amount, currency=currency)
+        normalized = Salary.create(
+            amount=salary_result.amount,
+            currency=salary_result.currency.value if salary_result.currency else None,
+        )
+        parsed_data.salary_amount = normalized.amount
+        parsed_data.salary_currency = normalized.currency
         return "salary_pass", salary_result.evidence
 
     @staticmethod

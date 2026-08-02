@@ -90,11 +90,9 @@ class VacancyService:
                 grade=parse_result.grade,
                 experience_level=parse_result.experience_level,
                 work_format=parse_result.work_format,
-                salary_amount=parse_result.salary.amount if parse_result.salary else None,
+                salary_amount=parse_result.salary_amount,
                 salary_currency=(
-                    parse_result.salary.currency.value
-                    if parse_result.salary and parse_result.salary.currency
-                    else None
+                    parse_result.salary_currency.value if parse_result.salary_currency else None
                 ),
             )
             async with self._uow:

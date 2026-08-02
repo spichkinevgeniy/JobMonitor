@@ -73,8 +73,12 @@ class UserService:
             )
             user.cv_skills = Skills.from_strs([item.value for item in dto.skills])
 
-            user.cv_salary = dto.salary
-            if dto.salary is not None and dto.salary.amount is not None:
+            parsed_salary = Salary.create(
+                amount=dto.salary_amount,
+                currency=dto.salary_currency.value if dto.salary_currency else None,
+            )
+            if parsed_salary.amount is not None:
+                user.cv_salary = parsed_salary
                 user.filter_salary_mode = FilterMode.STRICT
             else:
                 user.cv_salary = None
