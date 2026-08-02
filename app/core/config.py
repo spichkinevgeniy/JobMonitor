@@ -37,7 +37,8 @@ class BaseAppSettings(BaseSettings):
     POSTGRES_DB: str = ""
 
     OPENROUTER_API_KEY: str
-    OPENROUTER_MODEL: str = "meta-llama/llama-3.3-70b-instruct:free"
+    OPENROUTER_MODEL: str = "google/gemini-2.5-flash"
+    OPENROUTER_APP_TITLE: str = "jobmonitor"
 
     SENTRY_DSN: str | None = None
     SENTRY_ENV: str

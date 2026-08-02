@@ -40,7 +40,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER?Variable is not set}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?Variable is not set}
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY?Variable is not set}
-      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-meta-llama/llama-3.3-70b-instruct:free}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-google/gemini-2.5-flash}
+      OPENROUTER_APP_TITLE: ${OPENROUTER_APP_TITLE:-jobmonitor}
       SENTRY_DSN: ${SENTRY_DSN:-}
       SENTRY_ENV: ${SENTRY_ENV:-production}
       SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-0.0}

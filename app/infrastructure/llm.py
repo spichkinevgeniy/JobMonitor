@@ -2,7 +2,7 @@ from functools import lru_cache
 
 from pydantic_ai import Agent
 from pydantic_ai.models import Model
-from pydantic_ai.models.openai import OpenAIChatModel
+from pydantic_ai.models.openrouter import OpenRouterModel
 from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 from app.application.dto import OutResumeParse, OutResumeSalaryParse, OutVacancyParse
@@ -10,9 +10,13 @@ from app.core.config import config
 from app.domain.shared.value_objects import ExperienceLevel, Grade, SkillType
 
 
+@lru_cache(maxsize=1)
 def get_openrouter_model() -> Model:
-    provider = OpenRouterProvider(api_key=config.OPENROUTER_API_KEY)
-    return OpenAIChatModel(config.OPENROUTER_MODEL, provider=provider)
+    provider = OpenRouterProvider(
+        api_key=config.OPENROUTER_API_KEY,
+        app_title=config.OPENROUTER_APP_TITLE,
+    )
+    return OpenRouterModel(config.OPENROUTER_MODEL, provider=provider)
 
 
 @lru_cache(maxsize=1)
