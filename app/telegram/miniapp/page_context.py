@@ -65,16 +65,16 @@ _SKILL_OPTION_VIEWS: tuple[SkillOptionView, ...] = (
         SpecializationType.BACKEND,
     ),
     SkillOptionView(
-        SkillType.TYPESCRIPT.value,
-        SkillType.TYPESCRIPT.value,
-        SpecializationType.BACKEND,
-    ),
-    SkillOptionView(
         SkillType.KOTLIN.value,
         SkillType.KOTLIN.value,
         SpecializationType.BACKEND,
     ),
     SkillOptionView(SkillType.REACT.value, SkillType.REACT.value, SpecializationType.FRONTEND),
+    SkillOptionView(
+        SkillType.TYPESCRIPT.value,
+        SkillType.TYPESCRIPT.value,
+        SpecializationType.FRONTEND,
+    ),
     SkillOptionView(SkillType.VUE.value, SkillType.VUE.value, SpecializationType.FRONTEND),
     SkillOptionView(SkillType.ANGULAR.value, SkillType.ANGULAR.value, SpecializationType.FRONTEND),
     SkillOptionView(
@@ -86,11 +86,6 @@ _SKILL_OPTION_VIEWS: tuple[SkillOptionView, ...] = (
     SkillOptionView(
         SkillType.COMPUTER_VISION.value,
         SkillType.COMPUTER_VISION.value,
-        SpecializationType.DATA_SCIENCE_ML,
-    ),
-    SkillOptionView(
-        SkillType.RECOMMENDER_SYSTEMS.value,
-        SkillType.RECOMMENDER_SYSTEMS.value,
         SpecializationType.DATA_SCIENCE_ML,
     ),
     SkillOptionView(SkillType.IOS.value, SkillType.IOS.value, SpecializationType.MOBILE),
@@ -108,11 +103,6 @@ _SKILL_OPTION_VIEWS: tuple[SkillOptionView, ...] = (
         SpecializationType.GAMEDEV,
     ),
     SkillOptionView(
-        SkillType.GAMEPLAY_PROGRAMMING.value,
-        SkillType.GAMEPLAY_PROGRAMMING.value,
-        SpecializationType.GAMEDEV,
-    ),
-    SkillOptionView(
         SkillType.GRAPHICS.value,
         SkillType.GRAPHICS.value,
         SpecializationType.GAMEDEV,
@@ -128,11 +118,6 @@ _SKILL_OPTION_VIEWS: tuple[SkillOptionView, ...] = (
         SpecializationType.QA,
     ),
     SkillOptionView(
-        SkillType.PERFORMANCE_TESTING.value,
-        SkillType.PERFORMANCE_TESTING.value,
-        SpecializationType.QA,
-    ),
-    SkillOptionView(
         SkillType.DEVOPS.value,
         SkillType.DEVOPS.value,
         SpecializationType.INFRASTRUCTURE_DEVOPS,
@@ -143,21 +128,21 @@ _SKILL_OPTION_VIEWS: tuple[SkillOptionView, ...] = (
         SpecializationType.INFRASTRUCTURE_DEVOPS,
     ),
     SkillOptionView(
-        SkillType.DBA.value,
-        SkillType.DBA.value,
-        SpecializationType.INFRASTRUCTURE_DEVOPS,
-    ),
-    SkillOptionView(
         SkillType.SYSTEM_ADMINISTRATION.value,
         SkillType.SYSTEM_ADMINISTRATION.value,
         SpecializationType.INFRASTRUCTURE_DEVOPS,
     ),
-    SkillOptionView(SkillType.SQL.value, SkillType.SQL.value, SpecializationType.ANALYTICS),
     SkillOptionView(
         SkillType.DATA_ANALYSIS.value,
         SkillType.DATA_ANALYSIS.value,
         SpecializationType.ANALYTICS,
     ),
+    SkillOptionView(
+        SkillType.DATA_ENGINEERING.value,
+        SkillType.DATA_ENGINEERING.value,
+        SpecializationType.ANALYTICS,
+    ),
+    SkillOptionView(SkillType.SQL.value, SkillType.SQL.value, SpecializationType.ANALYTICS),
 )
 
 _WORK_FORMAT_LABELS = {

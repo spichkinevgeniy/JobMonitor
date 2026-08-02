@@ -4,6 +4,7 @@ from collections.abc import Awaitable, Callable
 from pydantic_ai.exceptions import ModelHTTPError
 
 from app.core.logger import get_app_logger
+from app.infrastructure.observability.metrics import LLM_ERRORS_TOTAL
 
 logger = get_app_logger(__name__)
 
@@ -24,7 +25,18 @@ async def run_with_llm_retry[T](
         try:
             return await runner()
         except ModelHTTPError as exc:
+            LLM_ERRORS_TOTAL.labels(
+                operation=operation_name,
+                reason=f"http_{exc.status_code}",
+            ).inc()
             if exc.status_code not in _RETRYABLE_STATUS_CODES:
+                logger.error(
+                    "LLM call failed permanently during %s (status=%s, model=%s): %s",
+                    operation_name,
+                    exc.status_code,
+                    exc.model_name,
+                    exc.body,
+                )
                 raise
 
             if attempt == _RETRY_ATTEMPTS:
@@ -44,5 +56,11 @@ async def run_with_llm_retry[T](
                 delay_seconds,
             )
             await asyncio.sleep(delay_seconds)
+        except Exception as exc:
+            LLM_ERRORS_TOTAL.labels(
+                operation=operation_name,
+                reason=type(exc).__name__,
+            ).inc()
+            raise
 
     raise TemporaryLLMUnavailableError(f"LLM temporarily unavailable during {operation_name}")

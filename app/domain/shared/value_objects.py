@@ -67,7 +67,6 @@ class SkillType(StrEnum):
     MACHINE_LEARNING = "Machine Learning"
     NLP = "NLP"
     COMPUTER_VISION = "Computer Vision"
-    RECOMMENDER_SYSTEMS = "Recommender Systems"
 
     # Mobile
     IOS = "iOS"
@@ -78,23 +77,21 @@ class SkillType(StrEnum):
     # GameDev
     UNITY = "Unity"
     UNREAL_ENGINE = "Unreal Engine"
-    GAMEPLAY_PROGRAMMING = "Gameplay Programming"
     GRAPHICS = "Graphics"
 
     # QA
     MANUAL_QA = "Manual QA"
     QA_AUTOMATION = "QA Automation"
-    PERFORMANCE_TESTING = "Performance Testing"
 
     # Infrastructure & DevOps
     DEVOPS = "DevOps"
     SRE = "SRE"
-    DBA = "DBA"
     SYSTEM_ADMINISTRATION = "System Administration"
 
     # Analytics
     SQL = "SQL"
     DATA_ANALYSIS = "Data Analysis"
+    DATA_ENGINEERING = "Data Engineering"
 
 
 @dataclass(frozen=True, slots=True)

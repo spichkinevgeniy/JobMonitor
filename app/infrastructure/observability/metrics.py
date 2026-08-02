@@ -11,6 +11,12 @@ MESSAGES_NOT_VACANCY_TOTAL = Counter(
     "Total number of messages classified as not-a-vacancy by LLM.",
 )
 
+LLM_ERRORS_TOTAL = Counter(
+    "job_monitor_llm_errors_total",
+    "Total number of failed LLM calls, labeled by operation and error reason.",
+    ["operation", "reason"],
+)
+
 SKILL_MATCHES_TOTAL = Counter(
     "job_monitor_skill_matches_total",
     "Total number of accepted user-skill matches across vacancies.",

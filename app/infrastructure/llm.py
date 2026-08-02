@@ -7,7 +7,12 @@ from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 from app.application.dto import OutResumeParse, OutResumeSalaryParse, OutVacancyParse
 from app.core.config import config
-from app.domain.shared.value_objects import ExperienceLevel, Grade, SkillType
+from app.domain.shared.value_objects import (
+    ExperienceLevel,
+    Grade,
+    SkillType,
+    SpecializationType,
+)
 
 
 @lru_cache(maxsize=1)
@@ -21,6 +26,7 @@ def get_openrouter_model() -> Model:
 
 @lru_cache(maxsize=1)
 def get_vacancy_parse_agent() -> Agent[None, OutVacancyParse]:
+    allowed_specializations = ", ".join(item.value for item in SpecializationType)
     allowed_skills = ", ".join(skill.value for skill in SkillType)
     allowed_grades = ", ".join(grade.value for grade in Grade)
     allowed_experience_levels = ", ".join(level.value for level in ExperienceLevel)
@@ -56,7 +62,14 @@ def get_vacancy_parse_agent() -> Agent[None, OutVacancyParse]:
         "Если есть смешанные сигналы, выбирай is_vacancy=false.\n"
         "Только после решения по is_vacancy извлекай поля.\n\n"
         "Если это вакансия, извлеки:\n"
-        "1. specializations только из фиксированного списка.\n"
+        f"1. specializations только из списка: {allowed_specializations}.\n"
+        "   - Обычно хватает одной специализации: выбирай ту, к которой относится основная роль.\n"
+        "   - Data Science / ML ставь, когда роль про обучение и применение моделей.\n"
+        "   - Analytics ставь, когда роль про подготовку данных, витрины, отчетность и BI, "
+        "включая Data Engineer и ETL-инженера.\n"
+        "   - Infrastructure & DevOps ставь только для инфраструктурных ролей, а не для "
+        "backend-вакансий, где упомянуты Docker или CI/CD.\n"
+        "   - Не придумывай значения вне списка.\n"
         f"2. skills только из SkillType: {allowed_skills}.\n"
         "   - Извлекай только skills, которые определяют саму вакансию: основную роль, основной "
         "стек или ключевую предметную область.\n"
@@ -65,6 +78,11 @@ def get_vacancy_parse_agent() -> Agent[None, OutVacancyParse]:
         "требование, оставляй Go и не добавляй Python.\n"
         "   - Не добавляй skills из разделов `будет плюсом`, `nice to have`, дополнительных "
         "требований, бонусных знаний, смежных инструментов или второстепенных задач.\n"
+        "   - SQL указывай только если работа с данными и есть суть роли: аналитика, "
+        "отчетность, витрины, DWH, ETL. Не указывай SQL, если это обычная часть "
+        "backend-стека: работа с базой, ORM, миграции, запросы из приложения.\n"
+        "   - Data Engineering указывай для ролей про пайплайны данных, ETL/ELT, DWH и "
+        "оркестрацию, а не для аналитиков отчетности и не для ML-инженеров.\n"
         "   - Максимум 3 skills. Если есть сомнение, выбирай меньше.\n"
         "   - Не придумывай skills вне списка.\n"
         "3. salary: извлекай только зарплату в RUB; если указан диапазон, бери минимум. "
@@ -89,6 +107,7 @@ def get_vacancy_parse_agent() -> Agent[None, OutVacancyParse]:
 
 @lru_cache(maxsize=1)
 def get_resume_parse_agent() -> Agent[None, OutResumeParse]:
+    allowed_specializations = ", ".join(item.value for item in SpecializationType)
     allowed_skills = ", ".join(skill.value for skill in SkillType)
     allowed_grades = ", ".join(grade.value for grade in Grade)
     allowed_experience_levels = ", ".join(level.value for level in ExperienceLevel)
@@ -97,7 +116,7 @@ def get_resume_parse_agent() -> Agent[None, OutResumeParse]:
         "Преобразуй резюме в структурированные поля.\n\n"
         "Правила:\n"
         "1. is_resume=true только для резюме и профилей кандидата.\n"
-        "2. specializations выбирай только из фиксированного списка.\n"
+        f"2. specializations выбирай только из списка: {allowed_specializations}.\n"
         "   - Определи основную специализацию по желаемой должности, названию последних ролей "
         "и подтвержденному коммерческому опыту.\n"
         "   - Сильные сигналы: заголовок резюме, блок 'Желаемая должность', названия реальных "
@@ -125,6 +144,11 @@ def get_resume_parse_agent() -> Agent[None, OutResumeParse]:
         "   - DevOps и System Administration не указывай только по Docker/Linux/Nginx/SSH, "
         "если это вторичные навыки backend-инженера.\n"
         "   - Data Analysis не выводи только из наличия SQL.\n"
+        "   - SQL указывай только если работа с данными была сутью роли кандидата: аналитика, "
+        "отчетность, витрины, DWH, ETL. Не указывай SQL, если это обычная работа "
+        "backend-разработчика с базой через ORM и запросы из приложения.\n"
+        "   - Data Engineering указывай при явном опыте с пайплайнами данных, ETL/ELT, DWH или "
+        "оркестрацией (Airflow и аналоги).\n"
         "   - Если есть сомнение, выбирай меньше skills.\n"
         "4. salary — желаемая зарплата только в RUB; если указан диапазон, бери минимум. "
         "Если валюта другая или надежно определить RUB нельзя, верни null.\n"
