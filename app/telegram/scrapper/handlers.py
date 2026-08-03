@@ -38,7 +38,7 @@ class TelegramScraper:
         self._session_factory = session_factory
         self._extractor = extractor
         self._observability = observability
-        self._notification_service = TelegramNotificationService(bot)
+        self._notification_service = TelegramNotificationService(bot, session_factory)
 
     async def _message_handler(self, event: events.NewMessage.Event) -> None:
         message = event.message

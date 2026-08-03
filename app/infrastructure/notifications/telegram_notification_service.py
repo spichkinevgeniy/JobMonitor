@@ -2,16 +2,20 @@ from uuid import UUID
 
 from aiogram import Bot
 from aiogram.exceptions import TelegramForbiddenError
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.application.ports.notification_port import INotificationService
 from app.core.logger import get_app_logger
+from app.domain.user.value_objects import UserId
+from app.infrastructure.db.uow.user_uow import UserUnitOfWork
 
 logger = get_app_logger(__name__)
 
 
 class TelegramNotificationService(INotificationService):
-    def __init__(self, bot: Bot) -> None:
+    def __init__(self, bot: Bot, session_factory: async_sessionmaker[AsyncSession]) -> None:
         self._bot = bot
+        self._session_factory = session_factory
 
     async def dispatch_vacancy(
         self,
@@ -40,6 +44,7 @@ class TelegramNotificationService(INotificationService):
                     vacancy_id,
                     user_id,
                 )
+                await self._deactivate_user(user_id)
             except Exception:
                 logger.exception(
                     "Failed to forward vacancy %s to user %s",
@@ -48,3 +53,13 @@ class TelegramNotificationService(INotificationService):
                 )
 
         logger.info("Dispatch finished for vacancy %s", vacancy_id)
+
+    async def _deactivate_user(self, user_id: int) -> None:
+        try:
+            async with UserUnitOfWork(self._session_factory) as uow:
+                user = await uow.users.get_by_tg_id(UserId(user_id))
+                if user is not None and user.is_active:
+                    user.is_active = False
+                    await uow.users.update(user)
+        except Exception:
+            logger.exception("Failed to deactivate user %s after bot-forbidden error", user_id)
