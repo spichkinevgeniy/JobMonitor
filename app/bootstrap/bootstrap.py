@@ -57,7 +57,8 @@ async def build_runtime_components() -> RuntimeComponents:
     dp, bot = build_bot()
     await setup_bot_commands(bot)
     observability = build_observability_service()
-    await UserService(UserUnitOfWork(async_session_factory), observability).sync_user_metrics()
+    user_service = UserService(UserUnitOfWork(async_session_factory), observability)
+    await user_service.sync_user_metrics()
     scraper, provider = await build_scraper(bot, observability)
     miniapp_server = build_miniapp_server()
     return RuntimeComponents(
@@ -66,4 +67,5 @@ async def build_runtime_components() -> RuntimeComponents:
         scraper=scraper,
         provider=provider,
         miniapp_server=miniapp_server,
+        user_service=user_service,
     )

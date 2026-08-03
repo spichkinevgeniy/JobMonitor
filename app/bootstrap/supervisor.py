@@ -1,5 +1,6 @@
 import asyncio
 
+from app.bootstrap.metrics_sync import run_metrics_sync_loop
 from app.bootstrap.models import RuntimeComponents, RuntimeTasks
 from app.bootstrap.shutdown import graceful_shutdown, install_shutdown_handlers
 from app.infrastructure.telegram.miniapp_server import run_miniapp_server
@@ -23,6 +24,10 @@ def start_runtime_tasks(
             run_miniapp_server(components.miniapp_server),
             name="miniapp-server",
         ),
+        metrics_sync_task=asyncio.create_task(
+            run_metrics_sync_loop(components.user_service),
+            name="metrics-sync",
+        ),
         stop_task=asyncio.create_task(stop_event.wait(), name="shutdown-signal"),
     )
 
@@ -34,6 +39,7 @@ async def wait_runtime(tasks: RuntimeTasks) -> None:
             tasks.scraper_task,
             tasks.bot_task,
             tasks.miniapp_task,
+            tasks.metrics_sync_task,
             tasks.stop_task,
         )
         if task is not None
