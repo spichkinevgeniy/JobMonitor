@@ -54,6 +54,7 @@ services:
       METRICS_ENABLED: ${METRICS_ENABLED:-true}
       METRICS_ADDR: ${METRICS_ADDR:-0.0.0.0}
       METRICS_PORT: ${METRICS_PORT:-8000}
+      ADMIN_TG_IDS: ${ADMIN_TG_IDS:-}
     depends_on:
       db:
         condition: service_healthy

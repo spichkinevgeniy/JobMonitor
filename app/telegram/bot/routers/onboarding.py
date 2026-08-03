@@ -6,6 +6,7 @@ from aiogram.types import Message
 from app.application.services.user_service import UserService
 from app.core.logger import get_app_logger
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
+from app.infrastructure.observability import build_observability_service
 from app.telegram.bot.keyboards import START_BUTTON_TEXT, get_main_menu_kb
 from app.telegram.bot.states import BotStates
 from app.telegram.bot.views import build_start_message
@@ -25,7 +26,7 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
     logger.info(f"Started onboarding for user {user_id}")
 
     uow = UserUnitOfWork(async_session_factory)
-    service = UserService(uow)
+    service = UserService(uow, build_observability_service())
     try:
         user, is_new = await service.get_or_create_user(
             tg_id=user_id,

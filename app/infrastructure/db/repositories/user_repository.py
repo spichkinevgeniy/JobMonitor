@@ -73,3 +73,9 @@ class UserRepository(IUserRepository):
         result = await self._session.execute(query)
         models = result.scalars().all()
         return [user_from_model(model) for model in models]
+
+    async def list_active_tg_ids(self) -> list[int]:
+        result = await self._session.execute(
+            select(UserModel.tg_id).where(UserModel.is_active.is_(True))
+        )
+        return [row[0] for row in result.all()]
