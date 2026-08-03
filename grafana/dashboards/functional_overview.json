@@ -203,13 +203,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (skill) (job_monitor_skill_matches_total)",
+          "expr": "sum by (skill) (increase(job_monitor_skill_matches_total[$__rate_interval]))",
           "legendFormat": "{{skill}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Language Matches by Users",
+      "title": "Language Matches by Users (per interval)",
       "type": "timeseries"
     },
     {
@@ -377,6 +377,6 @@
   "timezone": "",
   "title": "SmartJobMonitor / Functional",
   "uid": "smartjobmonitor-functional",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
