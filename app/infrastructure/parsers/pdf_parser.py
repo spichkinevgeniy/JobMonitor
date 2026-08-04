@@ -15,6 +15,10 @@ from app.infrastructure.parsers.exceptions import NotAResumeError, ParserError, 
 
 logger = get_app_logger(__name__)
 
+MAX_RESUME_SKILLS = 6
+MAX_RESUME_SPECIALIZATIONS = 3
+MIN_EVIDENCE_LENGTH = 3
+
 
 class PDFParser(BaseResumeParser):
     def __init__(self) -> None:
@@ -119,6 +123,7 @@ class PDFParser(BaseResumeParser):
             ),
         )
         parsed_data = result.output
+        self._sanitize_extracted_profile(parsed_data)
 
         salary_source = "resume_pass" if parsed_data.salary_amount is not None else "none"
         salary_evidence: str | None = None
@@ -166,6 +171,38 @@ class PDFParser(BaseResumeParser):
         parsed_data.salary_amount = normalized.amount
         parsed_data.salary_currency = normalized.currency
         return "salary_pass", salary_result.evidence
+
+    def _sanitize_extracted_profile(self, parsed_data: OutResumeParse) -> None:
+        """Defense-in-depth поверх LLM: не полагаемся только на промпт.
+
+        Отбрасывает specializations/skills без реальной цитаты-обоснования и
+        обрезает списки до разумного максимума, если модель всё равно
+        вернула слишком много (это признак "выбрала всё подряд", а не
+        реального богатого профиля).
+        """
+        original_specializations = len(parsed_data.specializations)
+        original_skills = len(parsed_data.skills)
+
+        parsed_data.specializations = [
+            item
+            for item in parsed_data.specializations
+            if len(item.evidence.strip()) >= MIN_EVIDENCE_LENGTH
+        ][:MAX_RESUME_SPECIALIZATIONS]
+
+        parsed_data.skills = [
+            item for item in parsed_data.skills if len(item.evidence.strip()) >= MIN_EVIDENCE_LENGTH
+        ][:MAX_RESUME_SKILLS]
+
+        if len(parsed_data.specializations) != original_specializations or (
+            len(parsed_data.skills) != original_skills
+        ):
+            logger.warning(
+                "Resume profile sanitized: specializations %d->%d, skills %d->%d",
+                original_specializations,
+                len(parsed_data.specializations),
+                original_skills,
+                len(parsed_data.skills),
+            )
 
     @staticmethod
     def _truncate_text(value: str | None, max_len: int = 140) -> str | None:

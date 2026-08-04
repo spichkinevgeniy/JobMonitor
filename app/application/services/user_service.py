@@ -69,9 +69,9 @@ class UserService:
 
             user.cv_text = dto.full_relevant_text_from_resume
             user.cv_specializations = Specializations.from_strs(
-                [item.value for item in dto.specializations]
+                [item.specialization.value for item in dto.specializations]
             )
-            user.cv_skills = Skills.from_strs([item.value for item in dto.skills])
+            user.cv_skills = Skills.from_strs([item.skill.value for item in dto.skills])
 
             parsed_salary = Salary.create(
                 amount=dto.salary_amount,
