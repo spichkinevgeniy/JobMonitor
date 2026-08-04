@@ -94,6 +94,7 @@ class VacancyService:
                 salary_currency=(
                     parse_result.salary_currency.value if parse_result.salary_currency else None
                 ),
+                company_type=parse_result.company_type,
             )
             async with self._uow:
                 await self._uow.vacancies.upsert(vacancy)

@@ -1,4 +1,5 @@
 from app.domain.shared.value_objects import (
+    CompanyType,
     ExperienceLevel,
     Grade,
     Salary,
@@ -25,6 +26,7 @@ def vacancy_to_model(vacancy: Vacancy) -> VacancyModel:
         grade=vacancy.grade.value,
         experience_level=vacancy.experience_level.value,
         work_format=vacancy.work_format.value if vacancy.work_format else None,
+        company_type=vacancy.company_type.value,
         created_at=vacancy.created_at,
         is_active=vacancy.is_active,
     )
@@ -42,6 +44,7 @@ def apply_vacancy(model: VacancyModel, vacancy: Vacancy) -> None:
     model.grade = vacancy.grade.value
     model.experience_level = vacancy.experience_level.value
     model.work_format = vacancy.work_format.value
+    model.company_type = vacancy.company_type.value
     model.is_active = vacancy.is_active
 
 
@@ -61,6 +64,9 @@ def vacancy_from_model(model: VacancyModel) -> Vacancy:
             else ExperienceLevel.UNDEFINED
         ),
         work_format=WorkFormat(model.work_format) if model.work_format else WorkFormat.UNDEFINED,
+        company_type=(
+            CompanyType(model.company_type) if model.company_type else CompanyType.UNDEFINED
+        ),
         content_hash=ContentHash(model.content_hash),
         created_at=model.created_at,
         is_active=model.is_active,

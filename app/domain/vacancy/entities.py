@@ -4,6 +4,7 @@ from datetime import UTC, datetime
 from uuid import UUID
 
 from app.domain.shared.value_objects import (
+    CompanyType,
     ExperienceLevel,
     Grade,
     Salary,
@@ -33,6 +34,7 @@ class Vacancy:
 
     created_at: datetime
     is_active: bool = True
+    company_type: CompanyType = CompanyType.UNDEFINED
 
     @classmethod
     def create(
@@ -49,6 +51,7 @@ class Vacancy:
         salary_amount: int | None = None,
         salary_currency: str | None = None,
         created_at: datetime | None = None,
+        company_type: CompanyType = CompanyType.UNDEFINED,
     ) -> "Vacancy":
         if not text or not text.strip():
             raise ValidationError("Vacancy text cannot be empty.")
@@ -77,6 +80,7 @@ class Vacancy:
             work_format=work_format,
             content_hash=cls.compute_content_hash(text),
             created_at=created_at or now,
+            company_type=company_type,
         )
 
     @staticmethod

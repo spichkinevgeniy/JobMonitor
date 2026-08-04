@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 
 from app.domain.shared.value_objects import (
+    CompanyType,
     CurrencyType,
     ExperienceLevel,
     Grade,
@@ -57,4 +58,10 @@ class OutVacancyParse(BaseModel):
     work_format: WorkFormat = Field(
         default=WorkFormat.UNDEFINED,
         description="Формат работы: REMOTE, HYBRID, ONSITE или UNDEFINED.",
+    )
+    company_type: CompanyType = Field(
+        default=CompanyType.UNDEFINED,
+        description=(
+            "Тип компании-работодателя: PRODUCT, OUTSTAFF, STARTUP, PROJECT_WORK или UNDEFINED."
+        ),
     )

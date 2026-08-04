@@ -26,6 +26,14 @@ class ExperienceLevel(StrEnum):
     UNDEFINED = "UNDEFINED"
 
 
+class CompanyType(StrEnum):
+    PRODUCT = "PRODUCT"
+    OUTSTAFF = "OUTSTAFF"
+    STARTUP = "STARTUP"
+    PROJECT_WORK = "PROJECT_WORK"
+    UNDEFINED = "UNDEFINED"
+
+
 class CurrencyType(StrEnum):
     RUB = "RUB"
     USD = "USD"
@@ -178,6 +186,7 @@ __all__ = [
     "WorkFormat",
     "Grade",
     "ExperienceLevel",
+    "CompanyType",
     "CurrencyType",
     "SpecializationType",
     "SkillType",

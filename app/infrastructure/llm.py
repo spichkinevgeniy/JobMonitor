@@ -8,6 +8,7 @@ from pydantic_ai.providers.openrouter import OpenRouterProvider
 from app.application.dto import OutResumeParse, OutResumeSalaryParse, OutVacancyParse
 from app.core.config import config
 from app.domain.shared.value_objects import (
+    CompanyType,
     ExperienceLevel,
     Grade,
     SkillType,
@@ -30,6 +31,7 @@ def get_vacancy_parse_agent() -> Agent[None, OutVacancyParse]:
     allowed_skills = ", ".join(skill.value for skill in SkillType)
     allowed_grades = ", ".join(grade.value for grade in Grade)
     allowed_experience_levels = ", ".join(level.value for level in ExperienceLevel)
+    allowed_company_types = ", ".join(item.value for item in CompanyType)
     system_prompt = (
         "Ты — строгий фильтр IT-вакансий. Ошибка классификации опаснее в сторону false positive, "
         "чем false negative.\n"
@@ -94,6 +96,20 @@ def get_vacancy_parse_agent() -> Agent[None, OutVacancyParse]:
         f"5. experience_level: только одно значение из {allowed_experience_levels}. "
         "Ориентируйся на требуемый коммерческий опыт. Если опыт не указан или неоднозначен, верни UNDEFINED.\n"
         "6. work_format: REMOTE, HYBRID, ONSITE или UNDEFINED.\n"
+        f"7. company_type: только одно значение из {allowed_company_types}.\n"
+        "   - PRODUCT: текст от первого лица про свой продукт/сервис ('наш продукт', "
+        "'мы разрабатываем'), названа прямая компания-бренд без посредников, есть упоминание "
+        "собственных пользователей или метрик продукта.\n"
+        "   - OUTSTAFF: 'для нашего клиента', 'клиентский проект', 'у одного из наших клиентов', "
+        "явное упоминание модели аутстаффа/аутсорса, смена проектов, либо это репост от "
+        "кадрового агентства ('вакансия от агентства', 'не является прямым работодателем').\n"
+        "   - STARTUP: 'молодая команда', 'стартап', 'один из первых разработчиков', "
+        "упоминание раунда/инвестиций/опционов, маленькая явно названная команда.\n"
+        "   - PROJECT_WORK: сдельная оплата, оплата по факту выполнения задачи, разовая задача, "
+        "ГПХ (не трудоустройство), нужен исполнитель на конкретную задачу без речи о постоянной "
+        "позиции.\n"
+        "   - UNDEFINED: нет ни одного из перечисленных признаков — просто стек, требования и "
+        "зарплата без контекста о компании или формате занятости.\n"
     )
 
     return Agent[None, OutVacancyParse](

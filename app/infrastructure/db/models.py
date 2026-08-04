@@ -34,6 +34,7 @@ class Vacancy(Base):
     grade: Mapped[str] = mapped_column(String, default="UNDEFINED")
     experience_level: Mapped[str] = mapped_column(String, default="UNDEFINED")
     work_format: Mapped[str] = mapped_column(String, default="UNDEFINED")
+    company_type: Mapped[str] = mapped_column(String, default="UNDEFINED")
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
@@ -63,6 +64,17 @@ class User(Base):
     filter_work_format_mode: Mapped[str] = mapped_column(String, default="SOFT")
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
+class VacancyDispatchLog(Base):
+    __tablename__ = "vacancy_dispatch_log"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_tg_id: Mapped[int] = mapped_column(BigInteger, index=True)
+    vacancy_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True))
+    dispatched_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
 
 
 async def init_db() -> None:
