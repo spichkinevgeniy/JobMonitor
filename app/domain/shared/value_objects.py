@@ -49,6 +49,7 @@ class SpecializationType(StrEnum):
     QA = "QA"
     INFRASTRUCTURE_DEVOPS = "Infrastructure & DevOps"
     ANALYTICS = "Analytics"
+    UI_UX_DESIGN = "UI/UX & Product Design"
 
 
 class SkillType(StrEnum):
@@ -100,6 +101,13 @@ class SkillType(StrEnum):
     SQL = "SQL"
     DATA_ANALYSIS = "Data Analysis"
     DATA_ENGINEERING = "Data Engineering"
+
+    # UI/UX & Product Design
+    FIGMA = "Figma"
+    PROTOTYPING = "Prototyping"
+    UX_RESEARCH = "UX Research"
+    DESIGN_SYSTEMS = "Design Systems"
+    INTERACTION_DESIGN = "Interaction Design"
 
 
 @dataclass(frozen=True, slots=True)

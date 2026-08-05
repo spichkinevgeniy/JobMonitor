@@ -40,6 +40,7 @@ _SKILL_SECTION_ORDER = (
     SpecializationType.QA,
     SpecializationType.INFRASTRUCTURE_DEVOPS,
     SpecializationType.ANALYTICS,
+    SpecializationType.UI_UX_DESIGN,
 )
 _SKILL_OPTION_VIEWS: tuple[SkillOptionView, ...] = (
     SkillOptionView(SkillType.PYTHON.value, SkillType.PYTHON.value, SpecializationType.BACKEND),
@@ -143,6 +144,31 @@ _SKILL_OPTION_VIEWS: tuple[SkillOptionView, ...] = (
         SpecializationType.ANALYTICS,
     ),
     SkillOptionView(SkillType.SQL.value, SkillType.SQL.value, SpecializationType.ANALYTICS),
+    SkillOptionView(
+        SkillType.FIGMA.value,
+        SkillType.FIGMA.value,
+        SpecializationType.UI_UX_DESIGN,
+    ),
+    SkillOptionView(
+        SkillType.PROTOTYPING.value,
+        SkillType.PROTOTYPING.value,
+        SpecializationType.UI_UX_DESIGN,
+    ),
+    SkillOptionView(
+        SkillType.UX_RESEARCH.value,
+        SkillType.UX_RESEARCH.value,
+        SpecializationType.UI_UX_DESIGN,
+    ),
+    SkillOptionView(
+        SkillType.DESIGN_SYSTEMS.value,
+        SkillType.DESIGN_SYSTEMS.value,
+        SpecializationType.UI_UX_DESIGN,
+    ),
+    SkillOptionView(
+        SkillType.INTERACTION_DESIGN.value,
+        SkillType.INTERACTION_DESIGN.value,
+        SpecializationType.UI_UX_DESIGN,
+    ),
 )
 
 _WORK_FORMAT_LABELS = {
