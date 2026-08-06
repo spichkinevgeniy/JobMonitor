@@ -42,3 +42,6 @@ job_monitor.session-journal
 # Local tooling
 .logfire/
 data/
+
+# Локальная карта каналов для разработки
+channels_map.local.json

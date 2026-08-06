@@ -1,19 +1,14 @@
-"""Одновременная отправка нескольких резюме одним пользователем.
-
-FSM-защиты тут мало: StateFilter вычисляется диспетчером до входа в хендлер,
-а Telegram отдаёт getUpdates пачкой. Замер на этом же стенде до фикса давал
-5 одновременных обработок из 5 отправленных — при потолке ~120 МБ на разбор
-это 600 МБ при 744 МБ свободных на проде.
-"""
+"""Одновременная отправка нескольких резюме одним пользователем."""
 
 import asyncio
 from collections.abc import AsyncIterator, Awaitable, Callable
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 from aiogram import Bot, Dispatcher
 from aiogram.types import Chat, Document, Message, Update, User
 
+from app.application.services.resume_quota_service import QuotaDecision, QuotaRejection
 from app.telegram.bot.routers import resume as resume_router
 
 BOT_TOKEN = "123456:AAaaAAaaAAaaAAaaAAaaAAaaAAaaAAaaAAa"
@@ -38,9 +33,20 @@ def _make_update(update_id: int, tg_id: int = TG_ID) -> Update:
     return Update(update_id=update_id, message=message)
 
 
+class _AlwaysAllowQuota:
+    def __init__(self, uow: object) -> None:
+        pass
+
+    async def check(self, tg_id: int) -> QuotaDecision:
+        return QuotaDecision(allowed=True)
+
+    async def register(self, tg_id: int) -> None:
+        pass
+
+
 @pytest.fixture
 def accepted(monkeypatch: pytest.MonkeyPatch) -> list[str]:
-    """Считаем, сколько загрузок дошло до разбора, и держим их в работе."""
+    """Считает загрузки, дошедшие до разбора, и держит их в работе."""
     reached: list[str] = []
 
     def fake_parser(file_name: str) -> object:
@@ -52,13 +58,15 @@ def accepted(monkeypatch: pytest.MonkeyPatch) -> list[str]:
 
     monkeypatch.setattr(resume_router.ParserFactory, "get_parser_by_extension", fake_parser)
     monkeypatch.setattr(Message, "answer", fake_answer)
+    # Квота живёт в БД, тут проверяется только захват.
+    monkeypatch.setattr(resume_router, "ResumeQuotaService", _AlwaysAllowQuota)
     resume_router._active_resume_uploads.clear()
     return reached
 
 
 @pytest.fixture(scope="module")
 async def feed() -> AsyncIterator[Callable[[list[Update]], Awaitable[None]]]:
-    """Роутер модульный: к диспетчеру он цепляется ровно один раз, отсюда и scope."""
+    """Роутер модульный: к диспетчеру он цепляется один раз, отсюда и scope."""
     bot = Bot(token=BOT_TOKEN)
     dispatcher = Dispatcher()
     dispatcher.include_router(resume_router.router)
@@ -95,3 +103,56 @@ class TestConcurrentUploads:
         await feed([_make_update(1, tg_id=111), _make_update(2, tg_id=222)])
 
         assert len(accepted) == 2
+
+
+class TestQuotaBlocksProcessing:
+    @pytest.fixture
+    def rejecting_quota(self, monkeypatch: pytest.MonkeyPatch) -> list[int]:
+        registered: list[int] = []
+
+        class _Rejecting:
+            def __init__(self, uow: object) -> None:
+                pass
+
+            async def check(self, tg_id: int) -> QuotaDecision:
+                return QuotaDecision(
+                    allowed=False,
+                    rejection=QuotaRejection.DAILY_QUOTA,
+                    retry_after=timedelta(days=1),
+                )
+
+            async def register(self, tg_id: int) -> None:
+                registered.append(tg_id)
+
+        monkeypatch.setattr(resume_router, "ResumeQuotaService", _Rejecting)
+        return registered
+
+    async def test_rejected_upload_never_reaches_parser(
+        self,
+        accepted: list[str],
+        rejecting_quota: list[int],
+        feed: Callable[[list[Update]], Awaitable[None]],
+    ) -> None:
+        await feed([_make_update(1)])
+
+        assert accepted == []
+
+    async def test_rejected_upload_is_not_counted(
+        self,
+        accepted: list[str],
+        rejecting_quota: list[int],
+        feed: Callable[[list[Update]], Awaitable[None]],
+    ) -> None:
+        await feed([_make_update(1)])
+
+        assert rejecting_quota == []
+
+    async def test_guard_is_released_after_rejection(
+        self,
+        accepted: list[str],
+        rejecting_quota: list[int],
+        feed: Callable[[list[Update]], Awaitable[None]],
+    ) -> None:
+        await feed([_make_update(1)])
+
+        assert resume_router._active_resume_uploads == set()
