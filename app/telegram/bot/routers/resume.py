@@ -51,6 +51,10 @@ router = Router()
 logger = get_app_logger(__name__)
 bot_logfire = logfire.with_tags("bot")
 
+# Пользователи с резюме в работе прямо сейчас. Держим в памяти, а не в FSM:
+# состояние читается диспетчером до входа в хендлер и от гонки не спасает.
+_active_resume_uploads: set[int] = set()
+
 
 async def _send_resume_prompt(message: Message, state: FSMContext) -> None:
     await state.set_state(BotStates.waiting_resume)
@@ -119,7 +123,22 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
             await message.answer(build_resume_file_too_large_text())
             return
 
-        await state.set_state(BotStates.processing_resume)
+        # Захват до первого await. StateFilter диспетчер проверяет ещё до входа
+        # в хендлер, поэтому пачка файлов проходит FSM-защиту целиком: замер на
+        # реальном Dispatcher дал 5 из 5 одновременных обработок. Проверка и
+        # вставка ниже идут без await между ними, в однопоточном event loop это
+        # атомарно.
+        if tg_id is not None:
+            if tg_id in _active_resume_uploads:
+                bot_logfire.info(
+                    "Resume rejected: upload already in progress",
+                    tg_id=tg_id,
+                    file_name=file_name,
+                    file_size=file_size,
+                )
+                await message.answer(build_resume_processing_text())
+                return
+            _active_resume_uploads.add(tg_id)
 
         async def reset_to_menu(err_msg: str) -> None:
             await state.set_state(BotStates.main_menu)
@@ -131,6 +150,7 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
         processing_message: Message | None = None
         buffer = BytesIO()
         try:
+            await state.set_state(BotStates.processing_resume)
             parser = ParserFactory.get_parser_by_extension(file_name)
             processing_message = await message.answer(
                 build_resume_processing_text(),
@@ -238,6 +258,8 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
             await reset_to_menu(build_resume_unknown_error_text())
         finally:
             buffer.close()
+            if tg_id is not None:
+                _active_resume_uploads.discard(tg_id)
             if await state.get_state() == BotStates.processing_resume.state:
                 await state.set_state(BotStates.main_menu)
 
