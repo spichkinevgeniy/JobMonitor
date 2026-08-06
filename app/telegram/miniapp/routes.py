@@ -19,16 +19,20 @@ from app.application.dto.miniapp import (
     SpecialtyReadResponse,
     SpecialtySaveRequest,
     StatsCompanyTypeResponse,
+    StatsFunnelResponse,
+    StatsFunnelRowResponse,
     StatsTrendPointResponse,
     StatsTrendSeriesResponse,
     WorkFormatChoice,
 )
 from app.application.services.stats_service import (
+    FilterFunnel,
     ProfileStats,
     StatsService,
     TrendGranularity,
 )
 from app.application.services.user_service import UserService
+from app.domain.matching.entities import MatchRejectionReason
 from app.domain.shared.value_objects import ExperienceLevel, Grade, WorkFormat
 from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode, LevelFilterMode
@@ -289,6 +293,12 @@ _TREND_TOGGLE_LABELS = {
     TrendGranularity.WEEK: "Недели",
     TrendGranularity.DAY: "Дни",
 }
+_REJECTION_LABELS = {
+    MatchRejectionReason.SALARY: "Отсёк фильтр зарплаты",
+    MatchRejectionReason.GRADE: "Отсёк грейд",
+    MatchRejectionReason.EXPERIENCE: "Отсёк опыт",
+    MatchRejectionReason.FORMAT: "Отсёк формат работы",
+}
 # Бакеты скользящие (от «сейчас» назад), а не календарные, поэтому пишем
 # «за последние 7 дней», а не «за эту неделю».
 _TREND_HEADLINE_LABELS = {
@@ -324,7 +334,30 @@ def _to_stats_response(user: User, stats: ProfileStats) -> ProfileStatsResponse:
             for item in stats.company_breakdown
         ],
         company_total=stats.company_total,
+        funnel=_to_funnel_response(stats.funnel),
     )
+
+
+def _to_funnel_response(funnel: FilterFunnel) -> StatsFunnelResponse:
+    if funnel.total == 0:
+        return StatsFunnelResponse(total=0, rows=[])
+
+    rows = [
+        StatsFunnelRowResponse(
+            label="Дошло до вас",
+            count=funnel.matched,
+            percent=round(funnel.matched * 100 / funnel.total),
+        )
+    ]
+    rows.extend(
+        StatsFunnelRowResponse(
+            label=_REJECTION_LABELS[item.reason],
+            count=item.count,
+            percent=round(item.count * 100 / funnel.total),
+        )
+        for item in funnel.rejections
+    )
+    return StatsFunnelResponse(total=funnel.total, rows=rows)
 
 
 def _work_format_choice(user: User) -> str:

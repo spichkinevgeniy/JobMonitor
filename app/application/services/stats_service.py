@@ -4,6 +4,7 @@ from datetime import UTC, date, datetime, timedelta
 from enum import StrEnum
 
 from app.application.ports.unit_of_work import VacancyUnitOfWork
+from app.domain.matching.entities import MatchDecision, MatchRejectionReason
 from app.domain.matching.policy import evaluate_match
 from app.domain.shared.value_objects import CompanyType
 from app.domain.user.entities import User
@@ -13,6 +14,7 @@ WEEK_DAYS = 7
 TREND_WEEKS = 8
 TREND_DAYS = 14
 COMPANY_BREAKDOWN_DAYS = 30
+FUNNEL_DAYS = 7
 
 # Окно выборки берём по самой длинной гранулярности: 8 недель покрывают и 14 дней,
 # поэтому на страницу хватает одного запроса в БД.
@@ -43,10 +45,30 @@ class CompanyTypeCount:
 
 
 @dataclass(frozen=True, slots=True)
+class RejectionCount:
+    reason: MatchRejectionReason
+    count: int
+
+
+@dataclass(frozen=True, slots=True)
+class FilterFunnel:
+    """Куда делись вакансии, прошедшие префильтр по специализации и скиллам.
+
+    matched + сумма rejections == total: evaluate_match возвращает первую
+    сработавшую причину, поэтому каждая вакансия учтена ровно один раз.
+    """
+
+    total: int
+    matched: int
+    rejections: list[RejectionCount]
+
+
+@dataclass(frozen=True, slots=True)
 class ProfileStats:
     trends: list[TrendSeries]
     company_breakdown: list[CompanyTypeCount]
     company_total: int
+    funnel: FilterFunnel
 
 
 class StatsService:
@@ -69,10 +91,14 @@ class StatsService:
                 since=now - timedelta(days=FETCH_DAYS),
             )
 
-        matched = [item for item in vacancies if evaluate_match(vacancy=item, user=user).accepted]
+        # Решение по каждой вакансии считаем один раз: тренды берут принятые,
+        # воронка — распределение отказов.
+        decisions = [(item, evaluate_match(vacancy=item, user=user)) for item in vacancies]
+        matched = [item for item, decision in decisions if decision.accepted]
         company_breakdown = _build_company_breakdown(matched, now)
 
         return ProfileStats(
+            funnel=_build_funnel(decisions, now),
             trends=[
                 TrendSeries(
                     granularity=TrendGranularity.WEEK,
@@ -109,6 +135,29 @@ def _build_trend(
             )
         )
     return points
+
+
+def _build_funnel(
+    decisions: list[tuple[Vacancy, MatchDecision]],
+    now: datetime,
+) -> FilterFunnel:
+    window_start = now - timedelta(days=FUNNEL_DAYS)
+    window = [
+        decision for vacancy, decision in decisions if window_start <= vacancy.created_at < now
+    ]
+
+    counter: Counter[MatchRejectionReason] = Counter(
+        decision.reason
+        for decision in window
+        if not decision.accepted and decision.reason is not None
+    )
+    return FilterFunnel(
+        total=len(window),
+        matched=sum(1 for decision in window if decision.accepted),
+        rejections=[
+            RejectionCount(reason=reason, count=count) for reason, count in counter.most_common()
+        ],
+    )
 
 
 def _build_company_breakdown(vacancies: list[Vacancy], now: datetime) -> list[CompanyTypeCount]:

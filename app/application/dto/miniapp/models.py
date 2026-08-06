@@ -118,11 +118,23 @@ class StatsCompanyTypeResponse(BaseModel):
     percent: int
 
 
+class StatsFunnelRowResponse(BaseModel):
+    label: str
+    count: int
+    percent: int
+
+
+class StatsFunnelResponse(BaseModel):
+    total: int
+    rows: list[StatsFunnelRowResponse]
+
+
 class ProfileStatsResponse(BaseModel):
     has_profile: bool
     trends: list[StatsTrendSeriesResponse]
     company_breakdown: list[StatsCompanyTypeResponse]
     company_total: int
+    funnel: StatsFunnelResponse
 
 
 @dataclass(frozen=True, slots=True)

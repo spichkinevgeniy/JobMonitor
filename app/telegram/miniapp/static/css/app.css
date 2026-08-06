@@ -512,6 +512,84 @@ body {
   font-size: 11px;
 }
 
+/* Воронка фильтров: цветом выделено только «дошло до вас»,
+   всё отсеянное — нейтральная серая шкала. */
+.funnel-bar {
+  display: flex;
+  gap: 2px;
+  height: 12px;
+  margin: 12px 0 14px;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.funnel-bar__seg {
+  height: 100%;
+}
+
+.funnel-list {
+  display: grid;
+  gap: 9px;
+}
+
+.funnel-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+}
+
+.funnel-row__dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+}
+
+.funnel-row__name {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.funnel-row__num {
+  font-weight: 800;
+}
+
+.funnel-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding-top: 11px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+
+.funnel-total b {
+  font-size: 1.3rem;
+}
+
+.funnel-tone-0 {
+  background: var(--accent);
+}
+
+.funnel-tone-1 {
+  background: #9aa3b2;
+}
+
+.funnel-tone-2 {
+  background: #b4bbc7;
+}
+
+.funnel-tone-3 {
+  background: #cdd2db;
+}
+
+.funnel-tone-4 {
+  background: #e2e5eb;
+}
+
 .stats-bars {
   display: grid;
   gap: 10px;

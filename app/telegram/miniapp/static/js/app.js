@@ -472,6 +472,54 @@
       renderTrendChart();
     }
 
+    function renderFunnel(funnel) {
+      const cardNode = root.querySelector("[data-stats-funnel-card]");
+      const barNode = root.querySelector("[data-stats-funnel-bar]");
+      const listNode = root.querySelector("[data-stats-funnel-list]");
+      const totalNode = root.querySelector("[data-stats-funnel-total]");
+      if (!cardNode || !barNode || !listNode) {
+        return;
+      }
+      if (!funnel || !funnel.total) {
+        cardNode.classList.add("is-hidden");
+        return;
+      }
+
+      cardNode.classList.remove("is-hidden");
+      barNode.textContent = "";
+      listNode.textContent = "";
+
+      funnel.rows.forEach((row, index) => {
+        const tone = `funnel-tone-${Math.min(index, 4)}`;
+
+        const segment = document.createElement("div");
+        segment.className = `funnel-bar__seg ${tone}`;
+        segment.style.width = `${row.percent}%`;
+        barNode.append(segment);
+
+        const listRow = document.createElement("div");
+        listRow.className = "funnel-row";
+
+        const dot = document.createElement("span");
+        dot.className = `funnel-row__dot ${tone}`;
+
+        const name = document.createElement("span");
+        name.className = "funnel-row__name";
+        name.textContent = row.label;
+
+        const count = document.createElement("span");
+        count.className = "funnel-row__num";
+        count.textContent = String(row.count);
+
+        listRow.append(dot, name, count);
+        listNode.append(listRow);
+      });
+
+      if (totalNode) {
+        totalNode.textContent = String(funnel.total);
+      }
+    }
+
     function renderCompanyBreakdown(data) {
       const listNode = root.querySelector("[data-stats-company]");
       const cardNode = root.querySelector("[data-stats-company-card]");
@@ -548,6 +596,7 @@
         }
 
         renderTrend(result.trends);
+        renderFunnel(result.funnel);
         renderCompanyBreakdown(result);
         if (cardsNode) {
           cardsNode.classList.remove("is-hidden");
