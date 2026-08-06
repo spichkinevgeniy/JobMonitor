@@ -22,8 +22,6 @@ MAX_RESUME_SPECIALIZATIONS = 3
 MIN_EVIDENCE_LENGTH = 3
 
 MAX_RESUME_PAGES = 10
-# Бюджет на страницу: A4 при 150 dpi — это 2.2 млн пикселей, так что запас
-# есть даже под A3. Страница крупнее рендерится с пониженным dpi.
 MAX_PAGE_PIXELS = 4_000_000
 MIN_RENDER_DPI = 40
 RENDER_TIMEOUT_SECONDS = 60
@@ -45,12 +43,7 @@ class PDFParser(BaseResumeParser):
         self._ensure_pdf_signature(raw)
 
         logger.info("Resume parsing started")
-        # Рендер синхронный и тяжёлый, а процесс у нас один на бота, скрапер и
-        # рассылку. Поток спасает лишь частично: MuPDF почти не отпускает GIL,
-        # замер дал 19% живого event loop против 64% в отдельном процессе.
-        # Полностью это лечится только выносом рендера в процесс.
-        # Таймаут страховочный: поток не прервать, но лимиты страниц и
-        # пикселей и так держат работу конечной.
+        # Таймаут не прерывает поток: работу ограничивают лимиты страниц и пикселей.
         try:
             images, pdf_text = await asyncio.wait_for(
                 asyncio.to_thread(self._pdf_to_images_and_text, raw),
@@ -84,8 +77,6 @@ class PDFParser(BaseResumeParser):
 
         try:
             with fitz.open(stream=data, filetype="pdf") as doc:
-                # Считаем страницы до рендера: 500 пустых страниц весят 80 КБ,
-                # но отрисовка каждой стоит памяти и секунд.
                 if doc.page_count > MAX_RESUME_PAGES:
                     logger.warning("Resume rejected: too many pages (%d)", doc.page_count)
                     raise TooManyPagesError(
@@ -128,13 +119,7 @@ class PDFParser(BaseResumeParser):
 
     @staticmethod
     def _fit_dpi_to_budget(page: fitz.Page, dpi: int) -> int | None:
-        """Понижает dpi, чтобы растр страницы влез в бюджет пикселей.
-
-        Размер страницы задаётся в самом PDF, спека допускает до 200x200
-        дюймов. На 150 dpi такая страница разворачивается в 2.7 ГБ, хотя
-        файл весит меньше килобайта. Возвращает None, если даже на
-        минимальном dpi страница не влезает — читать её всё равно нечем.
-        """
+        """Понижает dpi под бюджет пикселей. None — страница неподъёмная и на минимуме."""
         width_inches = page.rect.width / 72
         height_inches = page.rect.height / 72
         if width_inches <= 0 or height_inches <= 0:
@@ -149,11 +134,7 @@ class PDFParser(BaseResumeParser):
 
     @staticmethod
     def _ensure_pdf_signature(data: bytes) -> None:
-        """Расширение файла приходит от пользователя, содержимое не проверено.
-
-        Сигнатуру ищем не строго с нулевого байта: ридеры терпят мусор в
-        начале файла, и такие резюме реально встречаются.
-        """
+        """Ищем не с нулевого байта: ридеры терпят мусор в начале файла."""
         if PDF_SIGNATURE not in data[:PDF_SIGNATURE_SEARCH_BYTES]:
             logger.warning("Resume rejected: no PDF signature")
             raise ParserError("File is not a PDF")

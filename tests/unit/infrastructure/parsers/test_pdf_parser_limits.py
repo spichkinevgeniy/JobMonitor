@@ -1,9 +1,4 @@
-"""Защита от PDF-бомб: маленький файл не должен разворачиваться в гигабайты.
-
-Замер на коде до правок: 30 страниц по 40x40 дюймов — файл 5 КБ, но 3 ГБ в
-памяти и 17 секунд CPU. Сервер прода — 2 ГБ RAM без swap, то есть любой
-пользователь мог уронить процесс.
-"""
+"""Защита от PDF-бомб: маленький файл не должен разворачиваться в гигабайты."""
 
 import asyncio
 import io
@@ -47,7 +42,6 @@ class TestPageCountLimit:
     def test_rejects_before_rendering_anything(
         self, parser: PDFParser, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """Суть фикса: 500 страниц весят 80 КБ, рендерить их нельзя даже раз."""
         rendered = []
         monkeypatch.setattr(
             PDFParser, "_render_page", lambda self, page, dpi: rendered.append(page.number)
@@ -78,19 +72,16 @@ class TestPagePixelBudget:
         assert 40 * fitted * 40 * fitted <= MAX_PAGE_PIXELS
 
     def test_absurd_page_is_skipped(self, parser: PDFParser) -> None:
-        """200x200 дюймов — максимум по спеке PDF, на 150 dpi это 2.7 ГБ."""
         with fitz.open(stream=_make_pdf(1, 200, 200), filetype="pdf") as doc:
             assert parser._fit_dpi_to_budget(doc[0], 150) is None
 
     def test_degenerate_page_is_skipped(self, parser: PDFParser) -> None:
-        """Защитная ветка: сам fitz нулевой MediaBox правит на Letter,
-        поэтому такую страницу приходится подавать напрямую."""
+        """fitz правит нулевой MediaBox на Letter, поэтому подаём страницу напрямую."""
         page = SimpleNamespace(rect=SimpleNamespace(width=0.0, height=0.0))
 
         assert parser._fit_dpi_to_budget(page, 150) is None
 
     def test_bomb_stays_within_memory_budget(self, parser: PDFParser) -> None:
-        """Та самая бомба на 5 КБ, которая раньше давала 3 ГБ."""
         data = _make_pdf(MAX_RESUME_PAGES, 40, 40)
         assert len(data) < 100 * 1024
 
@@ -116,16 +107,13 @@ class TestSignatureCheck:
             await parser.extract_text(io.BytesIO(b""))
 
     def test_accepts_leading_junk_before_signature(self, parser: PDFParser) -> None:
-        """Ридеры терпят мусор в начале файла, и такие резюме встречаются."""
         parser._ensure_pdf_signature(b"\n\n" + _make_pdf(1, *A4_INCHES))
 
 
-class TestEventLoopIsFree:
-    async def test_rendering_does_not_block_event_loop(
+class TestRenderRunsOffLoop:
+    async def test_render_is_dispatched_to_thread(
         self, parser: PDFParser, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """Процесс один на бота, скрапер и рассылку — блокировать его нельзя."""
-
         def slow_render(data: bytes, dpi: int = 150) -> tuple[list, str]:
             time.sleep(0.5)
             return [], ""

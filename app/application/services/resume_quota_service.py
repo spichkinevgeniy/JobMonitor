@@ -1,9 +1,4 @@
-"""Кулдаун и дневная квота на загрузку резюме.
-
-Разбор одного резюме — это vision-запрос с десятком картинок, то есть
-прямые деньги. Ограничения тут не про падение сервиса (от него защищает
-захват на пользователя в роутере), а про стоимость.
-"""
+"""Кулдаун и дневная квота на загрузку резюме."""
 
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
@@ -32,7 +27,7 @@ class QuotaDecision:
 
     @property
     def retry_after_seconds(self) -> int:
-        """Округляем вверх: сказать «подождите 0 секунд» и снова отказать — плохо."""
+        """Округляем вверх, чтобы не отвечать «подождите 0 секунд»."""
         if self.retry_after is None:
             return 0
         return max(1, -(-int(self.retry_after.total_seconds()) // 1))
@@ -75,5 +70,5 @@ class ResumeQuotaService:
 
 
 def _as_utc(value: datetime) -> datetime:
-    """Postgres отдаёт timestamptz с зоной, но SQLite в тестах — наивный datetime."""
+    """Из БД дата может прийти без зоны."""
     return value if value.tzinfo is not None else value.replace(tzinfo=UTC)

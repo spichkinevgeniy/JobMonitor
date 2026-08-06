@@ -27,8 +27,7 @@ class FakeUserRepository:
     async def get_resume_upload_stats(
         self, tg_id: int, since: datetime
     ) -> tuple[int, datetime | None]:
-        # Сравнение по окну в проде делает Postgres, поэтому здесь приводим
-        # к UTC сами — но наружу отдаём значение как есть, включая наивное.
+        # Сравнение по окну в проде делает Postgres. Наружу отдаём как есть.
         mine = [item for item in self.uploads if _as_utc(item) >= since]
         return len(mine), max(self.uploads, key=_as_utc) if self.uploads else None
 
@@ -85,7 +84,6 @@ class TestCooldown:
         assert (await service.check(TG_ID)).allowed
 
     async def test_retry_after_never_reports_zero(self) -> None:
-        """Сказать «ждите 0 секунд» и снова отказать — худший вариант."""
         service, _ = _service([datetime.now(UTC) - COOLDOWN + timedelta(milliseconds=1)])
 
         decision = await service.check(TG_ID)
@@ -126,7 +124,6 @@ class TestDailyQuota:
         assert (await service.check(TG_ID)).allowed
 
     async def test_cooldown_wins_over_quota(self) -> None:
-        """Обе причины сразу: пользователю честнее назвать ближайшую."""
         now = datetime.now(UTC)
         uploads = [now - timedelta(seconds=index) for index in range(DAILY_QUOTA)]
         service, _ = _service(uploads)

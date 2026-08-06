@@ -1,8 +1,4 @@
-"""Глобальный потолок одновременных разборов.
-
-Захват на пользователя держит одного человека, но не общее число: десять
-аккаунтов давали десять параллельных разборов по ~120 МБ каждый.
-"""
+"""Глобальный потолок одновременных разборов."""
 
 import asyncio
 
@@ -40,8 +36,7 @@ async def test_admits_only_max_concurrent() -> None:
     release.set()
     results = await asyncio.gather(*tasks)
 
-    # Одновременно — не больше потолка, но дождавшиеся всё же обслуживаются:
-    # семафор ограничивает параллельность, а не общее число разборов.
+    # Семафор ограничивает параллельность, а не общее число разборов.
     assert peak == MAX_CONCURRENT_PARSES
     assert all(results)
 
@@ -64,7 +59,6 @@ async def test_refuses_instead_of_queueing_forever() -> None:
 
 
 async def test_slots_survive_refused_waiters() -> None:
-    """Отменённый по таймауту acquire не должен съедать разрешение."""
     release = asyncio.Event()
 
     async def holder() -> None:

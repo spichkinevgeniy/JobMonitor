@@ -60,8 +60,6 @@ router = Router()
 logger = get_app_logger(__name__)
 bot_logfire = logfire.with_tags("bot")
 
-# Пользователи с резюме в работе прямо сейчас. Держим в памяти, а не в FSM:
-# состояние читается диспетчером до входа в хендлер и от гонки не спасает.
 _active_resume_uploads: set[int] = set()
 
 
@@ -132,11 +130,8 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
             await message.answer(build_resume_file_too_large_text())
             return
 
-        # Захват до первого await. StateFilter диспетчер проверяет ещё до входа
-        # в хендлер, поэтому пачка файлов проходит FSM-защиту целиком: замер на
-        # реальном Dispatcher дал 5 из 5 одновременных обработок. Проверка и
-        # вставка ниже идут без await между ними, в однопоточном event loop это
-        # атомарно.
+        # Проверка и вставка без await между ними: FSM от гонки не спасает,
+        # её состояние диспетчер читает ещё до входа в хендлер.
         if tg_id is not None:
             if tg_id in _active_resume_uploads:
                 bot_logfire.info(
@@ -208,7 +203,7 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
                 )
                 await reset_to_menu(build_resume_context_error_text())
                 return
-            # Слот берём до скачивания: ожидающие не должны держать буферы.
+            # Слот до скачивания: ожидающие не держат буферы.
             async with acquire_parse_slot() as granted:
                 if not granted:
                     bot_logfire.warning(
@@ -218,7 +213,6 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
                     )
                     await reset_to_menu(build_resume_busy_text())
                     return
-                # Квоту тратим только когда реально начали работу.
                 if quota is not None and tg_id is not None:
                     await quota.register(tg_id)
                 await bot.download(document.file_id, destination=buffer)

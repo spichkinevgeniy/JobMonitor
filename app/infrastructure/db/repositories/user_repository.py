@@ -86,11 +86,7 @@ class UserRepository(IUserRepository):
     async def get_resume_upload_stats(
         self, tg_id: int, since: datetime
     ) -> tuple[int, datetime | None]:
-        """Сколько загрузок в окне и когда была последняя.
-
-        Кулдаун и квота нужны одновременно, поэтому берём одним запросом.
-        Последнюю загрузку ищем без окна: она может быть и старше него.
-        """
+        """Число загрузок в окне и время последней — она может быть старше окна."""
         result = await self._session.execute(
             select(
                 func.count().filter(ResumeUploadLogModel.uploaded_at >= since),

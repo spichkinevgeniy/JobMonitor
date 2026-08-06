@@ -1,10 +1,4 @@
-"""Одновременная отправка нескольких резюме одним пользователем.
-
-FSM-защиты тут мало: StateFilter вычисляется диспетчером до входа в хендлер,
-а Telegram отдаёт getUpdates пачкой. Замер на этом же стенде до фикса давал
-5 одновременных обработок из 5 отправленных — при потолке ~120 МБ на разбор
-это 600 МБ при 744 МБ свободных на проде.
-"""
+"""Одновременная отправка нескольких резюме одним пользователем."""
 
 import asyncio
 from collections.abc import AsyncIterator, Awaitable, Callable
@@ -52,7 +46,7 @@ class _AlwaysAllowQuota:
 
 @pytest.fixture
 def accepted(monkeypatch: pytest.MonkeyPatch) -> list[str]:
-    """Считаем, сколько загрузок дошло до разбора, и держим их в работе."""
+    """Считает загрузки, дошедшие до разбора, и держит их в работе."""
     reached: list[str] = []
 
     def fake_parser(file_name: str) -> object:
@@ -64,7 +58,7 @@ def accepted(monkeypatch: pytest.MonkeyPatch) -> list[str]:
 
     monkeypatch.setattr(resume_router.ParserFactory, "get_parser_by_extension", fake_parser)
     monkeypatch.setattr(Message, "answer", fake_answer)
-    # Квота живёт в БД, а тут проверяется только захват — пропускаем всех.
+    # Квота живёт в БД, тут проверяется только захват.
     monkeypatch.setattr(resume_router, "ResumeQuotaService", _AlwaysAllowQuota)
     resume_router._active_resume_uploads.clear()
     return reached
@@ -72,7 +66,7 @@ def accepted(monkeypatch: pytest.MonkeyPatch) -> list[str]:
 
 @pytest.fixture(scope="module")
 async def feed() -> AsyncIterator[Callable[[list[Update]], Awaitable[None]]]:
-    """Роутер модульный: к диспетчеру он цепляется ровно один раз, отсюда и scope."""
+    """Роутер модульный: к диспетчеру он цепляется один раз, отсюда и scope."""
     bot = Bot(token=BOT_TOKEN)
     dispatcher = Dispatcher()
     dispatcher.include_router(resume_router.router)
@@ -149,7 +143,6 @@ class TestQuotaBlocksProcessing:
         rejecting_quota: list[int],
         feed: Callable[[list[Update]], Awaitable[None]],
     ) -> None:
-        """Отказ не должен съедать квоту — иначе она не восстановится."""
         await feed([_make_update(1)])
 
         assert rejecting_quota == []
