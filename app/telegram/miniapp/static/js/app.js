@@ -354,21 +354,9 @@
 
     function renderWeekCard(data) {
       const countNode = root.querySelector("[data-stats-week-count]");
-      const deltaNode = root.querySelector("[data-stats-delta]");
       if (countNode) {
         countNode.textContent = String(data.current_week_count);
       }
-      if (!deltaNode) {
-        return;
-      }
-      if (data.delta_percent === null || data.delta_percent === undefined) {
-        deltaNode.classList.add("is-hidden");
-        return;
-      }
-      const isUp = data.delta_percent >= 0;
-      deltaNode.textContent = `${isUp ? "▲" : "▼"} ${isUp ? "+" : ""}${data.delta_percent}% к пред. неделе`;
-      deltaNode.classList.remove("is-hidden", "is-up", "is-down");
-      deltaNode.classList.add(isUp ? "is-up" : "is-down");
     }
 
     const DENSE_CHART_THRESHOLD = 10;

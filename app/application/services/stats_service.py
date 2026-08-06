@@ -45,7 +45,6 @@ class CompanyTypeCount:
 @dataclass(frozen=True, slots=True)
 class ProfileStats:
     current_week_count: int
-    previous_week_count: int
     trends: list[TrendSeries]
     company_breakdown: list[CompanyTypeCount]
     company_total: int
@@ -79,11 +78,6 @@ class StatsService:
                 matched,
                 now - timedelta(days=WEEK_DAYS),
                 now,
-            ),
-            previous_week_count=_count_between(
-                matched,
-                now - timedelta(days=2 * WEEK_DAYS),
-                now - timedelta(days=WEEK_DAYS),
             ),
             trends=[
                 TrendSeries(

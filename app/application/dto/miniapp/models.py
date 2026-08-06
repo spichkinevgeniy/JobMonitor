@@ -121,8 +121,6 @@ class StatsCompanyTypeResponse(BaseModel):
 class ProfileStatsResponse(BaseModel):
     has_profile: bool
     current_week_count: int
-    previous_week_count: int
-    delta_percent: int | None
     trends: list[StatsTrendSeriesResponse]
     company_breakdown: list[StatsCompanyTypeResponse]
     company_total: int

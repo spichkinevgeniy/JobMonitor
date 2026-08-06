@@ -358,19 +358,6 @@ body {
   gap: 4px;
 }
 
-.stats-card__head {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.stats-card__head > div {
-  flex: 1 1 180px;
-  min-width: 0;
-}
-
 .stats-card__eyebrow {
   margin: 0;
   color: var(--text-soft);
@@ -396,27 +383,6 @@ body {
   color: var(--text-soft);
   font-size: 13px;
   line-height: 1.4;
-}
-
-.stats-pill {
-  display: inline-flex;
-  align-items: center;
-  min-height: 26px;
-  padding: 5px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.stats-pill.is-up {
-  background: rgba(30, 142, 62, 0.1);
-  color: var(--success);
-}
-
-.stats-pill.is-down {
-  background: rgba(197, 57, 41, 0.1);
-  color: var(--danger);
 }
 
 .stats-card__toprow {

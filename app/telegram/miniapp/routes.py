@@ -300,8 +300,6 @@ def _to_stats_response(user: User, stats: ProfileStats) -> ProfileStatsResponse:
     return ProfileStatsResponse(
         has_profile=bool(user.cv_specializations.items and user.cv_skills.items),
         current_week_count=stats.current_week_count,
-        previous_week_count=stats.previous_week_count,
-        delta_percent=_delta_percent(stats.current_week_count, stats.previous_week_count),
         trends=[
             StatsTrendSeriesResponse(
                 granularity=series.granularity.value,
@@ -346,12 +344,6 @@ def _plural_form(amount: int, forms: tuple[str, str, str]) -> str:
     if remainder in (2, 3, 4):
         return few
     return many
-
-
-def _delta_percent(current: int, previous: int) -> int | None:
-    if previous == 0:
-        return None
-    return round((current - previous) * 100 / previous)
 
 
 def _work_format_choice(user: User) -> str:
