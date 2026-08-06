@@ -57,6 +57,7 @@ from app.telegram.miniapp.page_context import (
     build_stats_page_context,
     company_type_label,
 )
+from app.telegram.miniapp.throttle import register_export, seconds_until_export_allowed
 from app.telegram.miniapp.ui import templates
 
 router = APIRouter()
@@ -143,6 +144,15 @@ async def export_vacancies(
         export_format = ExportFormat(payload.export_format)
     except ValueError:
         raise HTTPException(status_code=400, detail="Неизвестный формат выгрузки.") from None
+
+    # Проверка и отметка без await между ними, иначе пачка запросов пройдёт целиком.
+    retry_after = seconds_until_export_allowed(user_context.tg_id)
+    if retry_after:
+        raise HTTPException(
+            status_code=429,
+            detail=f"Слишком часто. Повторите через {retry_after} с.",
+        )
+    register_export(user_context.tg_id)
 
     export_file = await service.build(user_context.tg_id, export_format)
     if export_file is None:
