@@ -352,13 +352,6 @@
       }
     }
 
-    function renderWeekCard(data) {
-      const countNode = root.querySelector("[data-stats-week-count]");
-      if (countNode) {
-        countNode.textContent = String(data.current_week_count);
-      }
-    }
-
     const DENSE_CHART_THRESHOLD = 10;
     let trendSeries = [];
     let toggleButtons = [];
@@ -420,18 +413,23 @@
 
     function renderTrendChart() {
       const chartNode = root.querySelector("[data-stats-chart]");
-      const titleNode = root.querySelector("[data-stats-chart-title]");
       const fromNode = root.querySelector("[data-stats-chart-from]");
+      const headlineValueNode = root.querySelector("[data-stats-headline-value]");
+      const headlineLabelNode = root.querySelector("[data-stats-headline-label]");
       const series = trendSeries.find((item) => item.granularity === activeGranularity);
       if (!chartNode || !series) {
         return;
       }
 
-      if (titleNode) {
-        titleNode.textContent = series.title;
+      const points = series.points;
+      const lastPoint = points.length > 0 ? points[points.length - 1] : null;
+      if (headlineValueNode) {
+        headlineValueNode.textContent = lastPoint ? String(lastPoint.count) : "0";
+      }
+      if (headlineLabelNode) {
+        headlineLabelNode.textContent = series.headline_label;
       }
 
-      const points = series.points;
       chartNode.textContent = "";
       chartNode.classList.toggle("stats-chart--dense", points.length > DENSE_CHART_THRESHOLD);
       const maxCount = points.reduce((max, point) => Math.max(max, point.count), 0);
@@ -477,7 +475,7 @@
     function renderCompanyBreakdown(data) {
       const listNode = root.querySelector("[data-stats-company]");
       const cardNode = root.querySelector("[data-stats-company-card]");
-      const noteNode = root.querySelector("[data-stats-company-note]");
+      const totalNode = root.querySelector("[data-stats-company-total]");
       if (!listNode || !cardNode) {
         return;
       }
@@ -509,8 +507,8 @@
         row.append(label, track);
         listNode.append(row);
       });
-      if (noteNode) {
-        noteNode.textContent = `Всего вакансий в выборке: ${data.company_total}. Тип определяется автоматически по тексту вакансии — иногда данных не хватает.`;
+      if (totalNode) {
+        totalNode.textContent = `Всего вакансий в выборке: ${data.company_total}.`;
       }
     }
 
@@ -549,7 +547,6 @@
           return;
         }
 
-        renderWeekCard(result);
         renderTrend(result.trends);
         renderCompanyBreakdown(result);
         if (cardsNode) {

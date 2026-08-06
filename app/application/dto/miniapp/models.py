@@ -108,7 +108,7 @@ class StatsTrendPointResponse(BaseModel):
 class StatsTrendSeriesResponse(BaseModel):
     granularity: str
     toggle_label: str
-    title: str
+    headline_label: str
     points: list[StatsTrendPointResponse]
 
 
@@ -120,7 +120,6 @@ class StatsCompanyTypeResponse(BaseModel):
 
 class ProfileStatsResponse(BaseModel):
     has_profile: bool
-    current_week_count: int
     trends: list[StatsTrendSeriesResponse]
     company_breakdown: list[StatsCompanyTypeResponse]
     company_total: int

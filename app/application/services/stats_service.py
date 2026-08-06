@@ -44,7 +44,6 @@ class CompanyTypeCount:
 
 @dataclass(frozen=True, slots=True)
 class ProfileStats:
-    current_week_count: int
     trends: list[TrendSeries]
     company_breakdown: list[CompanyTypeCount]
     company_total: int
@@ -74,11 +73,6 @@ class StatsService:
         company_breakdown = _build_company_breakdown(matched, now)
 
         return ProfileStats(
-            current_week_count=_count_between(
-                matched,
-                now - timedelta(days=WEEK_DAYS),
-                now,
-            ),
             trends=[
                 TrendSeries(
                     granularity=TrendGranularity.WEEK,

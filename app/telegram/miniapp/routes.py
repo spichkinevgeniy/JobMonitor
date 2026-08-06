@@ -27,7 +27,6 @@ from app.application.services.stats_service import (
     ProfileStats,
     StatsService,
     TrendGranularity,
-    TrendSeries,
 )
 from app.application.services.user_service import UserService
 from app.domain.shared.value_objects import ExperienceLevel, Grade, WorkFormat
@@ -290,21 +289,22 @@ _TREND_TOGGLE_LABELS = {
     TrendGranularity.WEEK: "Недели",
     TrendGranularity.DAY: "Дни",
 }
-_TREND_UNIT_FORMS = {
-    TrendGranularity.WEEK: ("неделя", "недели", "недель"),
-    TrendGranularity.DAY: ("день", "дня", "дней"),
+# Бакеты скользящие (от «сейчас» назад), а не календарные, поэтому пишем
+# «за последние 7 дней», а не «за эту неделю».
+_TREND_HEADLINE_LABELS = {
+    TrendGranularity.WEEK: "за последние 7 дней",
+    TrendGranularity.DAY: "за последние сутки",
 }
 
 
 def _to_stats_response(user: User, stats: ProfileStats) -> ProfileStatsResponse:
     return ProfileStatsResponse(
         has_profile=bool(user.cv_specializations.items and user.cv_skills.items),
-        current_week_count=stats.current_week_count,
         trends=[
             StatsTrendSeriesResponse(
                 granularity=series.granularity.value,
                 toggle_label=_TREND_TOGGLE_LABELS[series.granularity],
-                title=_trend_title(series),
+                headline_label=_TREND_HEADLINE_LABELS[series.granularity],
                 points=[
                     StatsTrendPointResponse(
                         label=point.bucket_start.strftime("%d.%m"),
@@ -325,25 +325,6 @@ def _to_stats_response(user: User, stats: ProfileStats) -> ProfileStatsResponse:
         ],
         company_total=stats.company_total,
     )
-
-
-def _trend_title(series: TrendSeries) -> str:
-    amount = len(series.points)
-    unit = _plural_form(amount, _TREND_UNIT_FORMS[series.granularity])
-    return f"последние {amount} {unit}"
-
-
-def _plural_form(amount: int, forms: tuple[str, str, str]) -> str:
-    """Русское склонение: 1 неделя, 2 недели, 5 недель."""
-    one, few, many = forms
-    if amount % 100 in range(11, 15):
-        return many
-    remainder = amount % 10
-    if remainder == 1:
-        return one
-    if remainder in (2, 3, 4):
-        return few
-    return many
 
 
 def _work_format_choice(user: User) -> str:

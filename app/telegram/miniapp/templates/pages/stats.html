@@ -16,19 +16,14 @@
 
   <div class="stats-cards is-hidden" data-stats-cards>
     <section class="filter-card stats-card">
-      <p class="stats-card__eyebrow">За эту неделю</p>
-      <p class="stats-card__value" data-stats-week-count>0</p>
-      <p class="stats-card__caption">
-        вакансий подошло под ваш профиль: специализация, скиллы, зарплата, формат, грейд
-      </p>
-    </section>
-
-    <section class="filter-card stats-card">
       <div class="stats-card__toprow">
-        <p class="stats-card__eyebrow">Тренд по вашему профилю</p>
+        <p class="stats-card__eyebrow">Вакансии под ваш профиль</p>
         <div class="trend-toggle" role="group" aria-label="Гранулярность графика" data-stats-toggle></div>
       </div>
-      <p class="stats-card__title" data-stats-chart-title></p>
+      <p class="stats-headline">
+        <span class="stats-headline__value" data-stats-headline-value>0</span>
+        <span class="stats-headline__unit" data-stats-headline-label></span>
+      </p>
       <div class="stats-chart" data-stats-chart></div>
       <div class="stats-chart__axis">
         <span data-stats-chart-from></span>
@@ -38,9 +33,10 @@
 
     <section class="filter-card stats-card" data-stats-company-card>
       <p class="stats-card__eyebrow">Кто чаще всего нанимает</p>
-      <p class="stats-card__title">типы компаний среди подходящих вакансий · 30 дней</p>
+      <p class="stats-card__title">Какие вакансии падают вам в ленту · 30 дней</p>
       <div class="stats-bars" data-stats-company></div>
-      <p class="input-caption" data-stats-company-note>
+      <p class="input-caption" data-stats-company-total></p>
+      <p class="input-caption">
         Тип определяется автоматически по тексту вакансии — иногда данных не хватает.
       </p>
     </section>
