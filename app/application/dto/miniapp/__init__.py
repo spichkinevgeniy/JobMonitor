@@ -17,6 +17,7 @@ from app.application.dto.miniapp.models import (
     SpecialtySaveRequest,
     StatsCompanyTypeResponse,
     StatsTrendPointResponse,
+    StatsTrendSeriesResponse,
     WorkFormatChoice,
     parse_miniapp_payload,
 )
@@ -40,6 +41,7 @@ __all__ = [
     "SpecialtySaveRequest",
     "StatsCompanyTypeResponse",
     "StatsTrendPointResponse",
+    "StatsTrendSeriesResponse",
     "WorkFormatChoice",
     "parse_miniapp_payload",
 ]

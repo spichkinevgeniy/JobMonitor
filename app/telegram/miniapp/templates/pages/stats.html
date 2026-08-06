@@ -29,8 +29,11 @@
     </section>
 
     <section class="filter-card stats-card">
-      <p class="stats-card__eyebrow">Тренд по вашему профилю</p>
-      <p class="stats-card__title">последние 8 недель</p>
+      <div class="stats-card__toprow">
+        <p class="stats-card__eyebrow">Тренд по вашему профилю</p>
+        <div class="trend-toggle" role="group" aria-label="Гранулярность графика" data-stats-toggle></div>
+      </div>
+      <p class="stats-card__title" data-stats-chart-title></p>
       <div class="stats-chart" data-stats-chart></div>
       <div class="stats-chart__axis">
         <span data-stats-chart-from></span>

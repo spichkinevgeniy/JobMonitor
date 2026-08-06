@@ -1,6 +1,7 @@
 from collections import Counter
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
+from enum import StrEnum
 
 from app.application.ports.unit_of_work import VacancyUnitOfWork
 from app.domain.matching.policy import evaluate_match
@@ -10,13 +11,29 @@ from app.domain.vacancy.entities import Vacancy
 
 WEEK_DAYS = 7
 TREND_WEEKS = 8
+TREND_DAYS = 14
 COMPANY_BREAKDOWN_DAYS = 30
+
+# Окно выборки берём по самой длинной гранулярности: 8 недель покрывают и 14 дней,
+# поэтому на страницу хватает одного запроса в БД.
+FETCH_DAYS = max(TREND_WEEKS * WEEK_DAYS, TREND_DAYS, COMPANY_BREAKDOWN_DAYS)
+
+
+class TrendGranularity(StrEnum):
+    WEEK = "week"
+    DAY = "day"
 
 
 @dataclass(frozen=True, slots=True)
 class TrendPoint:
-    week_start: date
+    bucket_start: date
     count: int
+
+
+@dataclass(frozen=True, slots=True)
+class TrendSeries:
+    granularity: TrendGranularity
+    points: list[TrendPoint]
 
 
 @dataclass(frozen=True, slots=True)
@@ -29,7 +46,7 @@ class CompanyTypeCount:
 class ProfileStats:
     current_week_count: int
     previous_week_count: int
-    trend: list[TrendPoint]
+    trends: list[TrendSeries]
     company_breakdown: list[CompanyTypeCount]
     company_total: int
 
@@ -46,13 +63,12 @@ class StatsService:
 
     async def build_profile_stats(self, user: User) -> ProfileStats:
         now = datetime.now(UTC)
-        since = now - timedelta(days=TREND_WEEKS * WEEK_DAYS)
 
         async with self._uow:
             vacancies = await self._uow.vacancies.find_for_profile_since(
                 specializations={item.value for item in user.cv_specializations.items},
                 skills={item.value for item in user.cv_skills.items},
-                since=since,
+                since=now - timedelta(days=FETCH_DAYS),
             )
 
         matched = [item for item in vacancies if evaluate_match(vacancy=item, user=user).accepted]
@@ -69,7 +85,16 @@ class StatsService:
                 now - timedelta(days=2 * WEEK_DAYS),
                 now - timedelta(days=WEEK_DAYS),
             ),
-            trend=_build_trend(matched, now),
+            trends=[
+                TrendSeries(
+                    granularity=TrendGranularity.WEEK,
+                    points=_build_trend(matched, now, TREND_WEEKS, WEEK_DAYS),
+                ),
+                TrendSeries(
+                    granularity=TrendGranularity.DAY,
+                    points=_build_trend(matched, now, TREND_DAYS, 1),
+                ),
+            ],
             company_breakdown=company_breakdown,
             company_total=sum(item.count for item in company_breakdown),
         )
@@ -79,14 +104,19 @@ def _count_between(vacancies: list[Vacancy], start: datetime, end: datetime) -> 
     return sum(1 for item in vacancies if start <= item.created_at < end)
 
 
-def _build_trend(vacancies: list[Vacancy], now: datetime) -> list[TrendPoint]:
+def _build_trend(
+    vacancies: list[Vacancy],
+    now: datetime,
+    bucket_count: int,
+    bucket_days: int,
+) -> list[TrendPoint]:
     points: list[TrendPoint] = []
-    for index in reversed(range(TREND_WEEKS)):
-        end = now - timedelta(days=index * WEEK_DAYS)
-        start = end - timedelta(days=WEEK_DAYS)
+    for index in reversed(range(bucket_count)):
+        end = now - timedelta(days=index * bucket_days)
+        start = end - timedelta(days=bucket_days)
         points.append(
             TrendPoint(
-                week_start=start.date(),
+                bucket_start=start.date(),
                 count=_count_between(vacancies, start, end),
             )
         )

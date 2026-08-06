@@ -101,8 +101,15 @@ class SaveResponse(BaseModel):
 
 
 class StatsTrendPointResponse(BaseModel):
-    week_label: str
+    label: str
     count: int
+
+
+class StatsTrendSeriesResponse(BaseModel):
+    granularity: str
+    toggle_label: str
+    title: str
+    points: list[StatsTrendPointResponse]
 
 
 class StatsCompanyTypeResponse(BaseModel):
@@ -116,7 +123,7 @@ class ProfileStatsResponse(BaseModel):
     current_week_count: int
     previous_week_count: int
     delta_percent: int | None
-    trend: list[StatsTrendPointResponse]
+    trends: list[StatsTrendSeriesResponse]
     company_breakdown: list[StatsCompanyTypeResponse]
     company_total: int
 

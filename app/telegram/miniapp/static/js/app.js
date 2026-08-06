@@ -371,34 +371,119 @@
       deltaNode.classList.add(isUp ? "is-up" : "is-down");
     }
 
-    function renderTrend(points) {
-      const chartNode = root.querySelector("[data-stats-chart]");
-      const fromNode = root.querySelector("[data-stats-chart-from]");
-      if (!chartNode) {
+    const DENSE_CHART_THRESHOLD = 10;
+    let trendSeries = [];
+    let toggleButtons = [];
+    let activeGranularity = "";
+    let selectedPointIndex = -1;
+
+    function buildTrendToggle() {
+      const toggleNode = root.querySelector("[data-stats-toggle]");
+      if (!toggleNode) {
         return;
       }
+      toggleNode.textContent = "";
+      toggleButtons = [];
+      if (trendSeries.length < 2) {
+        toggleNode.classList.add("is-hidden");
+        return;
+      }
+      toggleNode.classList.remove("is-hidden");
+      trendSeries.forEach((series) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "trend-toggle__item";
+        button.textContent = series.toggle_label;
+        button.dataset.granularity = series.granularity;
+        button.addEventListener("click", () => {
+          if (series.granularity === activeGranularity) {
+            return;
+          }
+          activeGranularity = series.granularity;
+          selectedPointIndex = -1;
+          syncTrendToggle();
+          renderTrendChart();
+        });
+        toggleButtons.push(button);
+        toggleNode.append(button);
+      });
+      syncTrendToggle();
+    }
+
+    // Обновляем состояние на месте, не пересоздавая кнопки: иначе при работе
+    // с клавиатуры фокус слетает с нажатой кнопки.
+    function syncTrendToggle() {
+      toggleButtons.forEach((button) => {
+        const isActive = button.dataset.granularity === activeGranularity;
+        button.classList.toggle("is-active", isActive);
+        button.setAttribute("aria-pressed", String(isActive));
+      });
+    }
+
+    function selectTrendPoint(index) {
+      selectedPointIndex = selectedPointIndex === index ? -1 : index;
+      const columns = root.querySelectorAll("[data-stats-chart] .stats-chart__col");
+      columns.forEach((column, columnIndex) => {
+        const isSelected = columnIndex === selectedPointIndex;
+        column.classList.toggle("is-selected", isSelected);
+        column.setAttribute("aria-pressed", String(isSelected));
+      });
+    }
+
+    function renderTrendChart() {
+      const chartNode = root.querySelector("[data-stats-chart]");
+      const titleNode = root.querySelector("[data-stats-chart-title]");
+      const fromNode = root.querySelector("[data-stats-chart-from]");
+      const series = trendSeries.find((item) => item.granularity === activeGranularity);
+      if (!chartNode || !series) {
+        return;
+      }
+
+      if (titleNode) {
+        titleNode.textContent = series.title;
+      }
+
+      const points = series.points;
       chartNode.textContent = "";
+      chartNode.classList.toggle("stats-chart--dense", points.length > DENSE_CHART_THRESHOLD);
       const maxCount = points.reduce((max, point) => Math.max(max, point.count), 0);
-      points.forEach((point) => {
-        const column = document.createElement("div");
+
+      points.forEach((point, index) => {
+        const column = document.createElement("button");
+        column.type = "button";
         column.className = "stats-chart__col";
-        column.title = `${point.week_label}: ${point.count}`;
+        column.setAttribute("aria-pressed", "false");
+        column.setAttribute("aria-label", `${point.label}: ${point.count}`);
+
+        const value = document.createElement("span");
+        value.className = "stats-chart__value";
+        value.textContent = String(point.count);
 
         const bar = document.createElement("div");
         bar.className = "stats-chart__bar";
         const ratio = maxCount > 0 ? point.count / maxCount : 0;
         bar.style.height = `${Math.max(ratio * 100, point.count > 0 ? 6 : 2)}%`;
 
-        const value = document.createElement("span");
-        value.className = "stats-chart__value";
-        value.textContent = String(point.count);
+        const tip = document.createElement("span");
+        tip.className = "stats-chart__tip";
+        tip.textContent = point.label;
 
-        column.append(value, bar);
+        column.append(value, bar, tip);
+        column.addEventListener("click", () => selectTrendPoint(index));
         chartNode.append(column);
       });
+
       if (fromNode && points.length > 0) {
-        fromNode.textContent = `с ${points[0].week_label}`;
+        fromNode.textContent = `с ${points[0].label}`;
       }
+    }
+
+    function renderTrend(series) {
+      trendSeries = Array.isArray(series) ? series : [];
+      activeGranularity = trendSeries.length > 0 ? trendSeries[0].granularity : "";
+      selectedPointIndex = -1;
+      buildTrendToggle();
+      renderTrendChart();
     }
 
     function renderCompanyBreakdown(data) {
@@ -477,7 +562,7 @@
         }
 
         renderWeekCard(result);
-        renderTrend(result.trend);
+        renderTrend(result.trends);
         renderCompanyBreakdown(result);
         if (cardsNode) {
           cardsNode.classList.remove("is-hidden");
