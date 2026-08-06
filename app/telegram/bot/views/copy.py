@@ -146,6 +146,10 @@ def build_resume_daily_quota_text(quota: int) -> str:
     )
 
 
+def build_resume_busy_text() -> str:
+    return "Сейчас разбираем другие резюме. Попробуйте через пару минут."
+
+
 def build_resume_parser_error_text() -> str:
     return "Не удалось разобрать файл."
 

@@ -21,6 +21,7 @@ from app.infrastructure.parsers import (
     ParserFactory,
     TooManyPagesError,
 )
+from app.infrastructure.parsers.concurrency import acquire_parse_slot
 from app.telegram.bot.keyboards import (
     CANCEL_BUTTON_TEXT,
     HELP_BUTTON_TEXT,
@@ -33,6 +34,7 @@ from app.telegram.bot.keyboards import (
 from app.telegram.bot.states import BotStates
 from app.telegram.bot.views import (
     build_main_menu_fallback_text,
+    build_resume_busy_text,
     build_resume_cancel_text,
     build_resume_context_error_text,
     build_resume_cooldown_text,
@@ -159,6 +161,7 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
         try:
             await state.set_state(BotStates.processing_resume)
 
+            quota: ResumeQuotaService | None = None
             if tg_id is not None:
                 quota = ResumeQuotaService(UserUnitOfWork(async_session_factory))
                 decision = await quota.check(tg_id)
@@ -176,8 +179,6 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
                     else:
                         await reset_to_menu(build_resume_daily_quota_text(DAILY_QUOTA))
                     return
-                # Пишем до разбора: иначе битым файлом можно ходить по кругу.
-                await quota.register(tg_id)
 
             parser = ParserFactory.get_parser_by_extension(file_name)
             processing_message = await message.answer(
@@ -207,8 +208,21 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
                 )
                 await reset_to_menu(build_resume_context_error_text())
                 return
-            await bot.download(document.file_id, destination=buffer)
-            dto = await parser.extract_text(buffer)
+            # Слот берём до скачивания: ожидающие не должны держать буферы.
+            async with acquire_parse_slot() as granted:
+                if not granted:
+                    bot_logfire.warning(
+                        "Resume rejected: no free parse slot",
+                        tg_id=tg_id,
+                        file_name=file_name,
+                    )
+                    await reset_to_menu(build_resume_busy_text())
+                    return
+                # Квоту тратим только когда реально начали работу.
+                if quota is not None and tg_id is not None:
+                    await quota.register(tg_id)
+                await bot.download(document.file_id, destination=buffer)
+                dto = await parser.extract_text(buffer)
 
             service = UserService(UserUnitOfWork(async_session_factory))
             updated = await service.update_resume(user.id, dto)
