@@ -1,0 +1,5533 @@
+[
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps"
+  ],
+  "salary_amount": 120000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1440.0
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "Node.js",
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1427.4
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "SRE",
+   "DevOps"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1426.32
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "PHP",
+   "Go",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1425.46
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1424.33
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1423.32
+ },
+ {
+  "specializations": [
+   "Mobile",
+   "Frontend"
+  ],
+  "skills": [
+   "TypeScript",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "INTERN",
+  "experience_level": "NO_EXPERIENCE",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1422.97
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "Unreal Engine",
+   "Graphics"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1422.14
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps"
+  ],
+  "salary_amount": 190000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1420.91
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1419.32
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1418.71
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "iOS"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1417.17
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "Data Analysis",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1416.22
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": 60000,
+  "salary_currency": "RUB",
+  "grade": "INTERN",
+  "experience_level": "NO_EXPERIENCE",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1405.05
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "PHP",
+   "Go",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1403.48
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "iOS"
+  ],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1402.78
+ },
+ {
+  "specializations": [
+   "QA",
+   "Backend"
+  ],
+  "skills": [
+   "QA Automation",
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1402.16
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Computer Vision",
+   "Machine Learning"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1401.31
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1400.82
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps"
+  ],
+  "salary_amount": 270000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1400.21
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Machine Learning",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1399.52
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "DevOps"
+  ],
+  "salary_amount": 350000,
+  "salary_currency": "RUB",
+  "grade": "LEAD",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1398.3
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1396.16
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1395.25
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1394.36
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "C#",
+   "Unity"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1393.79
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Machine Learning",
+   "SQL"
+  ],
+  "salary_amount": 270000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1392.25
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "PHP"
+  ],
+  "salary_amount": 250000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1391.51
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1380.32
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Python",
+   "QA Automation"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1379.08
+ },
+ {
+  "specializations": [
+   "GameDev",
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "C#",
+   "DevOps",
+   "Unity"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1377.81
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "DevOps",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1376.61
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1375.69
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1374.32
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "Node.js",
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1373.29
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "Unity"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1372.32
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "iOS"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1371.32
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1370.71
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1369.82
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "Node.js",
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1368.54
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1367.47
+ },
+ {
+  "specializations": [
+   "Data Science / ML",
+   "Frontend"
+  ],
+  "skills": [
+   "React"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1357.32
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1355.79
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "INTERN",
+  "experience_level": "NO_EXPERIENCE",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1355.48
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Machine Learning",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1354.62
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "DevOps",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1353.38
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1352.77
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go",
+   "Machine Learning",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1352.08
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "Unreal Engine"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1350.94
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": 60000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1349.27
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "Data Analysis",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1347.82
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "Data Analysis",
+   "SQL"
+  ],
+  "salary_amount": 70000,
+  "salary_currency": "RUB",
+  "grade": "UNDEFINED",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1347.12
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "JUNIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1344.27
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "Data Analysis",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1342.31
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1331.49
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1331.47
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1329.3
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "Node.js",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1328.32
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "React Native"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "JUNIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1327.32
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "Angular"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1326.02
+ },
+ {
+  "specializations": [
+   "Data Science / ML",
+   "Backend"
+  ],
+  "skills": [
+   "Machine Learning",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1322.7
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "iOS"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1321.11
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "PHP"
+  ],
+  "salary_amount": 250000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1319.62
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "Node.js",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1309.32
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C++",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1307.25
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go",
+   "DevOps",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1305.11
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": 60000,
+  "salary_currency": "RUB",
+  "grade": "JUNIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1303.31
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": 60000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1299.2
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1285.31
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1280.86
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "DevOps",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1278.68
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Machine Learning",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1260.31
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "Angular",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1259.29
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": 230000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1258.43
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "Graphics"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1257.19
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "INTERN",
+  "experience_level": "NO_EXPERIENCE",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1255.77
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "Node.js",
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1255.18
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "Manual QA"
+  ],
+  "salary_amount": 190000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1254.31
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1253.99
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1251.93
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "Data Analysis",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1251.27
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "Angular",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1248.62
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "Machine Learning",
+   "Data Analysis"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1247.68
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Machine Learning",
+   "NLP",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1237.31
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1235.49
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "Kotlin",
+   "Android"
+  ],
+  "salary_amount": 260000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1235.47
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "PHP",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1235.13
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "SQL",
+   "Manual QA"
+  ],
+  "salary_amount": 130000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1234.52
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "Unity"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1233.79
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Machine Learning",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1233.23
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "Data Analysis"
+  ],
+  "salary_amount": 250000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1232.5
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go",
+   "DevOps",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1231.81
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": 90000,
+  "salary_currency": "RUB",
+  "grade": "JUNIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1231.31
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1230.32
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Go",
+   "Python",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1228.74
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "INTERN",
+  "experience_level": "NO_EXPERIENCE",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1227.32
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "iOS"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1226.49
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "SRE",
+   "System Administration",
+   "DevOps"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1224.5
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go"
+  ],
+  "salary_amount": 320000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1224.23
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1212.31
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "Data Analysis",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1211.49
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "Kotlin",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "JUNIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1211.41
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "C++",
+   "Unreal Engine",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1209.64
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "DevOps",
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1209.12
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "Angular",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1208.32
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1207.66
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Machine Learning"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1206.77
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1206.19
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1204.99
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1203.32
+ },
+ {
+  "specializations": [
+   "GameDev",
+   "Backend"
+  ],
+  "skills": [
+   "Go",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1202.98
+ },
+ {
+  "specializations": [
+   "Data Science / ML",
+   "Backend"
+  ],
+  "skills": [
+   "Kotlin",
+   "Machine Learning",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1202.54
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1202.1
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C++"
+  ],
+  "salary_amount": 150000,
+  "salary_currency": "RUB",
+  "grade": "JUNIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1200.3
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1193.91
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "SQL"
+  ],
+  "salary_amount": 100000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1188.35
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [],
+  "salary_amount": 249000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1187.48
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "PHP",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1187.0
+ },
+ {
+  "specializations": [
+   "Data Science / ML",
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "DevOps",
+   "Machine Learning",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1185.63
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1185.09
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "DevOps",
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1184.32
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Manual QA"
+  ],
+  "salary_amount": 1000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1183.73
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "DevOps",
+   "Machine Learning",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1182.85
+ },
+ {
+  "specializations": [
+   "Mobile",
+   "Backend"
+  ],
+  "skills": [
+   "iOS"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1182.15
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "SQL"
+  ],
+  "salary_amount": 140000,
+  "salary_currency": "RUB",
+  "grade": "JUNIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1181.06
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Kotlin",
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1179.14
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "iOS"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1176.81
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "PHP",
+   "SQL"
+  ],
+  "salary_amount": 250000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1176.29
+ },
+ {
+  "specializations": [
+   "Data Science / ML",
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "Machine Learning",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1165.31
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": 250000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1163.71
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Data Analysis",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1163.49
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "PHP"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "INTERN",
+  "experience_level": "NO_EXPERIENCE",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1162.95
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "Java/Scala",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1161.41
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1160.45
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1159.96
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1158.89
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "SQL"
+  ],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1157.64
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1157.1
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "SQL"
+  ],
+  "salary_amount": 250000,
+  "salary_currency": "RUB",
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1155.31
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Java/Scala",
+   "SQL"
+  ],
+  "salary_amount": 140000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1153.81
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Kotlin",
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": 300000,
+  "salary_currency": "RUB",
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1152.26
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Manual QA"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "JUNIOR",
+  "experience_level": "NO_EXPERIENCE",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1148.64
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "Data Analysis",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1139.49
+ },
+ {
+  "specializations": [
+   "QA",
+   "Mobile"
+  ],
+  "skills": [
+   "Kotlin",
+   "QA Automation",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1139.48
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1137.21
+ },
+ {
+  "specializations": [
+   "Data Science / ML",
+   "Backend"
+  ],
+  "skills": [
+   "Machine Learning",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1135.84
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": 180000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1131.31
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "INTERN",
+  "experience_level": "NO_EXPERIENCE",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1115.49
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1112.32
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Machine Learning"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1108.62
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1105.24
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "INTERN",
+  "experience_level": "NO_EXPERIENCE",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1091.49
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Machine Learning",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1090.81
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "Graphics"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1088.34
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1087.95
+ },
+ {
+  "specializations": [
+   "QA",
+   "Mobile"
+  ],
+  "skills": [
+   "Kotlin",
+   "QA Automation",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1087.49
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1086.72
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "Flutter"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1084.69
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "SQL",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1083.03
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C++"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1080.99
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1080.26
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Machine Learning",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1080.11
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1068.16
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1067.49
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go",
+   "DevOps",
+   "SQL"
+  ],
+  "salary_amount": 270000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1066.84
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "SQL"
+  ],
+  "salary_amount": 250000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1065.52
+ },
+ {
+  "specializations": [
+   "Data Science / ML",
+   "Analytics"
+  ],
+  "skills": [
+   "Machine Learning",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1065.24
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "SQL",
+   "System Administration"
+  ],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1064.92
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Kotlin",
+   "QA Automation"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1064.35
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go",
+   "SQL"
+  ],
+  "salary_amount": 100000,
+  "salary_currency": "RUB",
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1063.32
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Python",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1062.95
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Manual QA"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1062.07
+ },
+ {
+  "specializations": [
+   "GameDev",
+   "QA"
+  ],
+  "skills": [
+   "Manual QA"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1061.26
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Node.js",
+   "SQL",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1059.77
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "PHP"
+  ],
+  "salary_amount": 120000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1059.32
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "Unity"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1057.26
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1056.27
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Python",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1044.49
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "DevOps",
+   "Java/Scala",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1043.49
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1043.47
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": 130000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1042.53
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "Node.js",
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1041.99
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Machine Learning",
+   "NLP"
+  ],
+  "salary_amount": 190000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1041.61
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "DevOps",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1040.9
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Machine Learning",
+   "NLP"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1040.31
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "Unreal Engine"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1039.99
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1039.32
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1038.41
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "Node.js",
+   "Angular",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1037.32
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Data Analysis",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1035.98
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "React",
+   "React Native",
+   "TypeScript"
+  ],
+  "salary_amount": 300000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1035.07
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1034.54
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "System Administration"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1033.71
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1032.3
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1021.32
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "Node.js",
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1020.89
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1019.49
+ },
+ {
+  "specializations": [
+   "Data Science / ML",
+   "QA"
+  ],
+  "skills": [
+   "Machine Learning",
+   "QA Automation"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1019.48
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "Vue"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1019.24
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "C#",
+   "QA Automation",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1017.86
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "Manual QA"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1017.29
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1016.32
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": 115000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1015.31
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": 150000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1014.2
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1012.7
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "iOS"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1011.54
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#"
+  ],
+  "salary_amount": 120000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1010.63
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "PHP",
+   "SQL"
+  ],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1009.08
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "PHP",
+   "SQL"
+  ],
+  "salary_amount": 400000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 1008.23
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "PHP",
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 996.15
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 995.49
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "SQL"
+  ],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 995.38
+ },
+ {
+  "specializations": [
+   "QA",
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps",
+   "QA Automation"
+  ],
+  "salary_amount": 150000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 995.02
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": 195000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 994.09
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 993.1
+ },
+ {
+  "specializations": [
+   "QA",
+   "Mobile"
+  ],
+  "skills": [
+   "Kotlin",
+   "QA Automation",
+   "Android"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 992.34
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C++",
+   "C"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 991.73
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "INTERN",
+  "experience_level": "NO_EXPERIENCE",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 991.06
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "Node.js",
+   "Go",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 990.07
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "Node.js",
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 988.59
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "DevOps",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": 256000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 987.77
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Machine Learning",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 986.87
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 984.26
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "SRE",
+   "DevOps"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 982.31
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "SQL"
+  ],
+  "salary_amount": 300000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 972.31
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 971.48
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "DevOps",
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 969.66
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Machine Learning",
+   "DevOps",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 968.32
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "Angular",
+   "TypeScript"
+  ],
+  "salary_amount": 300000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 966.39
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "Vue",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 962.71
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "JUNIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 949.32
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C++"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 946.32
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 943.77
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "DevOps",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 939.26
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "DevOps",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 924.3
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "Kotlin",
+   "Flutter",
+   "iOS"
+  ],
+  "salary_amount": 150000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 923.48
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 921.51
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "Node.js",
+   "React"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 921.11
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "SRE",
+   "DevOps",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 920.1
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "Node.js",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 919.31
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "Angular"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 917.8
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "SQL"
+  ],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 916.23
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "LEAD",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 915.23
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 914.53
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "PHP"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 912.49
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 910.66
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "Node.js"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 901.04
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 899.56
+ },
+ {
+  "specializations": [
+   "QA",
+   "Mobile"
+  ],
+  "skills": [
+   "Android",
+   "QA Automation",
+   "iOS"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 899.48
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "PHP"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 898.74
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": 50000,
+  "salary_currency": "RUB",
+  "grade": "JUNIOR",
+  "experience_level": "NO_EXPERIENCE",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 898.03
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "Data Analysis"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 897.29
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "Java/Scala"
+  ],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 896.31
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "Unity",
+   "Graphics"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 895.84
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "DevOps",
+   "SQL"
+  ],
+  "salary_amount": 250000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 895.11
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Manual QA"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 894.39
+ },
+ {
+  "specializations": [
+   "Data Science / ML",
+   "Backend"
+  ],
+  "skills": [
+   "Go",
+   "Machine Learning",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 893.46
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 892.98
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 892.18
+ },
+ {
+  "specializations": [
+   "Analytics",
+   "Backend"
+  ],
+  "skills": [
+   "SQL"
+  ],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 889.79
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Kotlin",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 888.29
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 888.23
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 875.68
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 875.42
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 874.86
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 874.04
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "Kotlin",
+   "DevOps",
+   "Android"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 873.52
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "SRE",
+   "System Administration",
+   "DevOps"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 873.19
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "Unreal Engine"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "INTERN",
+  "experience_level": "NO_EXPERIENCE",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 872.98
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 872.46
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 871.43
+ },
+ {
+  "specializations": [
+   "Mobile",
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "TypeScript",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "INTERN",
+  "experience_level": "NO_EXPERIENCE",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 871.04
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "C#",
+   "Unity"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 870.29
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Ruby"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 868.9
+ },
+ {
+  "specializations": [
+   "QA",
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "DevOps",
+   "QA Automation"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 867.52
+ },
+ {
+  "specializations": [
+   "Data Science / ML",
+   "Backend"
+  ],
+  "skills": [
+   "Machine Learning",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 866.7
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "SRE",
+   "System Administration",
+   "DevOps"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 865.19
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 864.23
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "PHP"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 491.27
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "TypeScript",
+   "React"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 98.58
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "SQL",
+   "Data Analysis"
+  ],
+  "salary_amount": 330000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 83.54
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps"
+  ],
+  "salary_amount": 4000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 83.13
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 82.74
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 81.92
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Kotlin",
+   "QA Automation",
+   "Manual QA"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "UNDEFINED",
+  "hours_ago": 80.85
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Node.js"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 79.53
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "C#",
+   "QA Automation"
+  ],
+  "salary_amount": 168000,
+  "salary_currency": "RUB",
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 79.11
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Manual QA",
+   "QA Automation"
+  ],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "grade": "UNDEFINED",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 78.11
+ },
+ {
+  "specializations": [
+   "Analytics",
+   "QA"
+  ],
+  "skills": [
+   "Manual QA",
+   "SQL",
+   "QA Automation"
+  ],
+  "salary_amount": 230000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 76.72
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Manual QA",
+   "QA Automation",
+   "Python"
+  ],
+  "salary_amount": 146000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 75.55
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "Kotlin",
+   "Android"
+  ],
+  "salary_amount": 250000,
+  "salary_currency": "RUB",
+  "grade": "LEAD",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 75.05
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C++"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 74.08
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "Kotlin",
+   "Android"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "JUNIOR",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 73.02
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Machine Learning",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 72.27
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C++"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 71.84
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "Python",
+   "DevOps",
+   "System Administration"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 65.89
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 60.33
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "DevOps",
+   "TypeScript",
+   "Node.js"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 59.49
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "React",
+   "SQL",
+   "Ruby"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 59.49
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Rust"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 59.33
+ },
+ {
+  "specializations": [
+   "Analytics"
+  ],
+  "skills": [
+   "Data Engineering",
+   "SQL"
+  ],
+  "salary_amount": 270000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 58.3
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Node.js",
+   "DevOps",
+   "Java/Scala"
+  ],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 57.93
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "JUNIOR",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 57.02
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 56.32
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Python",
+   "QA Automation"
+  ],
+  "salary_amount": 180000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 55.82
+ },
+ {
+  "specializations": [
+   "Data Science / ML",
+   "Backend"
+  ],
+  "skills": [
+   "Python",
+   "Machine Learning"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 55.3
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "DevOps",
+   "System Administration"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "PRODUCT",
+  "hours_ago": 54.26
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "Graphics"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "PRODUCT",
+  "hours_ago": 52.56
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps",
+   "Python"
+  ],
+  "salary_amount": 300000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "STARTUP",
+  "hours_ago": 51.54
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration",
+   "DevOps",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "ONSITE",
+  "company_type": "PRODUCT",
+  "hours_ago": 50.89
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#"
+  ],
+  "salary_amount": 80000,
+  "salary_currency": "RUB",
+  "grade": "JUNIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 50.44
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "DevOps",
+   "System Administration"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "PROJECT_WORK",
+  "hours_ago": 48.76
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go",
+   "SQL"
+  ],
+  "salary_amount": 127500,
+  "salary_currency": "RUB",
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 48.26
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Java/Scala",
+   "DevOps",
+   "Node.js"
+  ],
+  "salary_amount": 1800,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "UNDEFINED",
+  "company_type": "OUTSTAFF",
+  "hours_ago": 36.67
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Python",
+   "SQL",
+   "Manual QA"
+  ],
+  "salary_amount": 110000,
+  "salary_currency": "RUB",
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 35.48
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C",
+   "C++"
+  ],
+  "salary_amount": 300000,
+  "salary_currency": "RUB",
+  "grade": "LEAD",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "PRODUCT",
+  "hours_ago": 34.75
+ },
+ {
+  "specializations": [
+   "Data Science / ML",
+   "Backend"
+  ],
+  "skills": [
+   "Python",
+   "Go",
+   "Node.js"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "STARTUP",
+  "hours_ago": 33.12
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Java/Scala",
+   "SQL",
+   "Node.js"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "PRODUCT",
+  "hours_ago": 32.32
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go"
+  ],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "PROJECT_WORK",
+  "hours_ago": 31.81
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "C#"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 30.31
+ },
+ {
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Python",
+   "NLP",
+   "Machine Learning"
+  ],
+  "salary_amount": 320000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "PRODUCT",
+  "hours_ago": 28.82
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Manual QA"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "MIDDLE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "PRODUCT",
+  "hours_ago": 25.92
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python",
+   "C++"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "OUTSTAFF",
+  "hours_ago": 24.03
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "PRODUCT",
+  "hours_ago": 13.31
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "C#",
+   "Python"
+  ],
+  "salary_amount": 300000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 11.8
+ },
+ {
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "JUNIOR",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "PRODUCT",
+  "hours_ago": 11.25
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "DevOps",
+   "Python",
+   "C++"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "PRODUCT",
+  "hours_ago": 10.56
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "DevOps",
+   "Node.js",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "PRODUCT",
+  "hours_ago": 9.5
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Manual QA",
+   "QA Automation",
+   "SQL"
+  ],
+  "salary_amount": 150000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "HYBRID",
+  "company_type": "PROJECT_WORK",
+  "hours_ago": 9.25
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Go"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "INTERN",
+  "experience_level": "NO_EXPERIENCE",
+  "work_format": "UNDEFINED",
+  "company_type": "PRODUCT",
+  "hours_ago": 8.91
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "DevOps",
+   "System Administration"
+  ],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 8.43
+ },
+ {
+  "specializations": [
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "System Administration"
+  ],
+  "salary_amount": 300000,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "PRODUCT",
+  "hours_ago": 7.82
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": 150000,
+  "salary_currency": "RUB",
+  "grade": "MIDDLE",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "OUTSTAFF",
+  "hours_ago": 7.03
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "QA Automation",
+   "SQL",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "ONSITE",
+  "company_type": "PRODUCT",
+  "hours_ago": 6.14
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Manual QA"
+  ],
+  "salary_amount": 1200,
+  "salary_currency": "RUB",
+  "grade": "SENIOR",
+  "experience_level": "SIX_PLUS_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "OUTSTAFF",
+  "hours_ago": 5.43
+ },
+ {
+  "specializations": [
+   "UI/UX & Product Design"
+  ],
+  "skills": [
+   "Prototyping",
+   "Figma"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "UNDEFINED",
+  "company_type": "PRODUCT",
+  "hours_ago": 4.7
+ },
+ {
+  "specializations": [
+   "Backend",
+   "Data Science / ML"
+  ],
+  "skills": [
+   "React",
+   "Machine Learning",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "HYBRID",
+  "company_type": "UNDEFINED",
+  "hours_ago": 3.93
+ },
+ {
+  "specializations": [
+   "UI/UX & Product Design"
+  ],
+  "skills": [
+   "Prototyping",
+   "Figma",
+   "Interaction Design"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "PRODUCT",
+  "hours_ago": 3.32
+ },
+ {
+  "specializations": [
+   "Mobile"
+  ],
+  "skills": [
+   "Android",
+   "Kotlin"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "PRODUCT",
+  "hours_ago": 2.95
+ },
+ {
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Manual QA"
+  ],
+  "salary_amount": 90000,
+  "salary_currency": "RUB",
+  "grade": "JUNIOR",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "UNDEFINED",
+  "hours_ago": 2.66
+ },
+ {
+  "specializations": [
+   "GameDev"
+  ],
+  "skills": [
+   "Graphics",
+   "Unreal Engine"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "SENIOR",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "PRODUCT",
+  "hours_ago": 1.31
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "UNDEFINED",
+  "work_format": "REMOTE",
+  "company_type": "PRODUCT",
+  "hours_ago": 0.32
+ },
+ {
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "Machine Learning",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "grade": "UNDEFINED",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "work_format": "REMOTE",
+  "company_type": "PRODUCT",
+  "hours_ago": 0.25
+ }
+]
