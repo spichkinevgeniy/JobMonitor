@@ -16,6 +16,14 @@ from app.domain.vacancy.exceptions import ValidationError
 from app.domain.vacancy.value_objects import ContentHash, VacancyId
 
 
+@dataclass(frozen=True, slots=True)
+class DispatchedVacancy:
+    """Вакансия вместе с моментом, когда бот отправил её пользователю."""
+
+    vacancy: "Vacancy"
+    dispatched_at: datetime
+
+
 @dataclass(slots=True)
 class Vacancy:
     id: VacancyId

@@ -340,6 +340,7 @@
     const cardsNode = root.querySelector("[data-stats-cards]");
     const emptyNode = root.querySelector("[data-stats-empty]");
     const statsUrl = root.dataset.statsUrl;
+    const exportUrl = root.dataset.exportUrl;
 
     function setStatsStatus(message, state) {
       if (!statusNode) {
@@ -472,6 +473,96 @@
       renderTrendChart();
     }
 
+    function pluralize(amount, one, few, many) {
+      const mod100 = amount % 100;
+      if (mod100 >= 11 && mod100 <= 14) {
+        return many;
+      }
+      const mod10 = amount % 10;
+      if (mod10 === 1) {
+        return one;
+      }
+      if (mod10 >= 2 && mod10 <= 4) {
+        return few;
+      }
+      return many;
+    }
+
+    function renderExport(exportInfo) {
+      const cardNode = root.querySelector("[data-stats-export-card]");
+      const introNode = root.querySelector("[data-stats-export-intro]");
+      const noteNode = root.querySelector("[data-stats-export-note]");
+      const statusNode = root.querySelector("[data-stats-export-status]");
+      if (!cardNode || !introNode) {
+        return;
+      }
+      if (!exportInfo || !exportInfo.count) {
+        cardNode.classList.add("is-hidden");
+        return;
+      }
+
+      cardNode.classList.remove("is-hidden");
+      const word = pluralize(exportInfo.count, "вакансию", "вакансии", "вакансий");
+      introNode.textContent = `Выгрузить ${exportInfo.count} ${word} файлом:`;
+      if (noteNode) {
+        const since = exportInfo.since_label ? ` История ведётся ${exportInfo.since_label}.` : "";
+        noteNode.textContent = `Файл придёт в чат с ботом — можно отправить его нейросети.${since}`;
+      }
+
+      root.querySelectorAll("[data-export-format]").forEach((button) => {
+        button.addEventListener("click", () => sendExport(button, statusNode));
+      });
+    }
+
+    async function sendExport(button, statusNode) {
+      if (!exportUrl || !webApp || !webApp.initData) {
+        return;
+      }
+
+      const buttons = root.querySelectorAll("[data-export-format]");
+      buttons.forEach((item) => {
+        item.disabled = true;
+      });
+      if (statusNode) {
+        statusNode.textContent = "Готовим файл...";
+        statusNode.classList.remove("is-error", "is-success");
+      }
+
+      try {
+        const response = await fetch(exportUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            init_data: webApp.initData,
+            export_format: button.dataset.exportFormat,
+          }),
+        });
+        const result = await response.json().catch(() => null);
+        if (!statusNode) {
+          return;
+        }
+        if (!response.ok) {
+          statusNode.textContent =
+            result && typeof result.detail === "string"
+              ? result.detail
+              : "Не удалось сформировать файл.";
+          statusNode.classList.add("is-error");
+          return;
+        }
+        statusNode.textContent = result && result.message ? result.message : "Файл отправлен.";
+        statusNode.classList.add("is-success");
+      } catch {
+        if (statusNode) {
+          statusNode.textContent = "Ошибка отправки. Попробуйте ещё раз.";
+          statusNode.classList.add("is-error");
+        }
+      } finally {
+        buttons.forEach((item) => {
+          item.disabled = false;
+        });
+      }
+    }
+
     function renderFunnel(funnel) {
       const cardNode = root.querySelector("[data-stats-funnel-card]");
       const barNode = root.querySelector("[data-stats-funnel-bar]");
@@ -588,6 +679,10 @@
         }
 
         setStatsStatus("");
+        // Выгрузку показываем всегда: она про уже полученные вакансии и не
+        // зависит от того, заполнен ли профиль сейчас.
+        renderExport(result.export);
+
         if (!result.has_profile) {
           if (emptyNode) {
             emptyNode.classList.remove("is-hidden");

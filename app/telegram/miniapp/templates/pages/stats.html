@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="stats-root" data-stats-root data-stats-url="{{ stats_url }}">
+<div
+  class="stats-root"
+  data-stats-root
+  data-stats-url="{{ stats_url }}"
+  data-export-url="{{ export_url }}"
+>
   <p class="form-status" data-stats-status aria-live="polite">Загружаем аналитику...</p>
 
   <section class="stats-empty is-hidden" data-stats-empty>
@@ -51,6 +56,22 @@
         Тип определяется автоматически по тексту вакансии — иногда данных не хватает.
       </p>
     </section>
+
   </div>
+
+  <!-- Вне блока карточек: выгрузка нужна и тем, кто очистил профиль,
+       но раньше получал вакансии. -->
+  <section class="filter-card stats-card is-hidden" data-stats-export-card>
+    <p class="export-inline">
+      <span data-stats-export-intro></span>
+      <button type="button" class="export-inline__link" data-export-format="json">JSON</button>
+      <span class="export-inline__sep">·</span>
+      <button type="button" class="export-inline__link" data-export-format="markdown">Markdown</button>
+      <span class="export-inline__sep">·</span>
+      <button type="button" class="export-inline__link" data-export-format="txt">TXT</button>
+    </p>
+    <p class="input-caption" data-stats-export-note></p>
+    <p class="form-status" data-stats-export-status aria-live="polite"></p>
+  </section>
 </div>
 {% endblock %}

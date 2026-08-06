@@ -1,6 +1,7 @@
 from app.application.dto.miniapp.models import (
     ChoiceOptionDto,
     ExperienceLevelChoice,
+    ExportRequest,
     FormatReadResponse,
     FormatSaveRequest,
     GradeChoice,
@@ -16,6 +17,7 @@ from app.application.dto.miniapp.models import (
     SpecialtyReadResponse,
     SpecialtySaveRequest,
     StatsCompanyTypeResponse,
+    StatsExportResponse,
     StatsFunnelResponse,
     StatsFunnelRowResponse,
     StatsTrendPointResponse,
@@ -27,6 +29,7 @@ from app.application.dto.miniapp.models import (
 __all__ = [
     "ChoiceOptionDto",
     "ExperienceLevelChoice",
+    "ExportRequest",
     "FormatReadResponse",
     "FormatSaveRequest",
     "GradeChoice",
@@ -42,6 +45,7 @@ __all__ = [
     "SpecialtyReadResponse",
     "SpecialtySaveRequest",
     "StatsCompanyTypeResponse",
+    "StatsExportResponse",
     "StatsFunnelResponse",
     "StatsFunnelRowResponse",
     "StatsTrendPointResponse",

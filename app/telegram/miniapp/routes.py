@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -5,6 +6,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.application.dto.miniapp import (
     ExperienceLevelChoice,
+    ExportRequest,
     FormatReadResponse,
     FormatSaveRequest,
     GradeChoice,
@@ -19,12 +21,14 @@ from app.application.dto.miniapp import (
     SpecialtyReadResponse,
     SpecialtySaveRequest,
     StatsCompanyTypeResponse,
+    StatsExportResponse,
     StatsFunnelResponse,
     StatsFunnelRowResponse,
     StatsTrendPointResponse,
     StatsTrendSeriesResponse,
     WorkFormatChoice,
 )
+from app.application.services.export_service import ExportFormat, ExportService
 from app.application.services.stats_service import (
     FilterFunnel,
     ProfileStats,
@@ -36,8 +40,11 @@ from app.domain.matching.entities import MatchRejectionReason
 from app.domain.shared.value_objects import ExperienceLevel, Grade, WorkFormat
 from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode, LevelFilterMode
+from app.infrastructure.notifications import TelegramDocumentSender
 from app.telegram.miniapp.deps import (
     get_current_user,
+    get_document_sender,
+    get_export_service,
     get_stats_service,
     get_user_service,
     parse_user_context,
@@ -113,9 +120,44 @@ async def stats_page(request: Request) -> HTMLResponse:
 async def read_stats(
     user: Annotated[User, Depends(get_current_user)],
     service: Annotated[StatsService, Depends(get_stats_service)],
+    export_service: Annotated[ExportService, Depends(get_export_service)],
 ) -> ProfileStatsResponse:
     stats = await service.build_profile_stats(user)
-    return _to_stats_response(user, stats)
+    export_count, export_since = await export_service.count_available(user.tg_id.value)
+    return _to_stats_response(user, stats, export_count, export_since)
+
+
+@router.post(
+    "/miniapp/api/export",
+    name="miniapp-export",
+    response_model=SaveResponse,
+)
+async def export_vacancies(
+    payload: ExportRequest,
+    service: Annotated[ExportService, Depends(get_export_service)],
+    sender: Annotated[TelegramDocumentSender, Depends(get_document_sender)],
+) -> SaveResponse:
+    user_context = parse_user_context(payload.init_data)
+
+    try:
+        export_format = ExportFormat(payload.export_format)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Неизвестный формат выгрузки.") from None
+
+    export_file = await service.build(user_context.tg_id, export_format)
+    if export_file is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Пока нечего выгружать: бот ещё не присылал вам вакансии.",
+        )
+
+    await sender.send_document(
+        user_tg_id=user_context.tg_id,
+        filename=export_file.filename,
+        content=export_file.content,
+        caption=f"Выгрузка вакансий: {export_file.count} шт.",
+    )
+    return SaveResponse(message="Файл отправлен в чат с ботом.")
 
 
 @router.get(
@@ -307,9 +349,40 @@ _TREND_HEADLINE_LABELS = {
 }
 
 
-def _to_stats_response(user: User, stats: ProfileStats) -> ProfileStatsResponse:
+_MONTHS_GENITIVE = (
+    "января",
+    "февраля",
+    "марта",
+    "апреля",
+    "мая",
+    "июня",
+    "июля",
+    "августа",
+    "сентября",
+    "октября",
+    "ноября",
+    "декабря",
+)
+
+
+def _since_label(since: datetime | None) -> str | None:
+    if since is None:
+        return None
+    return f"с {since.day} {_MONTHS_GENITIVE[since.month - 1]}"
+
+
+def _to_stats_response(
+    user: User,
+    stats: ProfileStats,
+    export_count: int,
+    export_since: datetime | None,
+) -> ProfileStatsResponse:
     return ProfileStatsResponse(
         has_profile=bool(user.cv_specializations.items and user.cv_skills.items),
+        export=StatsExportResponse(
+            count=export_count,
+            since_label=_since_label(export_since),
+        ),
         trends=[
             StatsTrendSeriesResponse(
                 granularity=series.granularity.value,

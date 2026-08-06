@@ -129,8 +129,19 @@ class StatsFunnelResponse(BaseModel):
     rows: list[StatsFunnelRowResponse]
 
 
+class StatsExportResponse(BaseModel):
+    count: int
+    since_label: str | None = None
+
+
+class ExportRequest(BaseModel):
+    init_data: str
+    export_format: str
+
+
 class ProfileStatsResponse(BaseModel):
     has_profile: bool
+    export: StatsExportResponse
     trends: list[StatsTrendSeriesResponse]
     company_breakdown: list[StatsCompanyTypeResponse]
     company_total: int

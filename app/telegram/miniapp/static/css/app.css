@@ -512,6 +512,35 @@ body {
   font-size: 11px;
 }
 
+.export-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.export-inline__link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent-strong);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.export-inline__link:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.export-inline__sep {
+  color: var(--text-soft);
+}
+
 /* Воронка фильтров: цветом выделено только «дошло до вас»,
    всё отсеянное — нейтральная серая шкала. */
 .funnel-bar {
