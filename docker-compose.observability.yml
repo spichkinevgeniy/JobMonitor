@@ -16,7 +16,7 @@ services:
     image: grafana/grafana:latest
     container_name: job_monitor_grafana
     restart: unless-stopped
-    mem_limit: 192m
+    mem_limit: 256m
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:
