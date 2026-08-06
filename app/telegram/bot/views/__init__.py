@@ -29,6 +29,7 @@ from app.telegram.bot.views.profile import build_search_profile_text
 from app.telegram.bot.views.settings import (
     build_settings_menu_text,
     build_settings_menu_view,
+    build_stats_url,
 )
 from app.telegram.bot.views.tracking_settings import (
     format_salary,
@@ -64,6 +65,7 @@ __all__ = [
     "build_settings_unavailable_text",
     "build_start_message",
     "build_start_required_text",
+    "build_stats_url",
     "format_salary",
     "format_work_format",
 ]

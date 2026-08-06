@@ -11,24 +11,35 @@ from app.application.dto.miniapp import (
     LevelModeChoice,
     LevelReadResponse,
     LevelSaveRequest,
+    ProfileStatsResponse,
     SalaryModeChoice,
     SalaryReadResponse,
     SalarySaveRequest,
     SaveResponse,
     SpecialtyReadResponse,
     SpecialtySaveRequest,
+    StatsCompanyTypeResponse,
+    StatsTrendPointResponse,
     WorkFormatChoice,
 )
+from app.application.services.stats_service import ProfileStats, StatsService
 from app.application.services.user_service import UserService
 from app.domain.shared.value_objects import ExperienceLevel, Grade, WorkFormat
 from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode, LevelFilterMode
-from app.telegram.miniapp.deps import get_current_user, get_user_service, parse_user_context
+from app.telegram.miniapp.deps import (
+    get_current_user,
+    get_stats_service,
+    get_user_service,
+    parse_user_context,
+)
 from app.telegram.miniapp.page_context import (
     build_format_page_context,
     build_level_page_context,
     build_salary_page_context,
     build_specialty_page_context,
+    build_stats_page_context,
+    company_type_label,
 )
 from app.telegram.miniapp.ui import templates
 
@@ -74,6 +85,28 @@ async def level_page(request: Request) -> HTMLResponse:
         "pages/level.html",
         build_level_page_context(request),
     )
+
+
+@router.get("/miniapp/stats", response_class=HTMLResponse, name="miniapp-stats")
+async def stats_page(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse(
+        request,
+        "pages/stats.html",
+        build_stats_page_context(request),
+    )
+
+
+@router.get(
+    "/miniapp/api/stats",
+    name="miniapp-read-stats",
+    response_model=ProfileStatsResponse,
+)
+async def read_stats(
+    user: Annotated[User, Depends(get_current_user)],
+    service: Annotated[StatsService, Depends(get_stats_service)],
+) -> ProfileStatsResponse:
+    stats = await service.build_profile_stats(user)
+    return _to_stats_response(user, stats)
 
 
 @router.get(
@@ -245,6 +278,37 @@ async def save_level(
         raise HTTPException(status_code=404, detail="Пользователь не найден.")
 
     return SaveResponse(message="Грейд и опыт сохранены.")
+
+
+def _to_stats_response(user: User, stats: ProfileStats) -> ProfileStatsResponse:
+    return ProfileStatsResponse(
+        has_profile=bool(user.cv_specializations.items and user.cv_skills.items),
+        current_week_count=stats.current_week_count,
+        previous_week_count=stats.previous_week_count,
+        delta_percent=_delta_percent(stats.current_week_count, stats.previous_week_count),
+        trend=[
+            StatsTrendPointResponse(
+                week_label=point.week_start.strftime("%d.%m"),
+                count=point.count,
+            )
+            for point in stats.trend
+        ],
+        company_breakdown=[
+            StatsCompanyTypeResponse(
+                label=company_type_label(item.company_type.value),
+                count=item.count,
+                percent=round(item.count * 100 / stats.company_total),
+            )
+            for item in stats.company_breakdown
+        ],
+        company_total=stats.company_total,
+    )
+
+
+def _delta_percent(current: int, previous: int) -> int | None:
+    if previous == 0:
+        return None
+    return round((current - previous) * 100 / previous)
 
 
 def _work_format_choice(user: User) -> str:

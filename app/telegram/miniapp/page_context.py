@@ -10,6 +10,7 @@ from app.application.dto.miniapp import (
     WorkFormatChoice,
 )
 from app.domain.shared.value_objects import (
+    CompanyType,
     ExperienceLevel,
     Grade,
     SkillType,
@@ -195,6 +196,13 @@ _LEVEL_MODE_LABELS = {
     LevelModeChoice.UP_TO.value: "Не выше",
     LevelModeChoice.EXACT.value: "Только этот",
 }
+_COMPANY_TYPE_LABELS = {
+    CompanyType.PRODUCT.value: "Продуктовые команды",
+    CompanyType.OUTSTAFF.value: "Аутстафф и агентства",
+    CompanyType.STARTUP.value: "Стартапы",
+    CompanyType.PROJECT_WORK.value: "Разовая и проектная работа",
+    CompanyType.UNDEFINED.value: "Не удалось определить",
+}
 
 
 def _validate_skill_option_views() -> None:
@@ -313,6 +321,19 @@ def build_salary_page_context(request: Request) -> dict[str, object]:
         "action_label": "Сохранить",
         "save_url": _path_for(request, "miniapp-save-salary"),
         "success_text": "Зарплата сохранена.",
+    }
+
+
+def company_type_label(value: str) -> str:
+    return _COMPANY_TYPE_LABELS.get(value, value)
+
+
+def build_stats_page_context(request: Request) -> dict[str, object]:
+    return {
+        "page_title": "Аналитика",
+        "page_description": "Что происходит с вакансиями под ваш профиль.",
+        "active_page": "stats",
+        "stats_url": _path_for(request, "miniapp-read-stats"),
     }
 
 

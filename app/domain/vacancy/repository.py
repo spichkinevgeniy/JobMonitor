@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Protocol, runtime_checkable
 
 from app.domain.vacancy.entities import Vacancy
@@ -7,6 +8,13 @@ from app.domain.vacancy.value_objects import ContentHash, VacancyId
 @runtime_checkable
 class IVacancyRepository(Protocol):
     async def get_by_id(self, vacancy_id: VacancyId) -> Vacancy | None: ...
+
+    async def find_for_profile_since(
+        self,
+        specializations: set[str],
+        skills: set[str],
+        since: datetime,
+    ) -> list[Vacancy]: ...
 
     async def get_by_content_hash(self, content_hash: ContentHash) -> Vacancy | None: ...
 

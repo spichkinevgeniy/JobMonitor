@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="stats-root" data-stats-root data-stats-url="{{ stats_url }}">
+  <p class="form-status" data-stats-status aria-live="polite">Загружаем аналитику...</p>
+
+  <section class="stats-empty is-hidden" data-stats-empty>
+    <div class="filter-card">
+      <h2 class="section-title">Профиль не заполнен</h2>
+      <p class="input-caption">
+        Выберите специализацию и скиллы в настройках профиля — после этого здесь появится
+        статистика по подходящим вакансиям.
+      </p>
+    </div>
+  </section>
+
+  <div class="stats-cards is-hidden" data-stats-cards>
+    <section class="filter-card stats-card">
+      <div class="stats-card__head">
+        <div>
+          <p class="stats-card__eyebrow">За эту неделю</p>
+          <p class="stats-card__value" data-stats-week-count>0</p>
+          <p class="stats-card__caption">
+            вакансий подошло под ваш профиль: специализация, скиллы, зарплата, формат, грейд
+          </p>
+        </div>
+        <span class="stats-pill is-hidden" data-stats-delta></span>
+      </div>
+    </section>
+
+    <section class="filter-card stats-card">
+      <p class="stats-card__eyebrow">Тренд по вашему профилю</p>
+      <p class="stats-card__title">последние 8 недель</p>
+      <div class="stats-chart" data-stats-chart></div>
+      <div class="stats-chart__axis">
+        <span data-stats-chart-from></span>
+        <span>сейчас</span>
+      </div>
+    </section>
+
+    <section class="filter-card stats-card" data-stats-company-card>
+      <p class="stats-card__eyebrow">Кто чаще всего нанимает</p>
+      <p class="stats-card__title">типы компаний среди подходящих вакансий · 30 дней</p>
+      <div class="stats-bars" data-stats-company></div>
+      <p class="input-caption" data-stats-company-note>
+        Тип определяется автоматически по тексту вакансии — иногда данных не хватает.
+      </p>
+    </section>
+  </div>
+</div>
+{% endblock %}

@@ -100,6 +100,27 @@ class SaveResponse(BaseModel):
     message: str
 
 
+class StatsTrendPointResponse(BaseModel):
+    week_label: str
+    count: int
+
+
+class StatsCompanyTypeResponse(BaseModel):
+    label: str
+    count: int
+    percent: int
+
+
+class ProfileStatsResponse(BaseModel):
+    has_profile: bool
+    current_week_count: int
+    previous_week_count: int
+    delta_percent: int | None
+    trend: list[StatsTrendPointResponse]
+    company_breakdown: list[StatsCompanyTypeResponse]
+    company_total: int
+
+
 @dataclass(frozen=True, slots=True)
 class MiniAppPayload:
     specializations: frozenset[SpecializationType]

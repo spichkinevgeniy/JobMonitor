@@ -9,6 +9,7 @@ PROFILE_BUTTON_TEXT = "👤 Мой профиль"
 
 PROFILE_FILL_FORM_BUTTON_TEXT = "⚙️ Настроить профиль"
 PROFILE_UPLOAD_RESUME_BUTTON_TEXT = "📄 Загрузить резюме"
+PROFILE_STATS_BUTTON_TEXT = "📊 Аналитика"
 PROFILE_FILL_FORM_CALLBACK = "profile:fill_form"
 PROFILE_UPLOAD_RESUME_CALLBACK = "profile:upload_resume"
 SETTINGS_DONE_BUTTON_TEXT = "✅ Готов"
@@ -35,7 +36,7 @@ def get_cancel_kb() -> ReplyKeyboardMarkup:
     return builder.as_markup(resize_keyboard=True)
 
 
-def get_profile_actions_kb() -> InlineKeyboardMarkup:
+def get_profile_actions_kb(stats_url: str = "") -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.button(
         text=PROFILE_FILL_FORM_BUTTON_TEXT,
@@ -45,7 +46,12 @@ def get_profile_actions_kb() -> InlineKeyboardMarkup:
         text=PROFILE_UPLOAD_RESUME_BUTTON_TEXT,
         callback_data=PROFILE_UPLOAD_RESUME_CALLBACK,
     )
-    builder.adjust(1, 1)
+    if stats_url:
+        builder.button(
+            text=PROFILE_STATS_BUTTON_TEXT,
+            web_app=WebAppInfo(url=stats_url),
+        )
+    builder.adjust(1)
     return builder.as_markup()
 
 

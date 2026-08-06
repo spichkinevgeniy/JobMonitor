@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.vacancy.entities import Vacancy
@@ -24,6 +27,31 @@ class VacancyRepository(IVacancyRepository):
         if model is None:
             return None
         return vacancy_from_model(model)
+
+    async def find_for_profile_since(
+        self,
+        specializations: set[str],
+        skills: set[str],
+        since: datetime,
+    ) -> list[Vacancy]:
+        """Зеркало SQL-префильтра из UserRepository.find_prefiltered_candidates.
+
+        Там по вакансии ищут юзеров, здесь по профилю юзера — вакансии.
+        Пустой профиль не матчится ни с чем: у вакансии всегда есть
+        специализация и скиллы, поэтому пересечения не будет.
+        """
+        if not specializations or not skills:
+            return []
+
+        query = (
+            select(VacancyModel)
+            .where(VacancyModel.is_active.is_(True))
+            .where(VacancyModel.created_at >= since)
+            .where(VacancyModel.specializations.bool_op("?|")(array(sorted(specializations))))
+            .where(VacancyModel.skills.bool_op("?|")(array(sorted(skills))))
+        )
+        result = await self._session.execute(query)
+        return [vacancy_from_model(model) for model in result.scalars().all()]
 
     async def get_by_content_hash(self, content_hash: ContentHash) -> Vacancy | None:
         result = await self._session.execute(
