@@ -54,13 +54,17 @@ class VacancyRepository(IVacancyRepository):
         result = await self._session.execute(query)
         return [vacancy_from_model(model) for model in result.scalars().all()]
 
-    async def find_dispatched_for_user(self, user_tg_id: int) -> list[DispatchedVacancy]:
+    async def find_dispatched_for_user(
+        self, user_tg_id: int, limit: int | None = None
+    ) -> list[DispatchedVacancy]:
         query = (
             select(VacancyModel, VacancyDispatchLog.dispatched_at)
             .join(VacancyDispatchLog, VacancyDispatchLog.vacancy_id == VacancyModel.id)
             .where(VacancyDispatchLog.user_tg_id == user_tg_id)
             .order_by(VacancyDispatchLog.dispatched_at.desc())
         )
+        if limit is not None:
+            query = query.limit(limit)
         result = await self._session.execute(query)
         return [
             DispatchedVacancy(vacancy=vacancy_from_model(model), dispatched_at=dispatched_at)

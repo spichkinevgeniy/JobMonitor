@@ -19,6 +19,9 @@ _EXTENSIONS = {
     ExportFormat.TXT: "txt",
 }
 
+# Файл целиком собирается в памяти, поэтому размер выборки ограничен.
+MAX_EXPORT_VACANCIES = 5000
+
 
 @dataclass(frozen=True, slots=True)
 class ExportFile:
@@ -44,7 +47,9 @@ class ExportService:
 
     async def build(self, user_tg_id: int, export_format: ExportFormat) -> ExportFile | None:
         async with self._uow:
-            dispatched = await self._uow.vacancies.find_dispatched_for_user(user_tg_id)
+            dispatched = await self._uow.vacancies.find_dispatched_for_user(
+                user_tg_id, limit=MAX_EXPORT_VACANCIES
+            )
 
         if not dispatched:
             return None
