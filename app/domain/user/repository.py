@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Protocol, runtime_checkable
 
 from app.domain.user.entities import User
@@ -26,3 +27,9 @@ class IUserRepository(Protocol):
     ) -> list[User]: ...
 
     async def list_active_tg_ids(self) -> list[int]: ...
+
+    async def get_resume_upload_stats(
+        self, tg_id: int, since: datetime
+    ) -> tuple[int, datetime | None]: ...
+
+    async def log_resume_upload(self, tg_id: int) -> None: ...

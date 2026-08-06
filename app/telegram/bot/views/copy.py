@@ -135,6 +135,17 @@ def build_resume_too_many_pages_text() -> str:
     return "В резюме больше 10 страниц. Нужен более компактный PDF."
 
 
+def build_resume_cooldown_text(seconds: int) -> str:
+    return f"Слишком часто. Следующее резюме можно прислать через {seconds} с."
+
+
+def build_resume_daily_quota_text(quota: int) -> str:
+    return (
+        f"На сегодня лимит исчерпан: {quota} резюме в сутки. "
+        "Попробуйте завтра — профиль при этом сохранён."
+    )
+
+
 def build_resume_parser_error_text() -> str:
     return "Не удалось разобрать файл."
 

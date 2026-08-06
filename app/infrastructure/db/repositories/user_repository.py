@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,6 +8,7 @@ from app.domain.user.entities import User
 from app.domain.user.repository import IUserRepository
 from app.domain.user.value_objects import UserId
 from app.infrastructure.db.mappers.user import apply_user, user_from_model, user_to_model
+from app.infrastructure.db.models import ResumeUploadLog as ResumeUploadLogModel
 from app.infrastructure.db.models import User as UserModel
 
 
@@ -79,3 +82,24 @@ class UserRepository(IUserRepository):
             select(UserModel.tg_id).where(UserModel.is_active.is_(True))
         )
         return [row[0] for row in result.all()]
+
+    async def get_resume_upload_stats(
+        self, tg_id: int, since: datetime
+    ) -> tuple[int, datetime | None]:
+        """Сколько загрузок в окне и когда была последняя.
+
+        Кулдаун и квота нужны одновременно, поэтому берём одним запросом.
+        Последнюю загрузку ищем без окна: она может быть и старше него.
+        """
+        result = await self._session.execute(
+            select(
+                func.count().filter(ResumeUploadLogModel.uploaded_at >= since),
+                func.max(ResumeUploadLogModel.uploaded_at),
+            ).where(ResumeUploadLogModel.user_tg_id == tg_id)
+        )
+        count, last_uploaded_at = result.one()
+        return count or 0, last_uploaded_at
+
+    async def log_resume_upload(self, tg_id: int) -> None:
+        self._session.add(ResumeUploadLogModel(user_tg_id=tg_id))
+        await self._session.flush()

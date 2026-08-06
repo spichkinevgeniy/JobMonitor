@@ -6,6 +6,11 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
+from app.application.services.resume_quota_service import (
+    DAILY_QUOTA,
+    QuotaRejection,
+    ResumeQuotaService,
+)
 from app.application.services.user_service import UserService
 from app.core.logger import get_app_logger
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
@@ -30,6 +35,8 @@ from app.telegram.bot.views import (
     build_main_menu_fallback_text,
     build_resume_cancel_text,
     build_resume_context_error_text,
+    build_resume_cooldown_text,
+    build_resume_daily_quota_text,
     build_resume_file_too_large_text,
     build_resume_llm_unavailable_text,
     build_resume_not_a_resume_text,
@@ -151,6 +158,27 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
         buffer = BytesIO()
         try:
             await state.set_state(BotStates.processing_resume)
+
+            if tg_id is not None:
+                quota = ResumeQuotaService(UserUnitOfWork(async_session_factory))
+                decision = await quota.check(tg_id)
+                if not decision.allowed:
+                    bot_logfire.info(
+                        "Resume rejected: quota",
+                        tg_id=tg_id,
+                        rejection=decision.rejection,
+                        file_name=file_name,
+                    )
+                    if decision.rejection is QuotaRejection.COOLDOWN:
+                        await reset_to_menu(
+                            build_resume_cooldown_text(decision.retry_after_seconds)
+                        )
+                    else:
+                        await reset_to_menu(build_resume_daily_quota_text(DAILY_QUOTA))
+                    return
+                # Пишем до разбора: иначе битым файлом можно ходить по кругу.
+                await quota.register(tg_id)
+
             parser = ParserFactory.get_parser_by_extension(file_name)
             processing_message = await message.answer(
                 build_resume_processing_text(),

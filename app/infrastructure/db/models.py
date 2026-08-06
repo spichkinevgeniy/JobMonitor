@@ -77,6 +77,22 @@ class VacancyDispatchLog(Base):
     )
 
 
+class ResumeUploadLog(Base):
+    """Лог загрузок резюме: из него считаются кулдаун и дневная квота.
+
+    Счётчик в users потребовал бы логики сброса окна, а append-only лог
+    заодно отвечает на вопрос, сколько резюме вообще присылают.
+    """
+
+    __tablename__ = "resume_upload_log"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_tg_id: Mapped[int] = mapped_column(BigInteger, index=True)
+    uploaded_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
 async def init_db() -> None:
     from app.infrastructure.db.session import engine
 

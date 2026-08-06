@@ -8,12 +8,13 @@ FSM-защиты тут мало: StateFilter вычисляется диспе�
 
 import asyncio
 from collections.abc import AsyncIterator, Awaitable, Callable
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 from aiogram import Bot, Dispatcher
 from aiogram.types import Chat, Document, Message, Update, User
 
+from app.application.services.resume_quota_service import QuotaDecision, QuotaRejection
 from app.telegram.bot.routers import resume as resume_router
 
 BOT_TOKEN = "123456:AAaaAAaaAAaaAAaaAAaaAAaaAAaaAAaaAAa"
@@ -38,6 +39,17 @@ def _make_update(update_id: int, tg_id: int = TG_ID) -> Update:
     return Update(update_id=update_id, message=message)
 
 
+class _AlwaysAllowQuota:
+    def __init__(self, uow: object) -> None:
+        pass
+
+    async def check(self, tg_id: int) -> QuotaDecision:
+        return QuotaDecision(allowed=True)
+
+    async def register(self, tg_id: int) -> None:
+        pass
+
+
 @pytest.fixture
 def accepted(monkeypatch: pytest.MonkeyPatch) -> list[str]:
     """Считаем, сколько загрузок дошло до разбора, и держим их в работе."""
@@ -52,6 +64,8 @@ def accepted(monkeypatch: pytest.MonkeyPatch) -> list[str]:
 
     monkeypatch.setattr(resume_router.ParserFactory, "get_parser_by_extension", fake_parser)
     monkeypatch.setattr(Message, "answer", fake_answer)
+    # Квота живёт в БД, а тут проверяется только захват — пропускаем всех.
+    monkeypatch.setattr(resume_router, "ResumeQuotaService", _AlwaysAllowQuota)
     resume_router._active_resume_uploads.clear()
     return reached
 
@@ -95,3 +109,57 @@ class TestConcurrentUploads:
         await feed([_make_update(1, tg_id=111), _make_update(2, tg_id=222)])
 
         assert len(accepted) == 2
+
+
+class TestQuotaBlocksProcessing:
+    @pytest.fixture
+    def rejecting_quota(self, monkeypatch: pytest.MonkeyPatch) -> list[int]:
+        registered: list[int] = []
+
+        class _Rejecting:
+            def __init__(self, uow: object) -> None:
+                pass
+
+            async def check(self, tg_id: int) -> QuotaDecision:
+                return QuotaDecision(
+                    allowed=False,
+                    rejection=QuotaRejection.DAILY_QUOTA,
+                    retry_after=timedelta(days=1),
+                )
+
+            async def register(self, tg_id: int) -> None:
+                registered.append(tg_id)
+
+        monkeypatch.setattr(resume_router, "ResumeQuotaService", _Rejecting)
+        return registered
+
+    async def test_rejected_upload_never_reaches_parser(
+        self,
+        accepted: list[str],
+        rejecting_quota: list[int],
+        feed: Callable[[list[Update]], Awaitable[None]],
+    ) -> None:
+        await feed([_make_update(1)])
+
+        assert accepted == []
+
+    async def test_rejected_upload_is_not_counted(
+        self,
+        accepted: list[str],
+        rejecting_quota: list[int],
+        feed: Callable[[list[Update]], Awaitable[None]],
+    ) -> None:
+        """Отказ не должен съедать квоту — иначе она не восстановится."""
+        await feed([_make_update(1)])
+
+        assert rejecting_quota == []
+
+    async def test_guard_is_released_after_rejection(
+        self,
+        accepted: list[str],
+        rejecting_quota: list[int],
+        feed: Callable[[list[Update]], Awaitable[None]],
+    ) -> None:
+        await feed([_make_update(1)])
+
+        assert resume_router._active_resume_uploads == set()
