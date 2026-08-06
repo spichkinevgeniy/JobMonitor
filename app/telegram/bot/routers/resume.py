@@ -6,6 +6,11 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
+from app.application.services.resume_quota_service import (
+    DAILY_QUOTA,
+    QuotaRejection,
+    ResumeQuotaService,
+)
 from app.application.services.user_service import UserService
 from app.core.logger import get_app_logger
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
@@ -16,6 +21,7 @@ from app.infrastructure.parsers import (
     ParserFactory,
     TooManyPagesError,
 )
+from app.infrastructure.parsers.concurrency import acquire_parse_slot
 from app.telegram.bot.keyboards import (
     CANCEL_BUTTON_TEXT,
     HELP_BUTTON_TEXT,
@@ -28,8 +34,11 @@ from app.telegram.bot.keyboards import (
 from app.telegram.bot.states import BotStates
 from app.telegram.bot.views import (
     build_main_menu_fallback_text,
+    build_resume_busy_text,
     build_resume_cancel_text,
     build_resume_context_error_text,
+    build_resume_cooldown_text,
+    build_resume_daily_quota_text,
     build_resume_file_too_large_text,
     build_resume_llm_unavailable_text,
     build_resume_not_a_resume_text,
@@ -50,6 +59,8 @@ from app.telegram.bot.views import (
 router = Router()
 logger = get_app_logger(__name__)
 bot_logfire = logfire.with_tags("bot")
+
+_active_resume_uploads: set[int] = set()
 
 
 async def _send_resume_prompt(message: Message, state: FSMContext) -> None:
@@ -119,7 +130,19 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
             await message.answer(build_resume_file_too_large_text())
             return
 
-        await state.set_state(BotStates.processing_resume)
+        # Проверка и вставка без await между ними: FSM от гонки не спасает,
+        # её состояние диспетчер читает ещё до входа в хендлер.
+        if tg_id is not None:
+            if tg_id in _active_resume_uploads:
+                bot_logfire.info(
+                    "Resume rejected: upload already in progress",
+                    tg_id=tg_id,
+                    file_name=file_name,
+                    file_size=file_size,
+                )
+                await message.answer(build_resume_processing_text())
+                return
+            _active_resume_uploads.add(tg_id)
 
         async def reset_to_menu(err_msg: str) -> None:
             await state.set_state(BotStates.main_menu)
@@ -131,6 +154,27 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
         processing_message: Message | None = None
         buffer = BytesIO()
         try:
+            await state.set_state(BotStates.processing_resume)
+
+            quota: ResumeQuotaService | None = None
+            if tg_id is not None:
+                quota = ResumeQuotaService(UserUnitOfWork(async_session_factory))
+                decision = await quota.check(tg_id)
+                if not decision.allowed:
+                    bot_logfire.info(
+                        "Resume rejected: quota",
+                        tg_id=tg_id,
+                        rejection=decision.rejection,
+                        file_name=file_name,
+                    )
+                    if decision.rejection is QuotaRejection.COOLDOWN:
+                        await reset_to_menu(
+                            build_resume_cooldown_text(decision.retry_after_seconds)
+                        )
+                    else:
+                        await reset_to_menu(build_resume_daily_quota_text(DAILY_QUOTA))
+                    return
+
             parser = ParserFactory.get_parser_by_extension(file_name)
             processing_message = await message.answer(
                 build_resume_processing_text(),
@@ -159,8 +203,20 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
                 )
                 await reset_to_menu(build_resume_context_error_text())
                 return
-            await bot.download(document.file_id, destination=buffer)
-            dto = await parser.extract_text(buffer)
+            # Слот до скачивания: ожидающие не держат буферы.
+            async with acquire_parse_slot() as granted:
+                if not granted:
+                    bot_logfire.warning(
+                        "Resume rejected: no free parse slot",
+                        tg_id=tg_id,
+                        file_name=file_name,
+                    )
+                    await reset_to_menu(build_resume_busy_text())
+                    return
+                if quota is not None and tg_id is not None:
+                    await quota.register(tg_id)
+                await bot.download(document.file_id, destination=buffer)
+                dto = await parser.extract_text(buffer)
 
             service = UserService(UserUnitOfWork(async_session_factory))
             updated = await service.update_resume(user.id, dto)
@@ -238,6 +294,8 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
             await reset_to_menu(build_resume_unknown_error_text())
         finally:
             buffer.close()
+            if tg_id is not None:
+                _active_resume_uploads.discard(tg_id)
             if await state.get_state() == BotStates.processing_resume.state:
                 await state.set_state(BotStates.main_menu)
 

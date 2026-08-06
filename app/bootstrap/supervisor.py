@@ -5,6 +5,10 @@ from app.bootstrap.models import RuntimeComponents, RuntimeTasks
 from app.bootstrap.shutdown import graceful_shutdown, install_shutdown_handlers
 from app.infrastructure.telegram.miniapp_server import run_miniapp_server
 
+# Потолок одновременно обрабатываемых апдейтов: по умолчанию aiogram не
+# ограничивает их числом вовсе.
+BOT_TASKS_CONCURRENCY_LIMIT = 50
+
 
 def start_runtime_tasks(
     components: RuntimeComponents,
@@ -17,6 +21,7 @@ def start_runtime_tasks(
                 components.bot,
                 handle_signals=False,
                 close_bot_session=False,
+                tasks_concurrency_limit=BOT_TASKS_CONCURRENCY_LIMIT,
             ),
             name="telegram-bot",
         ),

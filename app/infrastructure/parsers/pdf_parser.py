@@ -1,4 +1,6 @@
+import asyncio
 import io
+import math
 from datetime import datetime
 
 import fitz  # type: ignore[import-untyped]
@@ -19,6 +21,13 @@ MAX_RESUME_SKILLS = 6
 MAX_RESUME_SPECIALIZATIONS = 3
 MIN_EVIDENCE_LENGTH = 3
 
+MAX_RESUME_PAGES = 10
+MAX_PAGE_PIXELS = 4_000_000
+MIN_RENDER_DPI = 40
+RENDER_TIMEOUT_SECONDS = 60
+PDF_SIGNATURE = b"%PDF-"
+PDF_SIGNATURE_SEARCH_BYTES = 1024
+
 
 class PDFParser(BaseResumeParser):
     def __init__(self) -> None:
@@ -29,14 +38,23 @@ class PDFParser(BaseResumeParser):
         if not isinstance(source, io.BytesIO):
             raise ParserError(f"PDFParser expects BytesIO, got {type(source)}")
 
+        source.seek(0)
+        raw = source.read()
+        self._ensure_pdf_signature(raw)
+
         logger.info("Resume parsing started")
-        images, pdf_text = self._pdf_to_images_and_text(source)
+        # Таймаут не прерывает поток: работу ограничивают лимиты страниц и пикселей.
+        try:
+            images, pdf_text = await asyncio.wait_for(
+                asyncio.to_thread(self._pdf_to_images_and_text, raw),
+                timeout=RENDER_TIMEOUT_SECONDS,
+            )
+        except TimeoutError:
+            logger.warning("Resume rejected: rendering timed out")
+            raise ParserError("PDF rendering timed out") from None
 
         if not images:
             raise ParserError("Unable to render images from PDF")
-        if len(images) > 10:
-            logger.warning("Resume rejected: too many pages (%d)", len(images))
-            raise TooManyPagesError("Resume is too long (more than 10 pages)")
 
         try:
             logger.info("Resume images ready: %d pages", len(images))
@@ -53,20 +71,24 @@ class PDFParser(BaseResumeParser):
         logger.info("Resume parsing completed: success")
         return parsed_data
 
-    def _pdf_to_images_and_text(
-        self, source: io.BytesIO, dpi: int = 150
-    ) -> tuple[list[Image.Image], str]:
-        source.seek(0)
+    def _pdf_to_images_and_text(self, data: bytes, dpi: int = 150) -> tuple[list[Image.Image], str]:
         images: list[Image.Image] = []
         text_parts: list[str] = []
 
         try:
-            with fitz.open(stream=source.read(), filetype="pdf") as doc:
+            with fitz.open(stream=data, filetype="pdf") as doc:
+                if doc.page_count > MAX_RESUME_PAGES:
+                    logger.warning("Resume rejected: too many pages (%d)", doc.page_count)
+                    raise TooManyPagesError(
+                        f"Resume is too long (more than {MAX_RESUME_PAGES} pages)"
+                    )
                 for page in doc:
                     img = self._render_page(page, dpi)
                     if img:
                         images.append(img)
                     text_parts.append(page.get_text("text"))
+        except TooManyPagesError:
+            raise
         except (fitz.FileDataError, fitz.EmptyFileError):
             logger.exception("Invalid PDF file")
         except Exception:
@@ -75,8 +97,18 @@ class PDFParser(BaseResumeParser):
         return images, "\n".join(part for part in text_parts if part)
 
     def _render_page(self, page: fitz.Page, dpi: int) -> Image.Image | None:
+        render_dpi = self._fit_dpi_to_budget(page, dpi)
+        if render_dpi is None:
+            logger.warning(
+                "Page %d skipped: too large to render (%.0fx%.0f pt)",
+                page.number,
+                page.rect.width,
+                page.rect.height,
+            )
+            return None
+
         try:
-            pix = page.get_pixmap(dpi=dpi)
+            pix = page.get_pixmap(dpi=render_dpi)
             img_bytes = pix.tobytes("png")
             img = Image.open(io.BytesIO(img_bytes))
             img.load()
@@ -84,6 +116,28 @@ class PDFParser(BaseResumeParser):
         except Exception:
             logger.exception("Error rendering page %d", page.number)
             return None
+
+    @staticmethod
+    def _fit_dpi_to_budget(page: fitz.Page, dpi: int) -> int | None:
+        """Понижает dpi под бюджет пикселей. None — страница неподъёмная и на минимуме."""
+        width_inches = page.rect.width / 72
+        height_inches = page.rect.height / 72
+        if width_inches <= 0 or height_inches <= 0:
+            return None
+
+        pixels = width_inches * height_inches * dpi * dpi
+        if pixels <= MAX_PAGE_PIXELS:
+            return dpi
+
+        fitted = int(dpi * math.sqrt(MAX_PAGE_PIXELS / pixels))
+        return fitted if fitted >= MIN_RENDER_DPI else None
+
+    @staticmethod
+    def _ensure_pdf_signature(data: bytes) -> None:
+        """Ищем не с нулевого байта: ридеры терпят мусор в начале файла."""
+        if PDF_SIGNATURE not in data[:PDF_SIGNATURE_SEARCH_BYTES]:
+            logger.warning("Resume rejected: no PDF signature")
+            raise ParserError("File is not a PDF")
 
     async def _run_agent(self, images: list[Image.Image], pdf_text: str) -> OutResumeParse:
         current_date = datetime.now().strftime("%B %Y")
