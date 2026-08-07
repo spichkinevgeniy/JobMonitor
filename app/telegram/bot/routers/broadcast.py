@@ -9,6 +9,7 @@ from app.core.config import config
 from app.core.logger import get_app_logger
 from app.domain.user.value_objects import UserId
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
+from app.telegram.bot.keyboards import get_main_menu_kb
 
 router = Router()
 logger = get_app_logger(__name__)
@@ -40,12 +41,12 @@ async def cmd_broadcast(message: Message, command: CommandObject) -> None:
     failed = 0
     for tg_id in tg_ids:
         try:
-            await bot.send_message(chat_id=tg_id, text=text)
+            await bot.send_message(chat_id=tg_id, text=text, reply_markup=get_main_menu_kb())
             sent += 1
         except TelegramRetryAfter as exc:
             await asyncio.sleep(exc.retry_after)
             try:
-                await bot.send_message(chat_id=tg_id, text=text)
+                await bot.send_message(chat_id=tg_id, text=text, reply_markup=get_main_menu_kb())
                 sent += 1
             except Exception:
                 logger.exception("Broadcast retry failed for user %s", tg_id)
