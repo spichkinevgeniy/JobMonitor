@@ -1,3 +1,7 @@
+from typing import Any
+
+from sqlalchemy import Row
+
 from app.domain.shared.value_objects import (
     CompanyType,
     ExperienceLevel,
@@ -76,4 +80,33 @@ def vacancy_from_model(model: VacancyModel) -> Vacancy:
         is_active=model.is_active,
         source_channel=model.source_channel,
         source_message_id=model.source_message_id,
+    )
+
+
+def vacancy_for_stats(row: Row[Any]) -> Vacancy:
+    """Собирает Vacancy из узкой выборки для аналитики.
+
+    Текст, зеркальные идентификаторы и хэш сюда не читаются — аналитике они
+    не нужны, а тянуть text по тысяче строк на запрос дорого. Поля-заглушки
+    оставлены, чтобы не заводить второй тип ради тех же вычислений.
+    """
+    return Vacancy(
+        id=VacancyId(row.id),
+        text="",
+        specializations=Specializations.from_strs(row.specializations or []),
+        skills=Skills.from_strs(row.skills or []),
+        mirror_chat_id=0,
+        mirror_message_id=0,
+        salary=Salary.create(row.salary_amount, row.salary_currency),
+        grade=Grade(row.grade) if row.grade else Grade.UNDEFINED,
+        experience_level=(
+            ExperienceLevel(row.experience_level)
+            if row.experience_level
+            else ExperienceLevel.UNDEFINED
+        ),
+        work_format=WorkFormat(row.work_format) if row.work_format else WorkFormat.UNDEFINED,
+        company_type=(CompanyType(row.company_type) if row.company_type else CompanyType.UNDEFINED),
+        content_hash=ContentHash(""),
+        created_at=row.created_at,
+        is_active=True,
     )

@@ -9,6 +9,7 @@ from app.domain.vacancy.repository import IVacancyRepository
 from app.domain.vacancy.value_objects import ContentHash, VacancyId
 from app.infrastructure.db.mappers.vacancy import (
     apply_vacancy,
+    vacancy_for_stats,
     vacancy_from_model,
     vacancy_to_model,
 )
@@ -44,15 +45,31 @@ class VacancyRepository(IVacancyRepository):
         if not specializations or not skills:
             return []
 
+        # Колонки поимённо, без text: ни воронке, ни тренду, ни разбивке по
+        # компаниям он не нужен, а весит в среднем 1296 символов при выборке
+        # до тысячи строк. Замер на проде: 21.5 мс против 8.1.
+        # Кортежи, а не сущности ORM: с отложенной колонкой любое обращение к
+        # ней обернулось бы отдельным запросом на каждую строку.
         query = (
-            select(VacancyModel)
+            select(
+                VacancyModel.id,
+                VacancyModel.specializations,
+                VacancyModel.skills,
+                VacancyModel.grade,
+                VacancyModel.experience_level,
+                VacancyModel.work_format,
+                VacancyModel.company_type,
+                VacancyModel.salary_amount,
+                VacancyModel.salary_currency,
+                VacancyModel.created_at,
+            )
             .where(VacancyModel.is_active.is_(True))
             .where(VacancyModel.created_at >= since)
             .where(VacancyModel.specializations.bool_op("?|")(array(sorted(specializations))))
             .where(VacancyModel.skills.bool_op("?|")(array(sorted(skills))))
         )
         result = await self._session.execute(query)
-        return [vacancy_from_model(model) for model in result.scalars().all()]
+        return [vacancy_for_stats(row) for row in result.all()]
 
     async def find_dispatched_for_user(
         self, user_tg_id: int, limit: int | None = None
