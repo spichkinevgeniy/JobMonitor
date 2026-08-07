@@ -16,6 +16,13 @@ SETTINGS_DONE_BUTTON_TEXT = "✅ Готов"
 SETTINGS_DONE_CALLBACK = "settings:done"
 
 
+# Кнопки главного меню шлют обычный текст, поэтому fallback обязан их
+# пропускать — иначе новая кнопка молча уходит в «используйте кнопки меню».
+MAIN_MENU_BUTTON_TEXTS = frozenset(
+    {PROFILE_BUTTON_TEXT, PROFILE_STATS_BUTTON_TEXT, HELP_BUTTON_TEXT}
+)
+
+
 def get_main_menu_kb() -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
     builder.button(text=PROFILE_BUTTON_TEXT)
