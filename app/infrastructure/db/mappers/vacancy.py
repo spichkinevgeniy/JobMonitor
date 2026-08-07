@@ -29,6 +29,8 @@ def vacancy_to_model(vacancy: Vacancy) -> VacancyModel:
         company_type=vacancy.company_type.value,
         created_at=vacancy.created_at,
         is_active=vacancy.is_active,
+        source_channel=vacancy.source_channel,
+        source_message_id=vacancy.source_message_id,
     )
 
 
@@ -46,6 +48,8 @@ def apply_vacancy(model: VacancyModel, vacancy: Vacancy) -> None:
     model.work_format = vacancy.work_format.value
     model.company_type = vacancy.company_type.value
     model.is_active = vacancy.is_active
+    model.source_channel = vacancy.source_channel
+    model.source_message_id = vacancy.source_message_id
 
 
 def vacancy_from_model(model: VacancyModel) -> Vacancy:
@@ -70,4 +74,6 @@ def vacancy_from_model(model: VacancyModel) -> Vacancy:
         content_hash=ContentHash(model.content_hash),
         created_at=model.created_at,
         is_active=model.is_active,
+        source_channel=model.source_channel,
+        source_message_id=model.source_message_id,
     )

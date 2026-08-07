@@ -1,14 +1,17 @@
 """Выгрузка вакансий: границы выборки."""
 
 from types import TracebackType
+from uuid import uuid4
 
 from app.application.services.export_service import (
     MAX_EXPORT_VACANCIES,
     ExportFormat,
     ExportService,
     _fence_for,
+    _source_url,
 )
-from app.domain.vacancy.entities import DispatchedVacancy
+from app.domain.shared.value_objects import WorkFormat
+from app.domain.vacancy.entities import DispatchedVacancy, Vacancy
 
 TG_ID = 777
 
@@ -79,3 +82,34 @@ class TestMarkdownFence:
         fence = _fence_for(text)
 
         assert fence not in text
+
+
+class TestSourceLink:
+    def _vacancy(self, channel: str | None, message_id: int | None) -> Vacancy:
+        return Vacancy.create(
+            vacancy_id=uuid4(),
+            text="Вакансия",
+            specializations_raw=["Backend"],
+            skills_raw=["Python"],
+            mirror_chat_id=1,
+            mirror_message_id=2,
+            work_format=WorkFormat.REMOTE,
+            source_channel=channel,
+            source_message_id=message_id,
+        )
+
+    def test_builds_link_to_the_original_post(self) -> None:
+        vacancy = self._vacancy("@python_jobs", 4242)
+
+        assert _source_url(vacancy) == "https://t.me/python_jobs/4242"
+
+    def test_no_link_for_old_vacancies(self) -> None:
+        """Собранные до появления колонок — источник восстановить неоткуда."""
+        assert _source_url(self._vacancy(None, None)) is None
+
+    def test_no_link_without_message_id(self) -> None:
+        assert _source_url(self._vacancy("@python_jobs", None)) is None
+
+    def test_no_link_for_private_channel(self) -> None:
+        """Без @username публичной ссылки не существует."""
+        assert _source_url(self._vacancy("Закрытый канал", 4242)) is None

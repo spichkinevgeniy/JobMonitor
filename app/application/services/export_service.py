@@ -5,7 +5,7 @@ from datetime import datetime
 from enum import StrEnum
 
 from app.application.ports.unit_of_work import VacancyUnitOfWork
-from app.domain.vacancy.entities import DispatchedVacancy
+from app.domain.vacancy.entities import DispatchedVacancy, Vacancy
 
 
 class ExportFormat(StrEnum):
@@ -71,6 +71,16 @@ class ExportService:
         )
 
 
+def _source_url(vacancy: Vacancy) -> str | None:
+    """Ссылка на исходный пост. У вакансий, собранных до появления колонок,
+    источника нет — и восстановить его неоткуда."""
+    channel = vacancy.source_channel
+    message_id = vacancy.source_message_id
+    if not channel or not channel.startswith("@") or message_id is None:
+        return None
+    return f"https://t.me/{channel[1:]}/{message_id}"
+
+
 def _as_dict(item: DispatchedVacancy) -> dict[str, object]:
     vacancy = item.vacancy
     return {
@@ -84,6 +94,8 @@ def _as_dict(item: DispatchedVacancy) -> dict[str, object]:
         "company_type": vacancy.company_type.value,
         "salary_amount": vacancy.salary.amount,
         "salary_currency": vacancy.salary.currency.value if vacancy.salary.currency else None,
+        "source_channel": vacancy.source_channel,
+        "source_url": _source_url(vacancy),
         "text": vacancy.text,
     }
 
@@ -113,7 +125,17 @@ def _meta_lines(item: DispatchedVacancy) -> list[str]:
         f"Формат: {vacancy.work_format.value}",
         f"Тип компании: {vacancy.company_type.value}",
         f"Зарплата: {salary}",
+        *_source_lines(vacancy),
     ]
+
+
+def _source_lines(vacancy: Vacancy) -> list[str]:
+    url = _source_url(vacancy)
+    if url:
+        return [f"Источник: {vacancy.source_channel} — {url}"]
+    if vacancy.source_channel:
+        return [f"Источник: {vacancy.source_channel}"]
+    return []
 
 
 def _fence_for(text: str) -> str:
