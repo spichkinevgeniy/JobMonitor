@@ -335,6 +335,7 @@ def build_stats_page_context(request: Request) -> dict[str, object]:
         "active_page": "stats",
         "stats_url": _path_for(request, "miniapp-read-stats"),
         "export_url": _path_for(request, "miniapp-export"),
+        "profile_url": _path_for(request, "miniapp-specialty"),
     }
 
 

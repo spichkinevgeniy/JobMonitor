@@ -339,6 +339,7 @@
     const statusNode = root.querySelector("[data-stats-status]");
     const cardsNode = root.querySelector("[data-stats-cards]");
     const emptyNode = root.querySelector("[data-stats-empty]");
+    const noDataNode = root.querySelector("[data-stats-no-data]");
     const statsUrl = root.dataset.statsUrl;
     const exportUrl = root.dataset.exportUrl;
 
@@ -686,6 +687,15 @@
         if (!result.has_profile) {
           if (emptyNode) {
             emptyNode.classList.remove("is-hidden");
+          }
+          return;
+        }
+
+        // Профиль есть, но окна пустые: рисовать нули во всех карточках честнее
+        // не показывать вовсе, иначе выглядит как сломанная аналитика.
+        if (!result.has_data) {
+          if (noDataNode) {
+            noDataNode.classList.remove("is-hidden");
           }
           return;
         }

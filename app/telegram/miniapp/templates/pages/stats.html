@@ -6,16 +6,33 @@
   data-stats-root
   data-stats-url="{{ stats_url }}"
   data-export-url="{{ export_url }}"
+  data-profile-url="{{ profile_url }}"
 >
   <p class="form-status" data-stats-status aria-live="polite">Загружаем аналитику...</p>
 
   <section class="stats-empty is-hidden" data-stats-empty>
     <div class="filter-card">
-      <h2 class="section-title">Профиль не заполнен</h2>
+      <h2 class="section-title">Сначала заполните профиль</h2>
       <p class="input-caption">
-        Выберите специализацию и скиллы в настройках профиля — после этого здесь появится
-        статистика по подходящим вакансиям.
+        Укажите специализацию и скиллы — по ним бот подбирает вакансии, и из них же
+        считается вся статистика на этой странице.
       </p>
+      <a class="save-button save-button--link" href="{{ profile_url }}">Заполнить профиль</a>
+    </div>
+  </section>
+
+  <section class="stats-empty is-hidden" data-stats-no-data>
+    <div class="filter-card">
+      <h2 class="section-title">Пока нечего показать</h2>
+      <p class="input-caption">
+        Профиль заполнен, но подходящих вакансий ещё не было. Бот проверяет каналы
+        постоянно — статистика появится сама, как только что-то найдётся.
+      </p>
+      <p class="input-caption">
+        Если ждать не хочется, ослабьте фильтры: добавьте специализации и скиллы или
+        снимите ограничения по зарплате и формату.
+      </p>
+      <a class="save-button save-button--link" href="{{ profile_url }}">Настроить фильтры</a>
     </div>
   </section>
 
