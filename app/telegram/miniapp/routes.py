@@ -420,7 +420,7 @@ def _to_funnel_response(funnel: FilterFunnel) -> StatsFunnelResponse:
     # человек с одним навыком видел «отсеяно ноль» вместо реальных потерь.
     total = funnel.specialization_total
     if total == 0:
-        return StatsFunnelResponse(total=0, rows=[])
+        return StatsFunnelResponse(total=0, matched=0, rows=[])
 
     rows = [
         StatsFunnelRowResponse(
@@ -445,7 +445,7 @@ def _to_funnel_response(funnel: FilterFunnel) -> StatsFunnelResponse:
         )
         for item in funnel.rejections
     )
-    return StatsFunnelResponse(total=total, rows=rows)
+    return StatsFunnelResponse(total=total, matched=funnel.matched, rows=rows)
 
 
 def _work_format_choice(user: User) -> str:

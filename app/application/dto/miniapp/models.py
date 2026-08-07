@@ -131,6 +131,7 @@ class SkillSuggestionResponse(BaseModel):
 
 class StatsFunnelResponse(BaseModel):
     total: int
+    matched: int = 0
     rows: list[StatsFunnelRowResponse]
 
 

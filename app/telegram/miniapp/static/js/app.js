@@ -579,7 +579,7 @@
       cardNode.classList.remove("is-hidden");
       if (titleNode) {
         const funnel = result.funnel || {};
-        titleNode.textContent = `Сейчас подходит ${funnel.rows && funnel.rows.length ? funnel.rows[0].count : 0} из ${funnel.total || 0}`;
+        titleNode.textContent = `Сейчас подходит ${funnel.matched || 0} из ${funnel.total || 0}`;
       }
 
       listNode.textContent = "";
