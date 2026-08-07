@@ -119,13 +119,22 @@ class StatsCompanyTypeResponse(BaseModel):
 
 
 class StatsFunnelRowResponse(BaseModel):
+    # Вид, а не позиция: цвет строки не должен зависеть от порядка,
+    # который задаётся в другом файле.
+    kind: str = "filter"
     label: str
     count: int
     percent: int
 
 
+class SkillSuggestionResponse(BaseModel):
+    skill: str
+    unlocks: int
+
+
 class StatsFunnelResponse(BaseModel):
     total: int
+    matched: int = 0
     rows: list[StatsFunnelRowResponse]
 
 
@@ -141,6 +150,7 @@ class ExportRequest(BaseModel):
 class ProfileStatsResponse(BaseModel):
     has_profile: bool
     has_data: bool
+    skill_suggestions: list[SkillSuggestionResponse]
     export: StatsExportResponse
     trends: list[StatsTrendSeriesResponse]
     company_breakdown: list[StatsCompanyTypeResponse]

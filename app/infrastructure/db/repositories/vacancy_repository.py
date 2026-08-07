@@ -71,6 +71,40 @@ class VacancyRepository(IVacancyRepository):
         result = await self._session.execute(query)
         return [vacancy_for_stats(row) for row in result.all()]
 
+    async def find_for_specializations_since(
+        self,
+        specializations: set[str],
+        since: datetime,
+    ) -> list[Vacancy]:
+        """Всё по специализациям пользователя, без учёта навыков.
+
+        Нужно, чтобы показать потерю на префильтре: воронка начинается уже
+        после него и эту часть не видит. Окно короче, чем у трендов, — иначе
+        строк набирается слишком много.
+        """
+        if not specializations:
+            return []
+
+        query = (
+            select(
+                VacancyModel.id,
+                VacancyModel.specializations,
+                VacancyModel.skills,
+                VacancyModel.grade,
+                VacancyModel.experience_level,
+                VacancyModel.work_format,
+                VacancyModel.company_type,
+                VacancyModel.salary_amount,
+                VacancyModel.salary_currency,
+                VacancyModel.created_at,
+            )
+            .where(VacancyModel.is_active.is_(True))
+            .where(VacancyModel.created_at >= since)
+            .where(VacancyModel.specializations.bool_op("?|")(array(sorted(specializations))))
+        )
+        result = await self._session.execute(query)
+        return [vacancy_for_stats(row) for row in result.all()]
+
     async def find_dispatched_for_user(
         self, user_tg_id: int, limit: int | None = None
     ) -> list[DispatchedVacancy]:

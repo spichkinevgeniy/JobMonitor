@@ -16,6 +16,12 @@ class IVacancyRepository(Protocol):
         since: datetime,
     ) -> list[Vacancy]: ...
 
+    async def find_for_specializations_since(
+        self,
+        specializations: set[str],
+        since: datetime,
+    ) -> list[Vacancy]: ...
+
     async def find_dispatched_for_user(
         self, user_tg_id: int, limit: int | None = None
     ) -> list[DispatchedVacancy]: ...

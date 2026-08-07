@@ -283,8 +283,20 @@ def _path_for(request: Request, name: str, **path_params: object) -> str:
     return str(request.app.url_path_for(name, **path_params))
 
 
+def _back_url(request: Request) -> str | None:
+    """Возврат показываем, только если человек пришёл из аналитики.
+
+    Из меню бота настройки открываются сами по себе, и ссылка «назад в
+    аналитику» там сбивала бы с толку.
+    """
+    if request.query_params.get("from") != "stats":
+        return None
+    return _path_for(request, "miniapp-stats")
+
+
 def build_specialty_page_context(request: Request) -> dict[str, object]:
     return {
+        "back_url": _back_url(request),
         "page_title": "Настройка специальностей",
         "page_description": "Добавьте или удалите нужные:",
         "active_page": "specialty",

@@ -563,6 +563,43 @@
       }
     }
 
+    function renderAdvice(result) {
+      const cardNode = root.querySelector("[data-stats-advice-card]");
+      const titleNode = root.querySelector("[data-stats-advice-title]");
+      const listNode = root.querySelector("[data-stats-advice-list]");
+      if (!cardNode || !listNode) {
+        return;
+      }
+      const items = result.skill_suggestions || [];
+      if (!items.length) {
+        cardNode.classList.add("is-hidden");
+        return;
+      }
+
+      cardNode.classList.remove("is-hidden");
+      if (titleNode) {
+        const funnel = result.funnel || {};
+        titleNode.textContent = `Сейчас подходит ${funnel.matched || 0} из ${funnel.total || 0}`;
+      }
+
+      listNode.textContent = "";
+      items.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "advice-row";
+
+        const skill = document.createElement("span");
+        skill.className = "advice-row__skill";
+        skill.textContent = item.skill;
+
+        const unlocks = document.createElement("span");
+        unlocks.className = "advice-row__unlocks";
+        unlocks.textContent = `+${item.unlocks}`;
+
+        row.append(skill, unlocks);
+        listNode.append(row);
+      });
+    }
+
     function renderFunnel(funnel) {
       const cardNode = root.querySelector("[data-stats-funnel-card]");
       const barNode = root.querySelector("[data-stats-funnel-bar]");
@@ -580,8 +617,17 @@
       barNode.textContent = "";
       listNode.textContent = "";
 
-      funnel.rows.forEach((row, index) => {
-        const tone = `funnel-tone-${Math.min(index, 4)}`;
+      let filterIndex = 0;
+      funnel.rows.forEach((row) => {
+        let tone;
+        if (row.kind === "matched") {
+          tone = "funnel-tone-matched";
+        } else if (row.kind === "skills") {
+          tone = "funnel-tone-skills";
+        } else {
+          tone = `funnel-tone-${Math.min(filterIndex, 3)}`;
+          filterIndex += 1;
+        }
 
         const segment = document.createElement("div");
         segment.className = `funnel-bar__seg ${tone}`;
@@ -701,6 +747,7 @@
 
         renderTrend(result.trends);
         renderFunnel(result.funnel);
+        renderAdvice(result);
         renderCompanyBreakdown(result);
         if (cardsNode) {
           cardsNode.classList.remove("is-hidden");

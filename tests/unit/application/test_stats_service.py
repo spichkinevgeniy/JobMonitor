@@ -124,6 +124,22 @@ class _FakeVacancyRepository:
             and {item.value for item in vacancy.skills.items} & skills
         ]
 
+    async def find_for_specializations_since(
+        self,
+        specializations: set[str],
+        since: datetime,
+    ) -> list[Vacancy]:
+        if not specializations:
+            return []
+
+        return [
+            vacancy
+            for vacancy in self._vacancies
+            if vacancy.is_active
+            and vacancy.created_at >= since
+            and {item.value for item in vacancy.specializations.items} & specializations
+        ]
+
 
 class _FakeVacancyUnitOfWork:
     def __init__(self, vacancies: list[Vacancy]) -> None:
