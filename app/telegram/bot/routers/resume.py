@@ -24,8 +24,7 @@ from app.infrastructure.parsers import (
 from app.infrastructure.parsers.concurrency import acquire_parse_slot
 from app.telegram.bot.keyboards import (
     CANCEL_BUTTON_TEXT,
-    HELP_BUTTON_TEXT,
-    PROFILE_BUTTON_TEXT,
+    MAIN_MENU_BUTTON_TEXTS,
     PROFILE_UPLOAD_RESUME_CALLBACK,
     UPLOAD_BUTTON_TEXT,
     get_cancel_kb,
@@ -331,7 +330,7 @@ async def processing_resume_document_block(message: Message) -> None:
     StateFilter(BotStates.main_menu, None),
     F.text,
     ~F.text.startswith("/"),
-    ~F.text.in_({UPLOAD_BUTTON_TEXT, HELP_BUTTON_TEXT, PROFILE_BUTTON_TEXT}),
+    ~F.text.in_(MAIN_MENU_BUTTON_TEXTS | {UPLOAD_BUTTON_TEXT}),
 )
 async def main_menu_fallback(message: Message) -> None:
     await message.answer(

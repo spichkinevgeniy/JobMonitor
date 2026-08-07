@@ -11,3 +11,14 @@ class INotificationService(Protocol):
         mirror_message_id: int,
         user_ids: list[int],
     ) -> None: ...
+
+
+@runtime_checkable
+class IDocumentSender(Protocol):
+    async def send_document(
+        self,
+        user_tg_id: int,
+        filename: str,
+        content: bytes,
+        caption: str,
+    ) -> None: ...

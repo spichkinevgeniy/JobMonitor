@@ -9,17 +9,26 @@ PROFILE_BUTTON_TEXT = "👤 Мой профиль"
 
 PROFILE_FILL_FORM_BUTTON_TEXT = "⚙️ Настроить профиль"
 PROFILE_UPLOAD_RESUME_BUTTON_TEXT = "📄 Загрузить резюме"
+PROFILE_STATS_BUTTON_TEXT = "📊 Аналитика"
 PROFILE_FILL_FORM_CALLBACK = "profile:fill_form"
 PROFILE_UPLOAD_RESUME_CALLBACK = "profile:upload_resume"
 SETTINGS_DONE_BUTTON_TEXT = "✅ Готов"
 SETTINGS_DONE_CALLBACK = "settings:done"
 
 
+# Кнопки главного меню шлют обычный текст, поэтому fallback обязан их
+# пропускать — иначе новая кнопка молча уходит в «используйте кнопки меню».
+MAIN_MENU_BUTTON_TEXTS = frozenset(
+    {PROFILE_BUTTON_TEXT, PROFILE_STATS_BUTTON_TEXT, HELP_BUTTON_TEXT}
+)
+
+
 def get_main_menu_kb() -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
     builder.button(text=PROFILE_BUTTON_TEXT)
+    builder.button(text=PROFILE_STATS_BUTTON_TEXT)
     builder.button(text=HELP_BUTTON_TEXT)
-    builder.adjust(2)
+    builder.adjust(2, 1)
     return builder.as_markup(resize_keyboard=True)
 
 
@@ -35,7 +44,18 @@ def get_cancel_kb() -> ReplyKeyboardMarkup:
     return builder.as_markup(resize_keyboard=True)
 
 
-def get_profile_actions_kb() -> InlineKeyboardMarkup:
+def get_stats_kb(stats_url: str) -> InlineKeyboardMarkup:
+    """Мини-апп открываем только отсюда: кнопке reply-клавиатуры Telegram не
+    передаёт подписанные данные, и авторизоваться там нечем."""
+    builder = InlineKeyboardBuilder()
+    builder.button(
+        text=PROFILE_STATS_BUTTON_TEXT,
+        web_app=WebAppInfo(url=stats_url),
+    )
+    return builder.as_markup()
+
+
+def get_profile_actions_kb(stats_url: str = "") -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.button(
         text=PROFILE_FILL_FORM_BUTTON_TEXT,
@@ -45,7 +65,12 @@ def get_profile_actions_kb() -> InlineKeyboardMarkup:
         text=PROFILE_UPLOAD_RESUME_BUTTON_TEXT,
         callback_data=PROFILE_UPLOAD_RESUME_CALLBACK,
     )
-    builder.adjust(1, 1)
+    if stats_url:
+        builder.button(
+            text=PROFILE_STATS_BUTTON_TEXT,
+            web_app=WebAppInfo(url=stats_url),
+        )
+    builder.adjust(1)
     return builder.as_markup()
 
 

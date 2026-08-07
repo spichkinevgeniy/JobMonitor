@@ -16,6 +16,14 @@ from app.domain.vacancy.exceptions import ValidationError
 from app.domain.vacancy.value_objects import ContentHash, VacancyId
 
 
+@dataclass(frozen=True, slots=True)
+class DispatchedVacancy:
+    """Вакансия вместе с моментом, когда бот отправил её пользователю."""
+
+    vacancy: "Vacancy"
+    dispatched_at: datetime
+
+
 @dataclass(slots=True)
 class Vacancy:
     id: VacancyId
@@ -35,6 +43,8 @@ class Vacancy:
     created_at: datetime
     is_active: bool = True
     company_type: CompanyType = CompanyType.UNDEFINED
+    source_channel: str | None = None
+    source_message_id: int | None = None
 
     @classmethod
     def create(
@@ -52,6 +62,8 @@ class Vacancy:
         salary_currency: str | None = None,
         created_at: datetime | None = None,
         company_type: CompanyType = CompanyType.UNDEFINED,
+        source_channel: str | None = None,
+        source_message_id: int | None = None,
     ) -> "Vacancy":
         if not text or not text.strip():
             raise ValidationError("Vacancy text cannot be empty.")
@@ -81,6 +93,8 @@ class Vacancy:
             content_hash=cls.compute_content_hash(text),
             created_at=created_at or now,
             company_type=company_type,
+            source_channel=source_channel,
+            source_message_id=source_message_id,
         )
 
     @staticmethod

@@ -5,30 +5,61 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.application.dto.miniapp import (
     ExperienceLevelChoice,
+    ExportRequest,
     FormatReadResponse,
     FormatSaveRequest,
     GradeChoice,
     LevelModeChoice,
     LevelReadResponse,
     LevelSaveRequest,
+    ProfileStatsResponse,
     SalaryModeChoice,
     SalaryReadResponse,
     SalarySaveRequest,
     SaveResponse,
     SpecialtyReadResponse,
     SpecialtySaveRequest,
+    StatsCompanyTypeResponse,
+    StatsExportResponse,
+    StatsFunnelResponse,
+    StatsFunnelRowResponse,
+    StatsTrendPointResponse,
+    StatsTrendSeriesResponse,
     WorkFormatChoice,
 )
+from app.application.services.export_service import ExportFormat, ExportService
+from app.application.services.stats_service import (
+    FilterFunnel,
+    ProfileStats,
+    StatsService,
+    TrendGranularity,
+)
 from app.application.services.user_service import UserService
+from app.domain.matching.entities import MatchRejectionReason
 from app.domain.shared.value_objects import ExperienceLevel, Grade, WorkFormat
 from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode, LevelFilterMode
-from app.telegram.miniapp.deps import get_current_user, get_user_service, parse_user_context
+from app.infrastructure.notifications import TelegramDocumentSender
+from app.telegram.miniapp.deps import (
+    get_current_user,
+    get_document_sender,
+    get_export_service,
+    get_stats_service,
+    get_user_service,
+    parse_user_context,
+)
 from app.telegram.miniapp.page_context import (
     build_format_page_context,
     build_level_page_context,
     build_salary_page_context,
     build_specialty_page_context,
+    build_stats_page_context,
+    company_type_label,
+)
+from app.telegram.miniapp.throttle import (
+    cancel_export,
+    register_export,
+    seconds_until_export_allowed,
 )
 from app.telegram.miniapp.ui import templates
 
@@ -74,6 +105,73 @@ async def level_page(request: Request) -> HTMLResponse:
         "pages/level.html",
         build_level_page_context(request),
     )
+
+
+@router.get("/miniapp/stats", response_class=HTMLResponse, name="miniapp-stats")
+async def stats_page(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse(
+        request,
+        "pages/stats.html",
+        build_stats_page_context(request),
+    )
+
+
+@router.get(
+    "/miniapp/api/stats",
+    name="miniapp-read-stats",
+    response_model=ProfileStatsResponse,
+)
+async def read_stats(
+    user: Annotated[User, Depends(get_current_user)],
+    service: Annotated[StatsService, Depends(get_stats_service)],
+    export_service: Annotated[ExportService, Depends(get_export_service)],
+) -> ProfileStatsResponse:
+    stats = await service.build_profile_stats(user)
+    export_count = await export_service.count_available(user.tg_id.value)
+    return _to_stats_response(user, stats, export_count)
+
+
+@router.post(
+    "/miniapp/api/export",
+    name="miniapp-export",
+    response_model=SaveResponse,
+)
+async def export_vacancies(
+    payload: ExportRequest,
+    service: Annotated[ExportService, Depends(get_export_service)],
+    sender: Annotated[TelegramDocumentSender, Depends(get_document_sender)],
+) -> SaveResponse:
+    user_context = parse_user_context(payload.init_data)
+
+    try:
+        export_format = ExportFormat(payload.export_format)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Неизвестный формат выгрузки.") from None
+
+    # Проверка и отметка без await между ними, иначе пачка запросов пройдёт целиком.
+    retry_after = seconds_until_export_allowed(user_context.tg_id)
+    if retry_after:
+        raise HTTPException(
+            status_code=429,
+            detail=f"Слишком часто. Повторите через {retry_after} с.",
+        )
+    register_export(user_context.tg_id)
+
+    export_file = await service.build(user_context.tg_id, export_format)
+    if export_file is None:
+        cancel_export(user_context.tg_id)
+        raise HTTPException(
+            status_code=404,
+            detail="Пока нечего выгружать: бот ещё не присылал вам вакансии.",
+        )
+
+    await sender.send_document(
+        user_tg_id=user_context.tg_id,
+        filename=export_file.filename,
+        content=export_file.content,
+        caption=f"Выгрузка вакансий: {export_file.count} шт.",
+    )
+    return SaveResponse(message="Файл отправлен в чат с ботом.")
 
 
 @router.get(
@@ -245,6 +343,92 @@ async def save_level(
         raise HTTPException(status_code=404, detail="Пользователь не найден.")
 
     return SaveResponse(message="Грейд и опыт сохранены.")
+
+
+_TREND_TOGGLE_LABELS = {
+    TrendGranularity.WEEK: "Недели",
+    TrendGranularity.DAY: "Дни",
+}
+_REJECTION_LABELS = {
+    MatchRejectionReason.SALARY: "Отсёк фильтр зарплаты",
+    MatchRejectionReason.GRADE: "Отсёк грейд",
+    MatchRejectionReason.EXPERIENCE: "Отсёк опыт",
+    MatchRejectionReason.FORMAT: "Отсёк формат работы",
+}
+# Бакеты скользящие (от «сейчас» назад), а не календарные, поэтому пишем
+# «за последние 7 дней», а не «за эту неделю».
+_TREND_HEADLINE_LABELS = {
+    TrendGranularity.WEEK: "за последние 7 дней",
+    TrendGranularity.DAY: "за последние сутки",
+}
+
+
+def _to_stats_response(
+    user: User,
+    stats: ProfileStats,
+    export_count: int,
+) -> ProfileStatsResponse:
+    return ProfileStatsResponse(
+        has_profile=bool(user.cv_specializations.items and user.cv_skills.items),
+        has_data=_has_any_data(stats),
+        export=StatsExportResponse(
+            count=export_count,
+        ),
+        trends=[
+            StatsTrendSeriesResponse(
+                granularity=series.granularity.value,
+                toggle_label=_TREND_TOGGLE_LABELS[series.granularity],
+                headline_label=_TREND_HEADLINE_LABELS[series.granularity],
+                points=[
+                    StatsTrendPointResponse(
+                        label=point.bucket_start.strftime("%d.%m"),
+                        count=point.count,
+                    )
+                    for point in series.points
+                ],
+            )
+            for series in stats.trends
+        ],
+        company_breakdown=[
+            StatsCompanyTypeResponse(
+                label=company_type_label(item.company_type.value),
+                count=item.count,
+                percent=round(item.count * 100 / stats.company_total),
+            )
+            for item in stats.company_breakdown
+        ],
+        company_total=stats.company_total,
+        funnel=_to_funnel_response(stats.funnel),
+    )
+
+
+def _has_any_data(stats: ProfileStats) -> bool:
+    """У нового пользователя окна пустые — показывать нули как аналитику нечестно."""
+    if stats.funnel.total or stats.company_total:
+        return True
+    return any(point.count for series in stats.trends for point in series.points)
+
+
+def _to_funnel_response(funnel: FilterFunnel) -> StatsFunnelResponse:
+    if funnel.total == 0:
+        return StatsFunnelResponse(total=0, rows=[])
+
+    rows = [
+        StatsFunnelRowResponse(
+            label="Дошло до вас",
+            count=funnel.matched,
+            percent=round(funnel.matched * 100 / funnel.total),
+        )
+    ]
+    rows.extend(
+        StatsFunnelRowResponse(
+            label=_REJECTION_LABELS[item.reason],
+            count=item.count,
+            percent=round(item.count * 100 / funnel.total),
+        )
+        for item in funnel.rejections
+    )
+    return StatsFunnelResponse(total=funnel.total, rows=rows)
 
 
 def _work_format_choice(user: User) -> str:

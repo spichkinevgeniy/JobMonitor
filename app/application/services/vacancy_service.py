@@ -95,6 +95,8 @@ class VacancyService:
                     parse_result.salary_currency.value if parse_result.salary_currency else None
                 ),
                 company_type=parse_result.company_type,
+                source_channel=raw_vacancy_info.source_channel,
+                source_message_id=raw_vacancy_info.message_id,
             )
             async with self._uow:
                 await self._uow.vacancies.upsert(vacancy)

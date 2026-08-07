@@ -166,6 +166,12 @@ class TelegramScraper:
         return "unknown"
 
     @staticmethod
+    def _source_username(event: events.NewMessage.Event) -> str | None:
+        """Только @username: по нему собирается ссылка на исходный пост."""
+        username = getattr(event.chat, "username", None)
+        return f"@{username}" if username else None
+
+    @staticmethod
     def _message_preview(text: str, limit: int = 300) -> str:
         normalized = " ".join(text.split())
         if len(normalized) <= limit:
@@ -217,4 +223,5 @@ class TelegramScraper:
             text=text,
             chat_id=event.chat_id,
             message_id=message.id,
+            source_channel=self._source_username(event),
         )

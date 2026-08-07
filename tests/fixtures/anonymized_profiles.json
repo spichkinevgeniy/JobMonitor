@@ -1,0 +1,1208 @@
+[
+ {
+  "tg_id": 1,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Java/Scala",
+   "Kotlin",
+   "DevOps"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "SENIOR",
+  "grade_mode": "UP_TO",
+  "experience_level": "SIX_PLUS_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 2,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 3,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Node.js"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "SENIOR",
+  "grade_mode": "UP_TO",
+  "experience_level": "SIX_PLUS_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 4,
+  "specializations": [
+   "Frontend",
+   "Backend",
+   "Mobile"
+  ],
+  "skills": [
+   "Vue",
+   "React",
+   "Node.js",
+   "PHP",
+   "Rust",
+   "Go",
+   "Ruby",
+   "React Native",
+   "TypeScript",
+   "iOS",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 5,
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "Vue"
+  ],
+  "salary_amount": 320000,
+  "salary_currency": "RUB",
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 6,
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "TypeScript",
+   "Vue",
+   "Node.js"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "SENIOR",
+  "grade_mode": "UP_TO",
+  "experience_level": "SIX_PLUS_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 7,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 8,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 9,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "PHP"
+  ],
+  "salary_amount": 250000,
+  "salary_currency": "RUB",
+  "salary_mode": "STRICT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 10,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "JUNIOR",
+  "grade_mode": "UP_TO",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 11,
+  "specializations": [
+   "Analytics",
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "DevOps",
+   "System Administration",
+   "SQL"
+  ],
+  "salary_amount": 250000,
+  "salary_currency": "RUB",
+  "salary_mode": "STRICT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 12,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#"
+  ],
+  "salary_amount": 80000,
+  "salary_currency": "RUB",
+  "salary_mode": "STRICT",
+  "grade": "MIDDLE",
+  "grade_mode": "UP_TO",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 13,
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "TypeScript",
+   "Node.js",
+   "React",
+   "PHP",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "MIDDLE",
+  "grade_mode": "UP_TO",
+  "experience_level": "SIX_PLUS_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 14,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Java/Scala",
+   "C#",
+   "SQL",
+   "PHP"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "ONSITE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 15,
+  "specializations": [
+   "Data Science / ML",
+   "Analytics",
+   "Backend",
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "Data Analysis",
+   "DevOps",
+   "Java/Scala",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "JUNIOR",
+  "grade_mode": "UP_TO",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 16,
+  "specializations": [
+   "Frontend",
+   "Backend"
+  ],
+  "skills": [
+   "Vue",
+   "C#",
+   "React",
+   "Node.js",
+   "PHP",
+   "Ruby",
+   "TypeScript",
+   "React Native"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 17,
+  "specializations": [
+   "GameDev",
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "C#",
+   "DevOps"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": "SIX_PLUS_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "HYBRID",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 18,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 19,
+  "specializations": [
+   "GameDev",
+   "Frontend",
+   "QA",
+   "Backend",
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "SQL",
+   "System Administration",
+   "Node.js",
+   "Vue",
+   "Manual QA",
+   "TypeScript",
+   "Go",
+   "QA Automation",
+   "React",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "MIDDLE",
+  "grade_mode": "UP_TO",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 20,
+  "specializations": [
+   "Mobile",
+   "Data Science / ML"
+  ],
+  "skills": [
+   "SQL",
+   "DevOps",
+   "NLP",
+   "Machine Learning",
+   "React Native",
+   "C++",
+   "System Administration",
+   "PHP",
+   "Computer Vision",
+   "Node.js",
+   "Vue",
+   "C",
+   "Manual QA",
+   "Data Analysis",
+   "Android",
+   "React",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "JUNIOR",
+  "grade_mode": "UP_TO",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 21,
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "JUNIOR",
+  "grade_mode": "UP_TO",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 22,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 23,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Node.js",
+   "Python",
+   "TypeScript",
+   "DevOps",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 24,
+  "specializations": [
+   "UI/UX & Product Design"
+  ],
+  "skills": [
+   "Design Systems",
+   "React Native",
+   "Prototyping",
+   "iOS",
+   "Graphics",
+   "Flutter",
+   "Android",
+   "Figma",
+   "Interaction Design",
+   "UX Research"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "SENIOR",
+  "grade_mode": "UP_TO",
+  "experience_level": "SIX_PLUS_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 25,
+  "specializations": [
+   "Backend",
+   "GameDev",
+   "Data Science / ML",
+   "Frontend"
+  ],
+  "skills": [
+   "TypeScript",
+   "Vue",
+   "Go",
+   "Unreal Engine",
+   "Rust",
+   "React",
+   "PHP",
+   "Python",
+   "Unity"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 26,
+  "specializations": [
+   "Frontend",
+   "Mobile"
+  ],
+  "skills": [
+   "Android",
+   "React",
+   "Kotlin",
+   "Go",
+   "TypeScript",
+   "React Native"
+  ],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "salary_mode": "STRICT",
+  "grade": "SENIOR",
+  "grade_mode": "UP_TO",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 27,
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "Android",
+   "Data Analysis",
+   "Kotlin",
+   "Manual QA",
+   "Python",
+   "QA Automation",
+   "React",
+   "SQL",
+   "TypeScript",
+   "iOS"
+  ],
+  "salary_amount": 200000,
+  "salary_currency": "RUB",
+  "salary_mode": "STRICT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 28,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": 300000,
+  "salary_currency": "RUB",
+  "salary_mode": "STRICT",
+  "grade": "SENIOR",
+  "grade_mode": "EXACT",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 29,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "MIDDLE",
+  "grade_mode": "UP_TO",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 30,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python",
+   "NLP"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "MIDDLE",
+  "grade_mode": "UP_TO",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 31,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 32,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 33,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "C#",
+   "C++"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 34,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 35,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 36,
+  "specializations": [
+   "Frontend",
+   "Backend"
+  ],
+  "skills": [
+   "SQL",
+   "DevOps",
+   "Node.js",
+   "TypeScript",
+   "C#",
+   "React"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "MIDDLE",
+  "grade_mode": "UP_TO",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 37,
+  "specializations": [
+   "QA"
+  ],
+  "skills": [
+   "SQL",
+   "Manual QA"
+  ],
+  "salary_amount": 110000,
+  "salary_currency": "RUB",
+  "salary_mode": "STRICT",
+  "grade": "MIDDLE",
+  "grade_mode": "UP_TO",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 38,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 39,
+  "specializations": [
+   "Infrastructure & DevOps",
+   "Backend"
+  ],
+  "skills": [
+   "DevOps",
+   "C#",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "SENIOR",
+  "grade_mode": "UP_TO",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 40,
+  "specializations": [
+   "Frontend",
+   "Backend"
+  ],
+  "skills": [
+   "React",
+   "Python"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": "NO_EXPERIENCE",
+  "experience_mode": "UP_TO",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 41,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Kotlin",
+   "Java/Scala",
+   "Go"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "SENIOR",
+  "grade_mode": "UP_TO",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 42,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "React",
+   "TypeScript",
+   "SQL",
+   "C#"
+  ],
+  "salary_amount": 120000,
+  "salary_currency": "RUB",
+  "salary_mode": "STRICT",
+  "grade": "MIDDLE",
+  "grade_mode": "UP_TO",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 43,
+  "specializations": [
+   "Backend",
+   "GameDev"
+  ],
+  "skills": [
+   "C#",
+   "Unity"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "MIDDLE",
+  "grade_mode": "UP_TO",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 44,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 45,
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "SQL",
+   "DevOps",
+   "React Native",
+   "Node.js",
+   "TypeScript",
+   "Figma",
+   "UX Research",
+   "React"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "SENIOR",
+  "grade_mode": "UP_TO",
+  "experience_level": "SIX_PLUS_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 46,
+  "specializations": [
+   "Data Science / ML",
+   "Mobile",
+   "Backend",
+   "Analytics",
+   "Frontend",
+   "GameDev"
+  ],
+  "skills": [
+   "Data Analysis",
+   "Data Engineering",
+   "Machine Learning",
+   "Python",
+   "Computer Vision",
+   "NLP",
+   "SQL",
+   "Unity",
+   "C#"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "JUNIOR",
+  "grade_mode": "UP_TO",
+  "experience_level": "NO_EXPERIENCE",
+  "experience_mode": "UP_TO",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 47,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 48,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Kotlin",
+   "DevOps",
+   "SQL",
+   "Java/Scala"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "MIDDLE",
+  "grade_mode": "UP_TO",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 49,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "DevOps",
+   "Python",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "MIDDLE",
+  "grade_mode": "UP_TO",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 50,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 51,
+  "specializations": [
+   "QA",
+   "Backend",
+   "Infrastructure & DevOps"
+  ],
+  "skills": [
+   "SQL",
+   "DevOps",
+   "Java/Scala",
+   "System Administration",
+   "Manual QA",
+   "QA Automation",
+   "SRE"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "JUNIOR",
+  "grade_mode": "UP_TO",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 52,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 53,
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "Python",
+   "TypeScript",
+   "Java/Scala",
+   "Node.js",
+   "React"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 54,
+  "specializations": [
+   "Frontend",
+   "Backend"
+  ],
+  "skills": [
+   "Node.js",
+   "PHP",
+   "TypeScript"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": "THREE_TO_SIX_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 55,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Python",
+   "SQL"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "MIDDLE",
+  "grade_mode": "UP_TO",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 56,
+  "specializations": [
+   "Backend"
+  ],
+  "skills": [
+   "Go"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "MIDDLE",
+  "grade_mode": "UP_TO",
+  "experience_level": "ONE_TO_THREE_YEARS",
+  "experience_mode": "UP_TO",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 57,
+  "specializations": [
+   "Data Science / ML"
+  ],
+  "skills": [
+   "Machine Learning",
+   "Python",
+   "NLP"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": "MIDDLE",
+  "grade_mode": "EXACT",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 58,
+  "specializations": [],
+  "skills": [],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ },
+ {
+  "tg_id": 59,
+  "specializations": [
+   "Backend",
+   "Frontend"
+  ],
+  "skills": [
+   "C#",
+   "Node.js",
+   "Python",
+   "Java/Scala",
+   "C++"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": "REMOTE",
+  "work_format_mode": "STRICT"
+ },
+ {
+  "tg_id": 60,
+  "specializations": [
+   "Frontend"
+  ],
+  "skills": [
+   "React",
+   "TypeScript",
+   "Vue",
+   "Angular"
+  ],
+  "salary_amount": null,
+  "salary_currency": null,
+  "salary_mode": "SOFT",
+  "grade": null,
+  "grade_mode": "IGNORE",
+  "experience_level": null,
+  "experience_mode": "IGNORE",
+  "work_format": null,
+  "work_format_mode": "SOFT"
+ }
+]

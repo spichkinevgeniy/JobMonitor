@@ -17,6 +17,7 @@ class InfoRawVacancy(BaseModel):
     mirror_message_id: int | None = None
     chat_id: int | None = None
     message_id: int | None = None
+    source_channel: str | None = None
 
 
 class OutVacancyParse(BaseModel):
