@@ -160,3 +160,14 @@ def build_resume_unknown_error_text() -> str:
 
 def build_resume_llm_unavailable_text() -> str:
     return "Сейчас модель временно перегружена. Попробуйте еще раз чуть позже."
+
+
+def build_stats_prompt_text() -> str:
+    return "Аналитика по вашему профилю: сколько вакансий подходит, что отсекают фильтры и кто нанимает."
+
+
+def build_stats_unavailable_text() -> str:
+    return (
+        "Страница аналитики сейчас недоступна.\n"
+        f"Если проблема повторяется, можно написать в {SUPPORT_BOT_HANDLE}."
+    )

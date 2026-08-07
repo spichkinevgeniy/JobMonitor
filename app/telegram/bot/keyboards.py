@@ -19,8 +19,9 @@ SETTINGS_DONE_CALLBACK = "settings:done"
 def get_main_menu_kb() -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
     builder.button(text=PROFILE_BUTTON_TEXT)
+    builder.button(text=PROFILE_STATS_BUTTON_TEXT)
     builder.button(text=HELP_BUTTON_TEXT)
-    builder.adjust(2)
+    builder.adjust(2, 1)
     return builder.as_markup(resize_keyboard=True)
 
 
@@ -34,6 +35,17 @@ def get_cancel_kb() -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
     builder.button(text=CANCEL_BUTTON_TEXT)
     return builder.as_markup(resize_keyboard=True)
+
+
+def get_stats_kb(stats_url: str) -> InlineKeyboardMarkup:
+    """Мини-апп открываем только отсюда: кнопке reply-клавиатуры Telegram не
+    передаёт подписанные данные, и авторизоваться там нечем."""
+    builder = InlineKeyboardBuilder()
+    builder.button(
+        text=PROFILE_STATS_BUTTON_TEXT,
+        web_app=WebAppInfo(url=stats_url),
+    )
+    return builder.as_markup()
 
 
 def get_profile_actions_kb(stats_url: str = "") -> InlineKeyboardMarkup:

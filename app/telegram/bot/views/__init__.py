@@ -27,6 +27,8 @@ from app.telegram.bot.views.copy import (
     build_settings_unavailable_text,
     build_start_message,
     build_start_required_text,
+    build_stats_prompt_text,
+    build_stats_unavailable_text,
 )
 from app.telegram.bot.views.profile import build_search_profile_text
 from app.telegram.bot.views.settings import (
@@ -70,6 +72,8 @@ __all__ = [
     "build_settings_saved_text",
     "build_settings_unavailable_text",
     "build_start_message",
+    "build_stats_prompt_text",
+    "build_stats_unavailable_text",
     "build_start_required_text",
     "build_stats_url",
     "format_salary",
