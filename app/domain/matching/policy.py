@@ -76,6 +76,8 @@ def _rejected_by_work_format(vacancy: Vacancy, user: User) -> bool:
     if user.cv_work_format is None:
         return False
     if vacancy.work_format == WorkFormat.UNDEFINED:
-        return True
+        # «Не указан» не равно «не подходит». Соседние проверки по грейду и
+        # опыту в этой же ситуации пропускают — приводим к одному поведению.
+        return False
 
     return vacancy.work_format != user.cv_work_format

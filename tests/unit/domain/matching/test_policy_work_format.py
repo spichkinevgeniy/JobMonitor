@@ -40,14 +40,20 @@ def test_strict_work_format_mismatch_rejected() -> None:
     assert decision.reason == MatchRejectionReason.FORMAT
 
 
-def test_strict_work_format_undefined_vacancy_rejected() -> None:
+def test_strict_work_format_undefined_vacancy_passes() -> None:
+    """«Формат не указан» не равно «формат не подходит».
+
+    Проверки по грейду и опыту в этой же ситуации пропускают — раньше формат
+    вёл себя противоположно и отсекал 32 вакансии в неделю у 29 человек.
+    Почему вакансия прошла, объясняет кнопка под ней.
+    """
     user = _build_user(work_format=WorkFormat.HYBRID, mode=FilterMode.STRICT)
     vacancy = _build_vacancy(work_format=WorkFormat.UNDEFINED)
 
     decision = evaluate_match(vacancy=vacancy, user=user)
 
-    assert decision.accepted is False
-    assert decision.reason == MatchRejectionReason.FORMAT
+    assert decision.accepted is True
+    assert decision.reason is None
 
 
 def test_soft_work_format_does_not_reject() -> None:

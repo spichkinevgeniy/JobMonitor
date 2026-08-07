@@ -171,3 +171,47 @@ def build_stats_unavailable_text() -> str:
         "Страница аналитики сейчас недоступна.\n"
         f"Если проблема повторяется, можно написать в {SUPPORT_BOT_HANDLE}."
     )
+
+
+_GRADE_TITLES = {
+    "INTERN": "Intern",
+    "JUNIOR": "Junior",
+    "MIDDLE": "Middle",
+    "SENIOR": "Senior",
+    "LEAD": "Lead",
+}
+
+_FORMAT_TITLES = {
+    "REMOTE": "удалённо",
+    "ONSITE": "офис",
+    "HYBRID": "гибрид",
+}
+
+
+def build_vacancy_reason_text(vacancy: object, matched_skills: list[str]) -> str:
+    specializations = getattr(vacancy, "specializations", None) or []
+    grade = getattr(vacancy, "grade", "UNDEFINED")
+    work_format = getattr(vacancy, "work_format", "UNDEFINED")
+
+    lines = ["Почему эта вакансия у вас"]
+    if specializations:
+        lines.append(f"Специализация: {', '.join(specializations)}")
+    lines.append(
+        f"Совпали навыки: {', '.join(matched_skills)}"
+        if matched_skills
+        else "Совпадений по навыкам нет"
+    )
+
+    if grade == "UNDEFINED":
+        lines.append("Грейд: в вакансии не указан, поэтому не отсеивали")
+    else:
+        lines.append(f"Грейд: {_GRADE_TITLES.get(grade, grade)}")
+
+    if work_format == "UNDEFINED":
+        lines.append("Формат: в вакансии не указан, поэтому не отсеивали")
+    else:
+        lines.append(f"Формат: {_FORMAT_TITLES.get(work_format, work_format)}")
+
+    lines.append("")
+    lines.append("Слишком много лишнего? Настройте фильтры в /settings.")
+    return "\n".join(lines)
