@@ -57,7 +57,11 @@ from app.telegram.miniapp.page_context import (
     build_stats_page_context,
     company_type_label,
 )
-from app.telegram.miniapp.throttle import register_export, seconds_until_export_allowed
+from app.telegram.miniapp.throttle import (
+    cancel_export,
+    register_export,
+    seconds_until_export_allowed,
+)
 from app.telegram.miniapp.ui import templates
 
 router = APIRouter()
@@ -156,6 +160,7 @@ async def export_vacancies(
 
     export_file = await service.build(user_context.tg_id, export_format)
     if export_file is None:
+        cancel_export(user_context.tg_id)
         raise HTTPException(
             status_code=404,
             detail="Пока нечего выгружать: бот ещё не присылал вам вакансии.",

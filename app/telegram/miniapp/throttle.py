@@ -26,6 +26,12 @@ def register_export(tg_id: int) -> None:
     _last_export[tg_id] = datetime.now(UTC)
 
 
+def cancel_export(tg_id: int) -> None:
+    """Отметку ставим до сборки файла ради атомарности, но за пустую выгрузку
+    минуту ждать незачем."""
+    _last_export.pop(tg_id, None)
+
+
 def _prune() -> None:
     if len(_last_export) < _MAX_TRACKED_USERS:
         return

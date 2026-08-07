@@ -7,6 +7,7 @@ import pytest
 from app.telegram.miniapp import throttle
 from app.telegram.miniapp.throttle import (
     EXPORT_COOLDOWN,
+    cancel_export,
     register_export,
     seconds_until_export_allowed,
 )
@@ -56,3 +57,17 @@ def test_stale_entries_are_pruned() -> None:
     register_export(TG_ID)
 
     assert throttle._last_export == {TG_ID: throttle._last_export[TG_ID]}
+
+
+def test_cancel_releases_the_slot() -> None:
+    register_export(TG_ID)
+
+    cancel_export(TG_ID)
+
+    assert seconds_until_export_allowed(TG_ID) == 0
+
+
+def test_cancel_without_registration_is_harmless() -> None:
+    cancel_export(TG_ID)
+
+    assert seconds_until_export_allowed(TG_ID) == 0

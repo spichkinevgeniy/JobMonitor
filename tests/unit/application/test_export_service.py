@@ -6,6 +6,7 @@ from app.application.services.export_service import (
     MAX_EXPORT_VACANCIES,
     ExportFormat,
     ExportService,
+    _fence_for,
 )
 from app.domain.vacancy.entities import DispatchedVacancy
 
@@ -60,3 +61,21 @@ async def test_build_returns_none_without_history() -> None:
     service = ExportService(uow)  # type: ignore[arg-type]
 
     assert await service.build(TG_ID, ExportFormat.JSON) is None
+
+
+class TestMarkdownFence:
+    def test_plain_text_uses_three_backticks(self) -> None:
+        assert _fence_for("обычный текст вакансии") == "```"
+
+    def test_fence_outgrows_backticks_inside_text(self) -> None:
+        assert _fence_for("код: ```python\nprint(1)\n```") == "````"
+
+    def test_fence_outgrows_the_longest_run(self) -> None:
+        assert _fence_for("`a`` b ````` c ``") == "``````"
+
+    def test_injected_text_stays_inside_the_block(self) -> None:
+        """Иначе постом в чужом канале можно вылезти из блока в разметку."""
+        text = "```\n# чужой заголовок\n[ссылка](http://evil)"
+        fence = _fence_for(text)
+
+        assert fence not in text

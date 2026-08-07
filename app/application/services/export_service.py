@@ -1,4 +1,5 @@
 import json
+import re
 from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
@@ -21,6 +22,7 @@ _EXTENSIONS = {
 
 # Файл целиком собирается в памяти, поэтому размер выборки ограничен.
 MAX_EXPORT_VACANCIES = 5000
+MIN_FENCE_LENGTH = 3
 
 
 @dataclass(frozen=True, slots=True)
@@ -113,13 +115,21 @@ def _meta_lines(item: DispatchedVacancy) -> list[str]:
     ]
 
 
+def _fence_for(text: str) -> str:
+    """Текст вакансии — из чужого канала, в нём могут быть свои обратные кавычки."""
+    longest = max((len(run) for run in re.findall(r"`+", text)), default=0)
+    return "`" * max(MIN_FENCE_LENGTH, longest + 1)
+
+
 def _render_markdown(items: list[DispatchedVacancy]) -> str:
     blocks = [
         f"# Вакансии из JobMonitor\n\nВсего: {len(items)}\n",
     ]
     for index, item in enumerate(items, start=1):
         meta = "\n".join(f"- {line}" for line in _meta_lines(item))
-        blocks.append(f"## Вакансия {index}\n\n{meta}\n\n```\n{item.vacancy.text}\n```\n")
+        text = item.vacancy.text
+        fence = _fence_for(text)
+        blocks.append(f"## Вакансия {index}\n\n{meta}\n\n{fence}\n{text}\n{fence}\n")
     return "\n".join(blocks)
 
 
