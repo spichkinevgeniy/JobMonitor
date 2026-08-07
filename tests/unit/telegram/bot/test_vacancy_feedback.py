@@ -1,7 +1,11 @@
 """Кнопки под вакансией: объяснение и отметка «не подходит»."""
 
 from app.telegram.bot.keyboards import (
+    VACANCY_NOOP_CALLBACK,
+    VACANCY_REJECT_BUTTON_TEXT,
     VACANCY_REJECT_CALLBACK_PREFIX,
+    VACANCY_REJECTED_BUTTON_TEXT,
+    VACANCY_WHY_BUTTON_TEXT,
     VACANCY_WHY_CALLBACK_PREFIX,
     get_vacancy_kb,
 )
@@ -34,6 +38,28 @@ class TestKeyboard:
 
         assert buttons[0].callback_data == f"{VACANCY_WHY_CALLBACK_PREFIX}{VACANCY_ID}"
         assert buttons[1].callback_data == f"{VACANCY_REJECT_CALLBACK_PREFIX}{VACANCY_ID}"
+
+
+class TestKeyboardAfterRejection:
+    def test_why_button_survives_rejection(self) -> None:
+        """После отметки объяснение остаётся: человек всё ещё хочет понять."""
+        rows = get_vacancy_kb(VACANCY_ID, rejected=True).inline_keyboard
+        texts = [b.text for row in rows for b in row]
+
+        assert VACANCY_WHY_BUTTON_TEXT in texts
+
+    def test_reject_button_replaced_by_mark(self) -> None:
+        rows = get_vacancy_kb(VACANCY_ID, rejected=True).inline_keyboard
+        texts = [b.text for row in rows for b in row]
+
+        assert VACANCY_REJECT_BUTTON_TEXT not in texts
+        assert VACANCY_REJECTED_BUTTON_TEXT in texts
+
+    def test_mark_does_nothing_on_tap(self) -> None:
+        rows = get_vacancy_kb(VACANCY_ID, rejected=True).inline_keyboard
+        mark = [b for row in rows for b in row if b.text == VACANCY_REJECTED_BUTTON_TEXT][0]
+
+        assert mark.callback_data == VACANCY_NOOP_CALLBACK
 
 
 class TestReasonText:

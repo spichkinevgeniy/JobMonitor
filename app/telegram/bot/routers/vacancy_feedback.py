@@ -10,9 +10,10 @@ from app.infrastructure.db import async_session_factory
 from app.infrastructure.db.models import Vacancy as VacancyModel
 from app.infrastructure.db.models import VacancyDispatchLog
 from app.telegram.bot.keyboards import (
+    VACANCY_NOOP_CALLBACK,
     VACANCY_REJECT_CALLBACK_PREFIX,
     VACANCY_WHY_CALLBACK_PREFIX,
-    get_vacancy_rejected_kb,
+    get_vacancy_kb,
 )
 from app.telegram.bot.views import build_vacancy_reason_text
 
@@ -75,11 +76,13 @@ async def reject_vacancy(callback: CallbackQuery) -> None:
     await callback.answer("Отмечено, учту")
     if isinstance(callback.message, Message):
         try:
-            await callback.message.edit_reply_markup(reply_markup=get_vacancy_rejected_kb())
+            await callback.message.edit_reply_markup(
+                reply_markup=get_vacancy_kb(str(vacancy_id), rejected=True)
+            )
         except Exception:
             logger.debug("Failed to update keyboard after rejection", exc_info=True)
 
 
-@router.callback_query(F.data == "vac:noop")
+@router.callback_query(F.data == VACANCY_NOOP_CALLBACK)
 async def ignore_noop(callback: CallbackQuery) -> None:
     await callback.answer()
