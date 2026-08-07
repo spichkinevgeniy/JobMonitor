@@ -729,3 +729,35 @@ body {
     flex-basis: 100%;
   }
 }
+
+.advice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 12px 0 14px;
+}
+
+.advice-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(5, 5, 5, 0.06);
+}
+
+.advice-row:last-child {
+  border-bottom: 0;
+}
+
+.advice-row__skill {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.advice-row__unlocks {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2f6fd0;
+  white-space: nowrap;
+}

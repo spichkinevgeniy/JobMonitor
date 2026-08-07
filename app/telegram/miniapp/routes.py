@@ -17,6 +17,7 @@ from app.application.dto.miniapp import (
     SalaryReadResponse,
     SalarySaveRequest,
     SaveResponse,
+    SkillSuggestionResponse,
     SpecialtyReadResponse,
     SpecialtySaveRequest,
     StatsCompanyTypeResponse,
@@ -371,6 +372,10 @@ def _to_stats_response(
     return ProfileStatsResponse(
         has_profile=bool(user.cv_specializations.items and user.cv_skills.items),
         has_data=_has_any_data(stats),
+        skill_suggestions=[
+            SkillSuggestionResponse(skill=item.skill, unlocks=item.unlocks)
+            for item in stats.skill_suggestions
+        ],
         export=StatsExportResponse(
             count=export_count,
         ),
@@ -410,25 +415,37 @@ def _has_any_data(stats: ProfileStats) -> bool:
 
 
 def _to_funnel_response(funnel: FilterFunnel) -> StatsFunnelResponse:
-    if funnel.total == 0:
+    # Считаем от всего, что было по специализации, а не от прошедшего
+    # префильтр: раньше потеря на навыках не попадала в воронку вообще, и
+    # человек с одним навыком видел «отсеяно ноль» вместо реальных потерь.
+    total = funnel.specialization_total
+    if total == 0:
         return StatsFunnelResponse(total=0, rows=[])
 
     rows = [
         StatsFunnelRowResponse(
             label="Дошло до вас",
             count=funnel.matched,
-            percent=round(funnel.matched * 100 / funnel.total),
+            percent=round(funnel.matched * 100 / total),
         )
     ]
+    if funnel.skills_mismatch:
+        rows.append(
+            StatsFunnelRowResponse(
+                label="Не совпали навыки",
+                count=funnel.skills_mismatch,
+                percent=round(funnel.skills_mismatch * 100 / total),
+            )
+        )
     rows.extend(
         StatsFunnelRowResponse(
             label=_REJECTION_LABELS[item.reason],
             count=item.count,
-            percent=round(item.count * 100 / funnel.total),
+            percent=round(item.count * 100 / total),
         )
         for item in funnel.rejections
     )
-    return StatsFunnelResponse(total=funnel.total, rows=rows)
+    return StatsFunnelResponse(total=total, rows=rows)
 
 
 def _work_format_choice(user: User) -> str:

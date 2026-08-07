@@ -124,6 +124,11 @@ class StatsFunnelRowResponse(BaseModel):
     percent: int
 
 
+class SkillSuggestionResponse(BaseModel):
+    skill: str
+    unlocks: int
+
+
 class StatsFunnelResponse(BaseModel):
     total: int
     rows: list[StatsFunnelRowResponse]
@@ -141,6 +146,7 @@ class ExportRequest(BaseModel):
 class ProfileStatsResponse(BaseModel):
     has_profile: bool
     has_data: bool
+    skill_suggestions: list[SkillSuggestionResponse]
     export: StatsExportResponse
     trends: list[StatsTrendSeriesResponse]
     company_breakdown: list[StatsCompanyTypeResponse]

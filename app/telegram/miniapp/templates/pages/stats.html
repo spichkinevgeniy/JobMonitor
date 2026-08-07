@@ -54,7 +54,7 @@
     </section>
 
     <section class="filter-card stats-card" data-stats-funnel-card>
-      <p class="stats-card__eyebrow">Что отсекают ваши фильтры</p>
+      <p class="stats-card__eyebrow">Что отсекает ваш профиль</p>
       <p class="stats-card__title">за последние 7 дней</p>
       <div class="funnel-bar" data-stats-funnel-bar></div>
       <div class="funnel-list" data-stats-funnel-list></div>
@@ -62,6 +62,17 @@
         <span>Всего по вашей специализации</span>
         <b data-stats-funnel-total>0</b>
       </p>
+    </section>
+
+    <section class="filter-card stats-card is-hidden" data-stats-advice-card>
+      <p class="stats-card__eyebrow">Что добавить в профиль</p>
+      <p class="stats-card__title" data-stats-advice-title></p>
+      <div class="advice-list" data-stats-advice-list></div>
+      <p class="input-caption">
+        Числа не складываются: одна вакансия часто требует сразу нескольких
+        навыков, поэтому вместе они дадут меньше суммы.
+      </p>
+      <a class="save-button save-button--link" href="{{ profile_url }}">Настроить профиль</a>
     </section>
 
     <section class="filter-card stats-card" data-stats-company-card>

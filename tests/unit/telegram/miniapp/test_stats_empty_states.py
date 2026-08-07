@@ -34,7 +34,14 @@ def _stats(
             else []
         ),
         company_total=company_total,
-        funnel=FilterFunnel(total=funnel_total, matched=funnel_total, rejections=[]),
+        funnel=FilterFunnel(
+            total=funnel_total,
+            matched=funnel_total,
+            rejections=[],
+            specialization_total=funnel_total,
+            skills_mismatch=0,
+        ),
+        skill_suggestions=[],
     )
 
 
