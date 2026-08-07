@@ -10,6 +10,9 @@
   <body data-page="{{ active_page }}">
     <main class="page-shell">
       <header class="page-header">
+        {% if back_url %}
+        <a class="back-link" href="{{ back_url }}">← Аналитика</a>
+        {% endif %}
         <h1>{{ page_title }}</h1>
         <p class="page-description">{{ page_description }}</p>
       </header>
