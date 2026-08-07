@@ -12,6 +12,11 @@ PROFILE_UPLOAD_RESUME_BUTTON_TEXT = "📄 Загрузить резюме"
 PROFILE_STATS_BUTTON_TEXT = "📊 Аналитика"
 PROFILE_FILL_FORM_CALLBACK = "profile:fill_form"
 PROFILE_UPLOAD_RESUME_CALLBACK = "profile:upload_resume"
+VACANCY_WHY_BUTTON_TEXT = "Почему прислали?"
+VACANCY_REJECT_BUTTON_TEXT = "Не подходит"
+VACANCY_WHY_CALLBACK_PREFIX = "vac:why:"
+VACANCY_REJECT_CALLBACK_PREFIX = "vac:no:"
+
 SETTINGS_DONE_BUTTON_TEXT = "✅ Готов"
 SETTINGS_DONE_CALLBACK = "settings:done"
 
@@ -106,4 +111,27 @@ def get_settings_menu_kb(
         callback_data=SETTINGS_DONE_CALLBACK,
     )
     builder.adjust(1, 1, 1, 1, 1)
+    return builder.as_markup()
+
+
+def get_vacancy_kb(vacancy_id: str) -> InlineKeyboardMarkup:
+    """Кнопки под вакансией. В callback_data влезает 64 байта, UUID с
+    префиксом занимает 44."""
+    builder = InlineKeyboardBuilder()
+    builder.button(
+        text=VACANCY_WHY_BUTTON_TEXT,
+        callback_data=f"{VACANCY_WHY_CALLBACK_PREFIX}{vacancy_id}",
+    )
+    builder.button(
+        text=VACANCY_REJECT_BUTTON_TEXT,
+        callback_data=f"{VACANCY_REJECT_CALLBACK_PREFIX}{vacancy_id}",
+    )
+    builder.adjust(2)
+    return builder.as_markup()
+
+
+def get_vacancy_rejected_kb() -> InlineKeyboardMarkup:
+    """Кнопок больше нет: вердикт записан, уточнять не спрашиваем."""
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Отмечено, учту", callback_data="vac:noop")
     return builder.as_markup()

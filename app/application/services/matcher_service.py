@@ -2,7 +2,7 @@ from time import perf_counter
 
 import logfire
 
-from app.application.ports.notification_port import INotificationService
+from app.application.ports.notification_port import DispatchTarget, INotificationService
 from app.application.ports.observability_port import IObservabilityService
 from app.application.ports.unit_of_work import MatchingUnitOfWork
 from app.core.logger import get_app_logger
@@ -47,13 +47,18 @@ class MatcherService:
                     candidate_count,
                 )
 
-                matched_user_ids: list[UserId] = []
+                targets: list[DispatchTarget] = []
                 rejected_count = 0
 
                 for candidate in prefiltered_candidates:
                     decision = evaluate_match(vacancy=vacancy, user=candidate)
                     if decision.accepted:
-                        matched_user_ids.append(candidate.tg_id)
+                        matched = sorted(
+                            item.value for item in vacancy.skills.items & candidate.cv_skills.items
+                        )
+                        targets.append(
+                            DispatchTarget(user_id=candidate.tg_id.value, matched_skills=matched)
+                        )
                         self._observe_skill_matches(vacancy=vacancy, user=candidate)
                         continue
 
@@ -68,11 +73,11 @@ class MatcherService:
                 vacancy_id=vacancy_id.value,
                 mirror_chat_id=vacancy.mirror_chat_id,
                 mirror_message_id=vacancy.mirror_message_id,
-                user_ids=[user_id.value for user_id in matched_user_ids],
+                targets=targets,
             )
 
             latency_ms = int((perf_counter() - start) * 1000)
-            final_count = len(matched_user_ids)
+            final_count = len(targets)
             application_logfire.info(
                 "Matching finished",
                 vacancy_id=str(vacancy_id.value),
@@ -89,7 +94,7 @@ class MatcherService:
                         rejection_ratio,
                     )
 
-            return matched_user_ids
+            return [UserId(target.user_id) for target in targets]
 
     async def _load_prefiltered_candidates(self, vacancy: Vacancy) -> list[User]:
         specializations = {item.value for item in vacancy.specializations.items}
