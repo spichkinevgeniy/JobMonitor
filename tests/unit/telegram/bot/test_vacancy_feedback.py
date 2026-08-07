@@ -1,10 +1,10 @@
 """Кнопки под вакансией: объяснение и отметка «не подходит»."""
 
 from app.telegram.bot.keyboards import (
-    VACANCY_NOOP_CALLBACK,
     VACANCY_REJECT_BUTTON_TEXT,
     VACANCY_REJECT_CALLBACK_PREFIX,
     VACANCY_REJECTED_BUTTON_TEXT,
+    VACANCY_UNDO_CALLBACK_PREFIX,
     VACANCY_WHY_BUTTON_TEXT,
     VACANCY_WHY_CALLBACK_PREFIX,
     get_vacancy_kb,
@@ -55,11 +55,19 @@ class TestKeyboardAfterRejection:
         assert VACANCY_REJECT_BUTTON_TEXT not in texts
         assert VACANCY_REJECTED_BUTTON_TEXT in texts
 
-    def test_mark_does_nothing_on_tap(self) -> None:
+    def test_mark_undoes_the_choice_on_tap(self) -> None:
+        """Промах по соседней кнопке иначе портит сигнал навсегда."""
         rows = get_vacancy_kb(VACANCY_ID, rejected=True).inline_keyboard
         mark = [b for row in rows for b in row if b.text == VACANCY_REJECTED_BUTTON_TEXT][0]
 
-        assert mark.callback_data == VACANCY_NOOP_CALLBACK
+        assert mark.callback_data == f"{VACANCY_UNDO_CALLBACK_PREFIX}{VACANCY_ID}"
+
+    def test_undo_callback_fits_telegram_limit(self) -> None:
+        rows = get_vacancy_kb(VACANCY_ID, rejected=True).inline_keyboard
+
+        for row in rows:
+            for button in row:
+                assert len(button.callback_data.encode()) <= 64
 
 
 class TestReasonText:

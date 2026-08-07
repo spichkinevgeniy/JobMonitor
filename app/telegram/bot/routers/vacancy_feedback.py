@@ -10,8 +10,8 @@ from app.infrastructure.db import async_session_factory
 from app.infrastructure.db.models import Vacancy as VacancyModel
 from app.infrastructure.db.models import VacancyDispatchLog
 from app.telegram.bot.keyboards import (
-    VACANCY_NOOP_CALLBACK,
     VACANCY_REJECT_CALLBACK_PREFIX,
+    VACANCY_UNDO_CALLBACK_PREFIX,
     VACANCY_WHY_CALLBACK_PREFIX,
     get_vacancy_kb,
 )
@@ -83,6 +83,26 @@ async def reject_vacancy(callback: CallbackQuery) -> None:
             logger.debug("Failed to update keyboard after rejection", exc_info=True)
 
 
-@router.callback_query(F.data == VACANCY_NOOP_CALLBACK)
-async def ignore_noop(callback: CallbackQuery) -> None:
-    await callback.answer()
+@router.callback_query(F.data.startswith(VACANCY_UNDO_CALLBACK_PREFIX))
+async def undo_rejection(callback: CallbackQuery) -> None:
+    """Кнопки стоят рядом, промахи неизбежны — а сигнал нужен чистый."""
+    vacancy_id = _vacancy_id(callback.data or "", VACANCY_UNDO_CALLBACK_PREFIX)
+    if vacancy_id is None or callback.from_user is None:
+        await callback.answer()
+        return
+
+    async with async_session_factory() as session:
+        await session.execute(
+            update(VacancyDispatchLog)
+            .where(VacancyDispatchLog.vacancy_id == vacancy_id)
+            .where(VacancyDispatchLog.user_tg_id == callback.from_user.id)
+            .values(feedback=None, feedback_at=None)
+        )
+        await session.commit()
+
+    await callback.answer("Отметка снята")
+    if isinstance(callback.message, Message):
+        try:
+            await callback.message.edit_reply_markup(reply_markup=get_vacancy_kb(str(vacancy_id)))
+        except Exception:
+            logger.debug("Failed to restore keyboard after undo", exc_info=True)
