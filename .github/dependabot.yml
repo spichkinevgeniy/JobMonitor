@@ -1,0 +1,22 @@
+version: 2
+
+# Плановые обновления отключены намеренно: тридцать зависимостей дают
+# несколько PR в неделю, на которые быстро перестают смотреть.
+# open-pull-requests-limit: 0 глушит только их — обновления по уязвимостям
+# приходят отдельным каналом и лимиту не подчиняются.
+updates:
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0
+
+  # Экшены обновляются редко, шума от них почти нет.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      actions:
+        patterns:
+          - "*"
