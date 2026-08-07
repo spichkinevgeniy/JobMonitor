@@ -334,6 +334,15 @@ body {
   cursor: default;
 }
 
+.save-button--link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin-top: 20px;
+  text-decoration: none;
+}
+
 .is-hidden {
   display: none !important;
 }

@@ -310,6 +310,7 @@ _TREND_HEADLINE_LABELS = {
 def _to_stats_response(user: User, stats: ProfileStats) -> ProfileStatsResponse:
     return ProfileStatsResponse(
         has_profile=bool(user.cv_specializations.items and user.cv_skills.items),
+        has_data=_has_any_data(stats),
         trends=[
             StatsTrendSeriesResponse(
                 granularity=series.granularity.value,
@@ -336,6 +337,13 @@ def _to_stats_response(user: User, stats: ProfileStats) -> ProfileStatsResponse:
         company_total=stats.company_total,
         funnel=_to_funnel_response(stats.funnel),
     )
+
+
+def _has_any_data(stats: ProfileStats) -> bool:
+    """У нового пользователя окна пустые — показывать нули как аналитику нечестно."""
+    if stats.funnel.total or stats.company_total:
+        return True
+    return any(point.count for series in stats.trends for point in series.points)
 
 
 def _to_funnel_response(funnel: FilterFunnel) -> StatsFunnelResponse:

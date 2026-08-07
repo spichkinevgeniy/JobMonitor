@@ -131,6 +131,7 @@ class StatsFunnelResponse(BaseModel):
 
 class ProfileStatsResponse(BaseModel):
     has_profile: bool
+    has_data: bool
     trends: list[StatsTrendSeriesResponse]
     company_breakdown: list[StatsCompanyTypeResponse]
     company_total: int
