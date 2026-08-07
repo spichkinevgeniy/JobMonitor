@@ -131,7 +131,6 @@ class StatsFunnelResponse(BaseModel):
 
 class StatsExportResponse(BaseModel):
     count: int
-    since_label: str | None = None
 
 
 class ExportRequest(BaseModel):

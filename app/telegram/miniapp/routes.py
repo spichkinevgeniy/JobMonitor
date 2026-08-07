@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -128,8 +127,8 @@ async def read_stats(
     export_service: Annotated[ExportService, Depends(get_export_service)],
 ) -> ProfileStatsResponse:
     stats = await service.build_profile_stats(user)
-    export_count, export_since = await export_service.count_available(user.tg_id.value)
-    return _to_stats_response(user, stats, export_count, export_since)
+    export_count = await export_service.count_available(user.tg_id.value)
+    return _to_stats_response(user, stats, export_count)
 
 
 @router.post(
@@ -364,40 +363,16 @@ _TREND_HEADLINE_LABELS = {
 }
 
 
-_MONTHS_GENITIVE = (
-    "января",
-    "февраля",
-    "марта",
-    "апреля",
-    "мая",
-    "июня",
-    "июля",
-    "августа",
-    "сентября",
-    "октября",
-    "ноября",
-    "декабря",
-)
-
-
-def _since_label(since: datetime | None) -> str | None:
-    if since is None:
-        return None
-    return f"с {since.day} {_MONTHS_GENITIVE[since.month - 1]}"
-
-
 def _to_stats_response(
     user: User,
     stats: ProfileStats,
     export_count: int,
-    export_since: datetime | None,
 ) -> ProfileStatsResponse:
     return ProfileStatsResponse(
         has_profile=bool(user.cv_specializations.items and user.cv_skills.items),
         has_data=_has_any_data(stats),
         export=StatsExportResponse(
             count=export_count,
-            since_label=_since_label(export_since),
         ),
         trends=[
             StatsTrendSeriesResponse(

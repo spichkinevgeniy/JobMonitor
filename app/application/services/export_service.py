@@ -42,10 +42,11 @@ class ExportService:
     def __init__(self, uow: VacancyUnitOfWork) -> None:
         self._uow = uow
 
-    async def count_available(self, user_tg_id: int) -> tuple[int, datetime | None]:
-        """Сколько вакансий доступно к выгрузке и с какого момента ведётся история."""
+    async def count_available(self, user_tg_id: int) -> int:
+        """Сколько вакансий доступно к выгрузке."""
         async with self._uow:
-            return await self._uow.vacancies.count_dispatched_for_user(user_tg_id)
+            count, _ = await self._uow.vacancies.count_dispatched_for_user(user_tg_id)
+            return count
 
     async def build(self, user_tg_id: int, export_format: ExportFormat) -> ExportFile | None:
         async with self._uow:

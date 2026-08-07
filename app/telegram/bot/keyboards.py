@@ -1,8 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
-from app.telegram.bot.views.settings import build_stats_url
-
 START_BUTTON_TEXT = "Открыть бота"
 UPLOAD_BUTTON_TEXT = "📄 Обновить резюме"
 CANCEL_BUTTON_TEXT = "❌ Отмена"
@@ -20,18 +18,9 @@ SETTINGS_DONE_CALLBACK = "settings:done"
 
 def get_main_menu_kb() -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
-    stats_url = build_stats_url()
     builder.button(text=PROFILE_BUTTON_TEXT)
-    if stats_url:
-        builder.button(
-            text=PROFILE_STATS_BUTTON_TEXT,
-            web_app=WebAppInfo(url=stats_url),
-        )
     builder.button(text=HELP_BUTTON_TEXT)
-    if stats_url:
-        builder.adjust(2, 1)
-    else:
-        builder.adjust(2)
+    builder.adjust(2)
     return builder.as_markup(resize_keyboard=True)
 
 

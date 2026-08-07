@@ -1,14 +1,19 @@
 (function () {
   const webApp = window.Telegram && window.Telegram.WebApp;
-  const telegramDebugInfo = () =>
-    JSON.stringify({
-      sdk: Boolean(webApp),
+  const telegramDebugInfo = () => {
+    const hashKeys = [...new URLSearchParams(window.location.hash.slice(1)).keys()];
+    // Порядок важен: сообщение обрезается, а решает первое поле. Пустой
+    // tgWebAppData значит, что мини-апп открыли кнопкой reply-клавиатуры —
+    // такому Telegram подписанные данные не передаёт.
+    return JSON.stringify({
+      tgWebAppData: hashKeys.includes("tgWebAppData"),
       initDataLength: webApp && webApp.initData ? webApp.initData.length : 0,
-      hashLength: window.location.hash.length,
-      hasTgWebAppData: new URLSearchParams(window.location.hash.slice(1)).has("tgWebAppData"),
+      sdk: Boolean(webApp),
+      hashKeys,
       platform: webApp ? webApp.platform : null,
       version: webApp ? webApp.version : null,
     });
+  };
   if (webApp) {
     webApp.ready();
     webApp.expand();
@@ -492,7 +497,6 @@
     function renderExport(exportInfo) {
       const cardNode = root.querySelector("[data-stats-export-card]");
       const introNode = root.querySelector("[data-stats-export-intro]");
-      const noteNode = root.querySelector("[data-stats-export-note]");
       const statusNode = root.querySelector("[data-stats-export-status]");
       if (!cardNode || !introNode) {
         return;
@@ -505,11 +509,6 @@
       cardNode.classList.remove("is-hidden");
       const word = pluralize(exportInfo.count, "вакансию", "вакансии", "вакансий");
       introNode.textContent = `Выгрузить ${exportInfo.count} ${word} файлом:`;
-      if (noteNode) {
-        const since = exportInfo.since_label ? ` История ведётся ${exportInfo.since_label}.` : "";
-        noteNode.textContent = `Файл придёт в чат с ботом — можно отправить его нейросети.${since}`;
-      }
-
       root.querySelectorAll("[data-export-format]").forEach((button) => {
         button.addEventListener("click", () => sendExport(button, statusNode));
       });
