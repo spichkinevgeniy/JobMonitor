@@ -424,6 +424,7 @@ def _to_funnel_response(funnel: FilterFunnel) -> StatsFunnelResponse:
 
     rows = [
         StatsFunnelRowResponse(
+            kind="matched",
             label="Дошло до вас",
             count=funnel.matched,
             percent=round(funnel.matched * 100 / total),
@@ -432,6 +433,7 @@ def _to_funnel_response(funnel: FilterFunnel) -> StatsFunnelResponse:
     if funnel.skills_mismatch:
         rows.append(
             StatsFunnelRowResponse(
+                kind="skills",
                 label="Не совпали навыки",
                 count=funnel.skills_mismatch,
                 percent=round(funnel.skills_mismatch * 100 / total),

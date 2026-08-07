@@ -119,6 +119,9 @@ class StatsCompanyTypeResponse(BaseModel):
 
 
 class StatsFunnelRowResponse(BaseModel):
+    # Вид, а не позиция: цвет строки не должен зависеть от порядка,
+    # который задаётся в другом файле.
+    kind: str = "filter"
     label: str
     count: int
     percent: int

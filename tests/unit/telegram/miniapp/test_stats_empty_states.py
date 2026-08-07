@@ -11,7 +11,7 @@ from app.application.services.stats_service import (
     TrendSeries,
 )
 from app.domain.shared.value_objects import CompanyType
-from app.telegram.miniapp.routes import _has_any_data
+from app.telegram.miniapp.routes import _has_any_data, _to_funnel_response
 
 BUCKET = date(2026, 8, 1)
 
@@ -64,3 +64,35 @@ def test_company_breakdown_alone_is_data() -> None:
 def test_funnel_alone_is_data() -> None:
     """Вакансии могли прийти и все отсеяться фильтрами — это тоже статистика."""
     assert _has_any_data(_stats(trend_counts=[0], funnel_total=7)) is True
+
+
+class TestFunnelRowKinds:
+    """Цвет строки задаётся её видом, а не позицией в списке."""
+
+    def _rows(self, **kwargs: int) -> list:
+        stats = _stats(**kwargs)  # type: ignore[arg-type]
+        return _to_funnel_response(stats.funnel).rows
+
+    def test_matched_row_is_marked(self) -> None:
+        rows = self._rows(trend_counts=[1], funnel_total=5)
+
+        assert rows[0].kind == "matched"
+
+    def test_skills_row_is_its_own_kind(self) -> None:
+        funnel = FilterFunnel(
+            total=5,
+            matched=5,
+            rejections=[],
+            specialization_total=12,
+            skills_mismatch=7,
+        )
+        rows = _to_funnel_response(funnel).rows
+
+        assert [row.kind for row in rows] == ["matched", "skills"]
+
+    def test_skills_row_absent_without_loss(self) -> None:
+        funnel = FilterFunnel(
+            total=5, matched=5, rejections=[], specialization_total=5, skills_mismatch=0
+        )
+
+        assert all(row.kind != "skills" for row in _to_funnel_response(funnel).rows)

@@ -608,23 +608,29 @@ body {
   font-size: 1.3rem;
 }
 
-.funnel-tone-0 {
+.funnel-tone-matched {
   background: var(--accent);
 }
 
-.funnel-tone-1 {
+/* Потеря на навыках — своим цветом: это не фильтр, а другая природа
+   потери, и чинится она иначе. */
+.funnel-tone-skills {
+  background: var(--highlight);
+}
+
+.funnel-tone-0 {
   background: #9aa3b2;
 }
 
-.funnel-tone-2 {
+.funnel-tone-1 {
   background: #b4bbc7;
 }
 
-.funnel-tone-3 {
+.funnel-tone-2 {
   background: #cdd2db;
 }
 
-.funnel-tone-4 {
+.funnel-tone-3 {
   background: #e2e5eb;
 }
 

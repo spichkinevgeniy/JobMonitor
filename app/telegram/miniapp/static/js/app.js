@@ -617,8 +617,17 @@
       barNode.textContent = "";
       listNode.textContent = "";
 
-      funnel.rows.forEach((row, index) => {
-        const tone = `funnel-tone-${Math.min(index, 4)}`;
+      let filterIndex = 0;
+      funnel.rows.forEach((row) => {
+        let tone;
+        if (row.kind === "matched") {
+          tone = "funnel-tone-matched";
+        } else if (row.kind === "skills") {
+          tone = "funnel-tone-skills";
+        } else {
+          tone = `funnel-tone-${Math.min(filterIndex, 3)}`;
+          filterIndex += 1;
+        }
 
         const segment = document.createElement("div");
         segment.className = `funnel-bar__seg ${tone}`;
