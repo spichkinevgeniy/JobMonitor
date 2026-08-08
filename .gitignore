@@ -17,8 +17,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
 parts/
 sdist/
 var/
@@ -42,3 +42,10 @@ job_monitor.session-journal
 # Local tooling
 .logfire/
 data/
+
+# Node.js
+node_modules/
+.vite/
+storybook-static/
+vite-dev.*.log
+.tmp-*/

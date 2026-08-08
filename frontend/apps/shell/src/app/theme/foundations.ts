@@ -1,0 +1,46 @@
+export const primitiveColors = {
+  'color/blue/50': '#EFF6FF',
+  'color/blue/100': '#DBEAFE',
+  'color/blue/500': '#3B82F6',
+  'color/blue/600': '#2563EB',
+  'color/blue/700': '#1D4ED8',
+  'color/neutral/0': '#FFFFFF',
+  'color/neutral/50': '#F7F8FA',
+  'color/neutral/100': '#F2F4F7',
+  'color/neutral/200': '#E4E7EC',
+  'color/neutral/400': '#98A2B3',
+  'color/neutral/500': '#667085',
+  'color/neutral/700': '#344054',
+  'color/neutral/900': '#101828',
+  'color/green/600': '#16A34A',
+  'color/red/600': '#DC2626',
+} as const
+
+export const semanticColors = {
+  'color/bg/default': primitiveColors['color/neutral/50'],
+  'color/bg/surface': primitiveColors['color/neutral/0'],
+  'color/bg/subtle': primitiveColors['color/neutral/100'],
+  'color/bg/primary-subtle': primitiveColors['color/blue/50'],
+  'color/bg/primary': primitiveColors['color/blue/600'],
+  'color/bg/primary-hover': primitiveColors['color/blue/700'],
+  'color/bg/disabled': primitiveColors['color/neutral/200'],
+  'color/text/primary': primitiveColors['color/neutral/900'],
+  'color/text/secondary': primitiveColors['color/neutral/500'],
+  'color/text/tertiary': primitiveColors['color/neutral/400'],
+  'color/text/inverse': primitiveColors['color/neutral/0'],
+  'color/text/brand': primitiveColors['color/blue/600'],
+  'color/text/disabled': primitiveColors['color/neutral/400'],
+  'color/border/default': primitiveColors['color/neutral/200'],
+  'color/border/strong': primitiveColors['color/neutral/400'],
+  'color/border/brand': primitiveColors['color/blue/600'],
+  'color/border/disabled': primitiveColors['color/neutral/200'],
+  'color/state/success': primitiveColors['color/green/600'],
+  'color/state/error': primitiveColors['color/red/600'],
+  'color/icon/brand': primitiveColors['color/blue/600'],
+  'color/icon/secondary': primitiveColors['color/neutral/500'],
+  'color/icon/disabled': primitiveColors['color/neutral/400'],
+  'color/icon/inverse': primitiveColors['color/neutral/0'],
+} as const
+
+export type PrimitiveColorToken = keyof typeof primitiveColors
+export type SemanticColorToken = keyof typeof semanticColors
