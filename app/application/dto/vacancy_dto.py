@@ -18,6 +18,7 @@ class InfoRawVacancy(BaseModel):
     chat_id: int | None = None
     message_id: int | None = None
     source_channel: str | None = None
+    source_topic_id: int | None = None
 
 
 class OutVacancyParse(BaseModel):

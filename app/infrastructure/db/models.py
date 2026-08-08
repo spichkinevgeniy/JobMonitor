@@ -38,6 +38,7 @@ class Vacancy(Base):
 
     source_channel: Mapped[str | None] = mapped_column(String, nullable=True)
     source_message_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    source_topic_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
