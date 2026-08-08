@@ -153,7 +153,8 @@ def get_vacancy_kb(
         rows += [2]
 
     if source_url:
-        builder.button(text=f"↗ {source_channel or 'Источник'}", url=source_url)
+        label = f"Источник: {source_channel}" if source_channel else "Источник"
+        builder.button(text=f"↗ {label}", url=source_url)
         rows += [1]
 
     builder.adjust(*rows)

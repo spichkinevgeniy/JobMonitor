@@ -107,7 +107,7 @@ class TestSourceButton:
             source_url="https://t.me/javascript_jobs/123",
         )
 
-        assert any("@javascript_jobs" in b.text for b in buttons)
+        assert any("Источник: @javascript_jobs" in b.text for b in buttons)
 
     def test_leads_to_the_exact_post(self) -> None:
         buttons = self._buttons(
