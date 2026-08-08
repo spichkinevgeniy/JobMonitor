@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 
+import { OnboardingPage } from '@/pages/onboarding'
 import { initializeTelegramWebApp } from '@/shared/lib/telegram'
 
 const App = () => {
@@ -7,7 +8,7 @@ const App = () => {
     initializeTelegramWebApp()
   }, [])
 
-  return <main>JobMonitor</main>
+  return <OnboardingPage />
 }
 
 export default App
