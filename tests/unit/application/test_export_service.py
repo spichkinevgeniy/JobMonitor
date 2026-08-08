@@ -8,7 +8,6 @@ from app.application.services.export_service import (
     ExportFormat,
     ExportService,
     _fence_for,
-    _source_url,
 )
 from app.domain.shared.value_objects import WorkFormat
 from app.domain.vacancy.entities import DispatchedVacancy, Vacancy
@@ -101,15 +100,15 @@ class TestSourceLink:
     def test_builds_link_to_the_original_post(self) -> None:
         vacancy = self._vacancy("@python_jobs", 4242)
 
-        assert _source_url(vacancy) == "https://t.me/python_jobs/4242"
+        assert vacancy.source_url == "https://t.me/python_jobs/4242"
 
     def test_no_link_for_old_vacancies(self) -> None:
         """Собранные до появления колонок — источник восстановить неоткуда."""
-        assert _source_url(self._vacancy(None, None)) is None
+        assert self._vacancy(None, None).source_url is None
 
     def test_no_link_without_message_id(self) -> None:
-        assert _source_url(self._vacancy("@python_jobs", None)) is None
+        assert self._vacancy("@python_jobs", None).source_url is None
 
     def test_no_link_for_private_channel(self) -> None:
         """Без @username публичной ссылки не существует."""
-        assert _source_url(self._vacancy("Закрытый канал", 4242)) is None
+        assert self._vacancy("Закрытый канал", 4242).source_url is None

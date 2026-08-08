@@ -74,6 +74,8 @@ class MatcherService:
                 mirror_chat_id=vacancy.mirror_chat_id,
                 mirror_message_id=vacancy.mirror_message_id,
                 targets=targets,
+                source_channel=vacancy.source_channel,
+                source_url=vacancy.source_url,
             )
 
             latency_ms = int((perf_counter() - start) * 1000)
