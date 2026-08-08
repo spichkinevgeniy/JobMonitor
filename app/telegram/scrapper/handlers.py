@@ -166,6 +166,20 @@ class TelegramScraper:
         return "unknown"
 
     @staticmethod
+    def _source_topic_id(message: Message) -> int | None:
+        """Тема форума, в которой опубликовано сообщение.
+
+        Без неё ссылка вида t.me/группа/сообщение в форуме не открывается.
+        reply_to_top_id указывает на корень темы, reply_to_msg_id — на само
+        сообщение темы, когда ответ идёт прямо в её начало.
+        """
+        reply_to = getattr(message, "reply_to", None)
+        if reply_to is None or not getattr(reply_to, "forum_topic", False):
+            return None
+        top_id = getattr(reply_to, "reply_to_top_id", None)
+        return top_id or getattr(reply_to, "reply_to_msg_id", None)
+
+    @staticmethod
     def _source_username(event: events.NewMessage.Event) -> str | None:
         """Только @username: по нему собирается ссылка на исходный пост."""
         username = getattr(event.chat, "username", None)
@@ -224,4 +238,5 @@ class TelegramScraper:
             chat_id=event.chat_id,
             message_id=message.id,
             source_channel=self._source_username(event),
+            source_topic_id=self._source_topic_id(message),
         )

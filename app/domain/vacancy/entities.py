@@ -45,21 +45,27 @@ class Vacancy:
     company_type: CompanyType = CompanyType.UNDEFINED
     source_channel: str | None = None
     source_message_id: int | None = None
+    source_topic_id: int | None = None
 
     @property
     def source_url(self) -> str | None:
         """Ссылка на исходный пост. Строится только из публичного @username:
         у закрытых каналов такой ссылки не существует.
 
-        Форумы (группы с темами) требуют трёхсоставной ссылки вида
-        t.me/группа/тема/сообщение — тему мы не храним, там ссылка приведёт
-        не туда.
+        В форумах (группах с темами) двухсоставная ссылка не открывает
+        сообщение — нужна t.me/группа/тема/сообщение. Проверено на проде:
+        t.me/front_end_jobs/16740 не открывается, t.me/front_end_jobs/2/16740
+        открывается.
         """
         if not self.source_channel or not self.source_channel.startswith("@"):
             return None
         if self.source_message_id is None:
             return None
-        return f"https://t.me/{self.source_channel[1:]}/{self.source_message_id}"
+
+        chat = self.source_channel[1:]
+        if self.source_topic_id is not None:
+            return f"https://t.me/{chat}/{self.source_topic_id}/{self.source_message_id}"
+        return f"https://t.me/{chat}/{self.source_message_id}"
 
     @classmethod
     def create(
@@ -79,6 +85,7 @@ class Vacancy:
         company_type: CompanyType = CompanyType.UNDEFINED,
         source_channel: str | None = None,
         source_message_id: int | None = None,
+        source_topic_id: int | None = None,
     ) -> "Vacancy":
         if not text or not text.strip():
             raise ValidationError("Vacancy text cannot be empty.")
@@ -110,6 +117,7 @@ class Vacancy:
             company_type=company_type,
             source_channel=source_channel,
             source_message_id=source_message_id,
+            source_topic_id=source_topic_id,
         )
 
     @staticmethod

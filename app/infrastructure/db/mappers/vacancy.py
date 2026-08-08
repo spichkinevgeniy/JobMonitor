@@ -35,6 +35,7 @@ def vacancy_to_model(vacancy: Vacancy) -> VacancyModel:
         is_active=vacancy.is_active,
         source_channel=vacancy.source_channel,
         source_message_id=vacancy.source_message_id,
+        source_topic_id=vacancy.source_topic_id,
     )
 
 
@@ -54,6 +55,7 @@ def apply_vacancy(model: VacancyModel, vacancy: Vacancy) -> None:
     model.is_active = vacancy.is_active
     model.source_channel = vacancy.source_channel
     model.source_message_id = vacancy.source_message_id
+    model.source_topic_id = vacancy.source_topic_id
 
 
 def vacancy_from_model(model: VacancyModel) -> Vacancy:
@@ -80,6 +82,7 @@ def vacancy_from_model(model: VacancyModel) -> Vacancy:
         is_active=model.is_active,
         source_channel=model.source_channel,
         source_message_id=model.source_message_id,
+        source_topic_id=model.source_topic_id,
     )
 
 
