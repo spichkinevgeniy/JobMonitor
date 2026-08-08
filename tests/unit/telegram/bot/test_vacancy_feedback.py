@@ -92,3 +92,42 @@ class TestReasonText:
         text = build_vacancy_reason_text(FakeVacancy(), [])
 
         assert "Совпадений по навыкам нет" in text
+
+
+class TestSourceButton:
+    """Заменяет шапку «Переслано из», которая была у пересылки."""
+
+    def _buttons(self, **kwargs: object) -> list:
+        kb = get_vacancy_kb(VACANCY_ID, **kwargs)  # type: ignore[arg-type]
+        return [b for row in kb.inline_keyboard for b in row]
+
+    def test_shows_channel_name_without_tapping(self) -> None:
+        buttons = self._buttons(
+            source_channel="@javascript_jobs",
+            source_url="https://t.me/javascript_jobs/123",
+        )
+
+        assert any("Источник: @javascript_jobs" in b.text for b in buttons)
+
+    def test_leads_to_the_exact_post(self) -> None:
+        buttons = self._buttons(
+            source_channel="@javascript_jobs",
+            source_url="https://t.me/javascript_jobs/123",
+        )
+        source = [b for b in buttons if b.url][0]
+
+        assert source.url == "https://t.me/javascript_jobs/123"
+
+    def test_absent_without_source(self) -> None:
+        assert all(b.url is None for b in self._buttons())
+
+    def test_survives_rejection(self) -> None:
+        """Иначе после «не подходит» источник пропадал бы."""
+        buttons = self._buttons(
+            rejected=True,
+            source_channel="@javascript_jobs",
+            source_url="https://t.me/javascript_jobs/123",
+        )
+
+        assert any(b.url for b in buttons)
+        assert any(b.text == VACANCY_WHY_BUTTON_TEXT for b in buttons)

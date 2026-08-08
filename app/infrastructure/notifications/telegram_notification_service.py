@@ -26,6 +26,8 @@ class TelegramNotificationService(INotificationService):
         mirror_chat_id: int,
         mirror_message_id: int,
         targets: list[DispatchTarget],
+        source_channel: str | None = None,
+        source_url: str | None = None,
     ) -> None:
         logger.info(
             "Dispatch vacancy %s (%s:%s) to %s users",
@@ -44,7 +46,11 @@ class TelegramNotificationService(INotificationService):
                     chat_id=user_id,
                     from_chat_id=mirror_chat_id,
                     message_id=mirror_message_id,
-                    reply_markup=get_vacancy_kb(str(vacancy_id)),
+                    reply_markup=get_vacancy_kb(
+                        str(vacancy_id),
+                        source_channel=source_channel,
+                        source_url=source_url,
+                    ),
                 )
                 await self._log_dispatch(user_id, vacancy_id, target.matched_skills)
             except TelegramForbiddenError:

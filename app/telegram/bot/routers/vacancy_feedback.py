@@ -30,6 +30,23 @@ def _vacancy_id(data: str, prefix: str) -> UUID | None:
         return None
 
 
+async def _source_of(vacancy_id: UUID) -> tuple[str | None, str | None]:
+    """Кнопку источника надо вернуть на место при пересборке клавиатуры."""
+    async with async_session_factory() as session:
+        row = (
+            await session.execute(
+                select(VacancyModel.source_channel, VacancyModel.source_message_id).where(
+                    VacancyModel.id == vacancy_id
+                )
+            )
+        ).first()
+    if row is None or not row.source_channel or row.source_message_id is None:
+        return None, None
+    if not row.source_channel.startswith("@"):
+        return row.source_channel, None
+    return row.source_channel, f"https://t.me/{row.source_channel[1:]}/{row.source_message_id}"
+
+
 @router.callback_query(F.data.startswith(VACANCY_WHY_CALLBACK_PREFIX))
 async def explain_vacancy(callback: CallbackQuery) -> None:
     vacancy_id = _vacancy_id(callback.data or "", VACANCY_WHY_CALLBACK_PREFIX)
@@ -76,8 +93,11 @@ async def reject_vacancy(callback: CallbackQuery) -> None:
     await callback.answer("Отмечено, учту")
     if isinstance(callback.message, Message):
         try:
+            channel, url = await _source_of(vacancy_id)
             await callback.message.edit_reply_markup(
-                reply_markup=get_vacancy_kb(str(vacancy_id), rejected=True)
+                reply_markup=get_vacancy_kb(
+                    str(vacancy_id), rejected=True, source_channel=channel, source_url=url
+                )
             )
         except Exception:
             logger.debug("Failed to update keyboard after rejection", exc_info=True)
@@ -103,6 +123,9 @@ async def undo_rejection(callback: CallbackQuery) -> None:
     await callback.answer("Отметка снята")
     if isinstance(callback.message, Message):
         try:
-            await callback.message.edit_reply_markup(reply_markup=get_vacancy_kb(str(vacancy_id)))
+            channel, url = await _source_of(vacancy_id)
+            await callback.message.edit_reply_markup(
+                reply_markup=get_vacancy_kb(str(vacancy_id), source_channel=channel, source_url=url)
+            )
         except Exception:
             logger.debug("Failed to restore keyboard after undo", exc_info=True)

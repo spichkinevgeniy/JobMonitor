@@ -23,6 +23,8 @@ class INotificationService(Protocol):
         mirror_chat_id: int,
         mirror_message_id: int,
         targets: list[DispatchTarget],
+        source_channel: str | None = None,
+        source_url: str | None = None,
     ) -> None: ...
 
 

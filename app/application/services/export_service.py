@@ -71,16 +71,6 @@ class ExportService:
         )
 
 
-def _source_url(vacancy: Vacancy) -> str | None:
-    """Ссылка на исходный пост. У вакансий, собранных до появления колонок,
-    источника нет — и восстановить его неоткуда."""
-    channel = vacancy.source_channel
-    message_id = vacancy.source_message_id
-    if not channel or not channel.startswith("@") or message_id is None:
-        return None
-    return f"https://t.me/{channel[1:]}/{message_id}"
-
-
 def _as_dict(item: DispatchedVacancy) -> dict[str, object]:
     vacancy = item.vacancy
     return {
@@ -95,7 +85,7 @@ def _as_dict(item: DispatchedVacancy) -> dict[str, object]:
         "salary_amount": vacancy.salary.amount,
         "salary_currency": vacancy.salary.currency.value if vacancy.salary.currency else None,
         "source_channel": vacancy.source_channel,
-        "source_url": _source_url(vacancy),
+        "source_url": vacancy.source_url,
         "text": vacancy.text,
     }
 
@@ -130,7 +120,7 @@ def _meta_lines(item: DispatchedVacancy) -> list[str]:
 
 
 def _source_lines(vacancy: Vacancy) -> list[str]:
-    url = _source_url(vacancy)
+    url = vacancy.source_url
     if url:
         return [f"Источник: {vacancy.source_channel} — {url}"]
     if vacancy.source_channel:

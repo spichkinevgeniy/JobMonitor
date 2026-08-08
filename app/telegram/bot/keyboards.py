@@ -116,14 +116,25 @@ def get_settings_menu_kb(
     return builder.as_markup()
 
 
-def get_vacancy_kb(vacancy_id: str, *, rejected: bool = False) -> InlineKeyboardMarkup:
+def get_vacancy_kb(
+    vacancy_id: str,
+    *,
+    rejected: bool = False,
+    source_channel: str | None = None,
+    source_url: str | None = None,
+) -> InlineKeyboardMarkup:
     """Кнопки под вакансией. В callback_data влезает 64 байта, UUID с
     префиксом занимает 44.
 
     После отметки «не подходит» объяснение остаётся доступным: человек может
     захотеть понять, почему ему это вообще прислали.
+
+    Кнопка источника заменяет шапку «Переслано из», которая была у пересылки:
+    ведёт не в канал, а сразу на исходный пост, и имя канала видно без нажатия.
     """
     builder = InlineKeyboardBuilder()
+    rows: list[int] = []
+
     builder.button(
         text=VACANCY_WHY_BUTTON_TEXT,
         callback_data=f"{VACANCY_WHY_CALLBACK_PREFIX}{vacancy_id}",
@@ -133,11 +144,18 @@ def get_vacancy_kb(vacancy_id: str, *, rejected: bool = False) -> InlineKeyboard
             text=VACANCY_REJECTED_BUTTON_TEXT,
             callback_data=f"{VACANCY_UNDO_CALLBACK_PREFIX}{vacancy_id}",
         )
-        builder.adjust(1, 1)
+        rows += [1, 1]
     else:
         builder.button(
             text=VACANCY_REJECT_BUTTON_TEXT,
             callback_data=f"{VACANCY_REJECT_CALLBACK_PREFIX}{vacancy_id}",
         )
-        builder.adjust(2)
+        rows += [2]
+
+    if source_url:
+        label = f"Источник: {source_channel}" if source_channel else "Источник"
+        builder.button(text=f"↗ {label}", url=source_url)
+        rows += [1]
+
+    builder.adjust(*rows)
     return builder.as_markup()

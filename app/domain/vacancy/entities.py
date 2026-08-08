@@ -46,6 +46,21 @@ class Vacancy:
     source_channel: str | None = None
     source_message_id: int | None = None
 
+    @property
+    def source_url(self) -> str | None:
+        """Ссылка на исходный пост. Строится только из публичного @username:
+        у закрытых каналов такой ссылки не существует.
+
+        Форумы (группы с темами) требуют трёхсоставной ссылки вида
+        t.me/группа/тема/сообщение — тему мы не храним, там ссылка приведёт
+        не туда.
+        """
+        if not self.source_channel or not self.source_channel.startswith("@"):
+            return None
+        if self.source_message_id is None:
+            return None
+        return f"https://t.me/{self.source_channel[1:]}/{self.source_message_id}"
+
     @classmethod
     def create(
         cls,
