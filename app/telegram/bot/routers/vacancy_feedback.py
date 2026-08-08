@@ -5,10 +5,12 @@ from aiogram import F, Router
 from aiogram.types import CallbackQuery, Message
 from sqlalchemy import select, update
 
+from app.application.ports.observability_port import Feature
 from app.core.logger import get_app_logger
 from app.infrastructure.db import async_session_factory
 from app.infrastructure.db.models import Vacancy as VacancyModel
 from app.infrastructure.db.models import VacancyDispatchLog
+from app.infrastructure.observability import observe_feature
 from app.telegram.bot.keyboards import (
     VACANCY_REJECT_CALLBACK_PREFIX,
     VACANCY_UNDO_CALLBACK_PREFIX,
@@ -68,6 +70,7 @@ async def explain_vacancy(callback: CallbackQuery) -> None:
     if row is None or not isinstance(callback.message, Message):
         return
 
+    observe_feature(Feature.VACANCY_WHY)
     matched_skills, vacancy = row
     # Отвечаем на само сообщение с вакансией: во всплывающем окне лимит
     # 200 символов, и оно исчезает без следа.
@@ -90,6 +93,7 @@ async def reject_vacancy(callback: CallbackQuery) -> None:
         )
         await session.commit()
 
+    observe_feature(Feature.VACANCY_REJECT)
     await callback.answer("Отмечено, учту")
     if isinstance(callback.message, Message):
         try:
@@ -120,6 +124,7 @@ async def undo_rejection(callback: CallbackQuery) -> None:
         )
         await session.commit()
 
+    observe_feature(Feature.VACANCY_UNDO)
     await callback.answer("Отметка снята")
     if isinstance(callback.message, Message):
         try:

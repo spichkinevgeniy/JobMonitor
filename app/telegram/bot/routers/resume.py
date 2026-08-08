@@ -6,6 +6,7 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
+from app.application.ports.observability_port import Feature
 from app.application.services.resume_quota_service import (
     DAILY_QUOTA,
     QuotaRejection,
@@ -15,6 +16,7 @@ from app.application.services.user_service import UserService
 from app.core.logger import get_app_logger
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
 from app.infrastructure.llm_runtime import TemporaryLLMUnavailableError
+from app.infrastructure.observability import observe_feature
 from app.infrastructure.parsers import (
     NotAResumeError,
     ParserError,
@@ -214,6 +216,7 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
                     return
                 if quota is not None and tg_id is not None:
                     await quota.register(tg_id)
+                observe_feature(Feature.RESUME_UPLOAD)
                 await bot.download(document.file_id, destination=buffer)
                 dto = await parser.extract_text(buffer)
 

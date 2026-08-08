@@ -4,7 +4,7 @@ import logfire
 
 from app.application.dto import InfoRawVacancy, OutVacancyParse
 from app.application.ports.llm_port import IVacancyLLMExtractor
-from app.application.ports.observability_port import IObservabilityService
+from app.application.ports.observability_port import IObservabilityService, SkipReason
 from app.application.ports.unit_of_work import VacancyUnitOfWork
 from app.core.logger import get_app_logger
 from app.domain.vacancy.entities import Vacancy
@@ -51,6 +51,7 @@ class VacancyService:
                     text_len=len(text),
                 )
                 self._observability.observe_not_vacancy_detected(1)
+                self._observability.observe_message_skipped(SkipReason.NOT_VACANCY)
                 return None
 
             application_logfire.info(

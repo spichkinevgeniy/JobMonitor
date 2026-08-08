@@ -8,9 +8,11 @@ from app.core.config import config
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
 from app.infrastructure.extractors.vacancy_extractor import GoogleVacancyLLMExtractor
 from app.infrastructure.observability import (
+    build_counter_store,
     build_observability_service,
     init_logfire,
     init_metrics_server,
+    set_observability_service,
 )
 from app.infrastructure.sentry import init_sentry
 from app.infrastructure.telegram.miniapp_server import build_miniapp_server
@@ -57,9 +59,10 @@ async def build_runtime_components() -> RuntimeComponents:
     dp, bot = build_bot()
     await setup_bot_commands(bot)
     await setup_menu_button(bot)
-    observability = build_observability_service()
+    counter_store = build_counter_store()
+    observability = build_observability_service(counter_store)
+    set_observability_service(observability)
     user_service = UserService(UserUnitOfWork(async_session_factory), observability)
-    await user_service.sync_user_metrics()
     scraper, provider = await build_scraper(bot, observability)
     miniapp_server = build_miniapp_server()
     return RuntimeComponents(
@@ -69,4 +72,5 @@ async def build_runtime_components() -> RuntimeComponents:
         provider=provider,
         miniapp_server=miniapp_server,
         user_service=user_service,
+        counter_store=counter_store,
     )

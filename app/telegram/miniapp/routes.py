@@ -28,6 +28,7 @@ from app.application.dto.miniapp import (
     StatsTrendSeriesResponse,
     WorkFormatChoice,
 )
+from app.application.ports.observability_port import Feature
 from app.application.services.export_service import ExportFormat, ExportService
 from app.application.services.stats_service import (
     FilterFunnel,
@@ -41,6 +42,7 @@ from app.domain.shared.value_objects import ExperienceLevel, Grade, WorkFormat
 from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode, LevelFilterMode
 from app.infrastructure.notifications import TelegramDocumentSender
+from app.infrastructure.observability import observe_feature
 from app.telegram.miniapp.deps import (
     get_current_user,
     get_document_sender,
@@ -63,6 +65,12 @@ from app.telegram.miniapp.throttle import (
     seconds_until_export_allowed,
 )
 from app.telegram.miniapp.ui import templates
+
+_EXPORT_FEATURES = {
+    ExportFormat.JSON: Feature.EXPORT_JSON,
+    ExportFormat.MARKDOWN: Feature.EXPORT_MARKDOWN,
+    ExportFormat.TXT: Feature.EXPORT_TXT,
+}
 
 router = APIRouter()
 
@@ -127,8 +135,11 @@ async def read_stats(
     service: Annotated[StatsService, Depends(get_stats_service)],
     export_service: Annotated[ExportService, Depends(get_export_service)],
 ) -> ProfileStatsResponse:
+    observe_feature(Feature.STATS_OPEN)
     stats = await service.build_profile_stats(user)
     export_count = await export_service.count_available(user.tg_id.value)
+    if stats.skill_suggestions:
+        observe_feature(Feature.ADVICE_SHOWN)
     return _to_stats_response(user, stats, export_count)
 
 
@@ -157,6 +168,7 @@ async def export_vacancies(
             detail=f"Слишком часто. Повторите через {retry_after} с.",
         )
     register_export(user_context.tg_id)
+    observe_feature(_EXPORT_FEATURES[export_format])
 
     export_file = await service.build(user_context.tg_id, export_format)
     if export_file is None:
@@ -212,6 +224,7 @@ async def save_specialty(
     if not updated:
         raise HTTPException(status_code=404, detail="Пользователь не найден.")
 
+    observe_feature(Feature.PROFILE_SAVE)
     return SaveResponse(message="Специализации и скиллы сохранены.")
 
 

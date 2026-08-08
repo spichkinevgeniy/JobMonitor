@@ -97,6 +97,21 @@ class ResumeUploadLog(Base):
     )
 
 
+class MetricCounter(Base):
+    """Счётчики событий, у которых нет своей таблицы.
+
+    Хранится агрегат, а не событие: строк столько же, сколько пар
+    «метрика + метка», и таблица не растёт от нагрузки.
+    """
+
+    __tablename__ = "metric_counter"
+
+    name: Mapped[str] = mapped_column(String, primary_key=True)
+    label: Mapped[str] = mapped_column(String, primary_key=True, default="")
+    value: Mapped[int] = mapped_column(BigInteger, default=0)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
 async def init_db() -> None:
     from app.infrastructure.db.session import engine
 

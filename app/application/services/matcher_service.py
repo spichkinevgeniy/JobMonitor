@@ -63,6 +63,8 @@ class MatcherService:
                         continue
 
                     rejected_count += 1
+                    if decision.reason is not None:
+                        self._observability.observe_match_rejected(decision.reason.value)
                     logger.debug(
                         "User %s rejected by %s",
                         candidate.tg_id.value,

@@ -7,7 +7,7 @@ from telethon.tl.custom.message import Message  # type: ignore[import-untyped]
 
 from app.application.dto import InfoRawVacancy
 from app.application.ports.llm_port import IVacancyLLMExtractor
-from app.application.ports.observability_port import IObservabilityService
+from app.application.ports.observability_port import IObservabilityService, SkipReason
 from app.application.services.matcher_service import MatcherService
 from app.application.services.vacancy_service import VacancyService
 from app.core.config import config
@@ -67,6 +67,7 @@ class TelegramScraper:
                         ContentHash(content_hash)
                     )
                 if exists:
+                    self._observability.observe_message_skipped(SkipReason.DUPLICATE)
                     scraper_logfire.info(
                         "Duplicate vacancy skipped",
                         chat_id=event.chat_id,
@@ -99,6 +100,7 @@ class TelegramScraper:
                 )
                 await matcher.match_vacancy(saved_vacancy_id)
         except IntegrityError:
+            self._observability.observe_message_skipped(SkipReason.DUPLICATE)
             scraper_logfire.info(
                 "Duplicate vacancy skipped",
                 chat_id=event.chat_id,
@@ -115,6 +117,9 @@ class TelegramScraper:
                 vacancy_id=vacancy_id,
             )
         except Exception:
+            # Сюда попадает и «модель не нашла ни одного навыка» — самая
+            # частая причина, по которой распознанный текст не стал вакансией.
+            self._observability.observe_message_skipped(SkipReason.PARSE_FAILED)
             logger.exception(
                 "Scraper message handling failed (chat_id=%s, message_id=%s, content_hash=%s, "
                 "vacancy_id=%s)",
@@ -197,6 +202,7 @@ class TelegramScraper:
         text = message.text or ""
 
         if not text:
+            self._observability.observe_message_skipped(SkipReason.TOO_SHORT)
             scraper_logfire.info(
                 "Message skipped: empty text",
                 chat_id=event.chat_id,
@@ -205,6 +211,7 @@ class TelegramScraper:
             return None
 
         if len(" ".join(text.split())) < MIN_VACANCY_TEXT_LENGTH:
+            self._observability.observe_message_skipped(SkipReason.TOO_SHORT)
             scraper_logfire.info(
                 "Message skipped: too short",
                 chat_id=event.chat_id,
@@ -221,6 +228,7 @@ class TelegramScraper:
         except Exception:
             source_channel = self._source_channel_name(event)
             preview = self._message_preview(text)
+            self._observability.observe_message_skipped(SkipReason.MIRROR_FAILED)
             logger.exception(
                 "Failed to forward message to mirror (source_chat_id=%s, source_channel=%s, "
                 "source_message_id=%s, source_message_preview=%r)",
