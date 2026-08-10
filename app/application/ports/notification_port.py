@@ -13,6 +13,7 @@ class DispatchTarget:
 
     user_id: int
     matched_skills: list[str] = field(default_factory=list)
+    matched_specializations: list[str] = field(default_factory=list)
 
 
 @runtime_checkable

@@ -52,7 +52,7 @@ class TelegramNotificationService(INotificationService):
                         source_url=source_url,
                     ),
                 )
-                await self._log_dispatch(user_id, vacancy_id, target.matched_skills)
+                await self._log_dispatch(user_id, vacancy_id, target)
             except TelegramForbiddenError:
                 logger.warning(
                     "Failed to send vacancy %s to user %s: bot forbidden",
@@ -69,9 +69,7 @@ class TelegramNotificationService(INotificationService):
 
         logger.info("Dispatch finished for vacancy %s", vacancy_id)
 
-    async def _log_dispatch(
-        self, user_id: int, vacancy_id: UUID, matched_skills: list[str]
-    ) -> None:
+    async def _log_dispatch(self, user_id: int, vacancy_id: UUID, target: DispatchTarget) -> None:
         try:
             async with SQLAlchemyUnitOfWork(self._session_factory) as uow:
                 assert uow.session is not None
@@ -79,7 +77,8 @@ class TelegramNotificationService(INotificationService):
                     VacancyDispatchLog(
                         user_tg_id=user_id,
                         vacancy_id=vacancy_id,
-                        matched_skills=matched_skills,
+                        matched_skills=target.matched_skills,
+                        matched_specializations=target.matched_specializations,
                     )
                 )
         except Exception:

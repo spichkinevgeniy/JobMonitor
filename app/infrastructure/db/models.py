@@ -81,6 +81,7 @@ class VacancyDispatchLog(Base):
     )
 
     matched_skills: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    matched_specializations: Mapped[list[str]] = mapped_column(JSONB, default=list)
     feedback: Mapped[str | None] = mapped_column(String, nullable=True)
     feedback_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 

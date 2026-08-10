@@ -173,45 +173,43 @@ def build_stats_unavailable_text() -> str:
     )
 
 
-_GRADE_TITLES = {
-    "INTERN": "Intern",
-    "JUNIOR": "Junior",
-    "MIDDLE": "Middle",
-    "SENIOR": "Senior",
-    "LEAD": "Lead",
-}
-
-_FORMAT_TITLES = {
-    "REMOTE": "удалённо",
-    "ONSITE": "офис",
-    "HYBRID": "гибрид",
+_USER_FORMAT_TITLES = {
+    "REMOTE": "только удалёнка",
+    "ONSITE": "только офис",
+    "HYBRID": "только гибрид",
 }
 
 
-def build_vacancy_reason_text(vacancy: object, matched_skills: list[str]) -> str:
-    specializations = getattr(vacancy, "specializations", None) or []
-    grade = getattr(vacancy, "grade", "UNDEFINED")
-    work_format = getattr(vacancy, "work_format", "UNDEFINED")
+def build_vacancy_reason_text(
+    matched_specializations: list[str],
+    matched_skills: list[str],
+    caveats: list[str],
+) -> str:
+    """Отвечает на «почему мне», а не пересказывает вакансию.
 
-    lines = ["Почему эта вакансия у вас"]
-    if specializations:
-        lines.append(f"Специализация: {', '.join(specializations)}")
-    lines.append(
-        f"Совпали навыки: {', '.join(matched_skills)}"
-        if matched_skills
-        else "Совпадений по навыкам нет"
-    )
-
-    if grade == "UNDEFINED":
-        lines.append("Грейд: в вакансии не указан, поэтому не отсеивали")
-    else:
-        lines.append(f"Грейд: {_GRADE_TITLES.get(grade, grade)}")
-
-    if work_format == "UNDEFINED":
-        lines.append("Формат: в вакансии не указан, поэтому не отсеивали")
-    else:
-        lines.append(f"Формат: {_FORMAT_TITLES.get(work_format, work_format)}")
-
-    lines.append("")
-    lines.append("Слишком много лишнего? Настройте фильтры в /settings.")
+    Грейд, формат и зарплату человек читает в самом объявлении — оно прямо
+    над кнопкой. Единственное, чего он знать не может, — какая часть его
+    профиля сработала. Остальное объясняем, только когда вакансия прошла
+    вопреки его же настройке: иначе это отчёт алгоритма, а не помощь.
+    """
+    matched = " · ".join(matched_specializations + matched_skills)
+    lines = [f"Совпало с вашим профилем: {matched}" if matched else "Совпадений с профилем нет"]
+    lines.extend(caveats)
     return "\n".join(lines)
+
+
+def build_reason_caveat_format(user_format: str) -> str:
+    title = _USER_FORMAT_TITLES.get(user_format, user_format)
+    return f"Формат работы в объявлении не указан — поэтому прошла, хотя у вас «{title}»"
+
+
+def build_reason_caveat_grade() -> str:
+    return "Грейд в объявлении не указан — поэтому прошла, хотя у вас есть фильтр по уровню"
+
+
+def build_reason_caveat_experience() -> str:
+    return "Опыт в объявлении не указан — поэтому прошла, хотя у вас есть фильтр по опыту"
+
+
+def build_reason_caveat_salary() -> str:
+    return "Зарплата в объявлении не указана — поэтому прошла, хотя у вас есть фильтр по деньгам"

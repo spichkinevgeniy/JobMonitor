@@ -7,7 +7,9 @@ from sqlalchemy import select, update
 
 from app.application.ports.observability_port import Feature
 from app.core.logger import get_app_logger
+from app.domain.user.value_objects import FilterMode, LevelFilterMode
 from app.infrastructure.db import async_session_factory
+from app.infrastructure.db.models import User as UserModel
 from app.infrastructure.db.models import Vacancy as VacancyModel
 from app.infrastructure.db.models import VacancyDispatchLog
 from app.infrastructure.observability import observe_feature
@@ -17,7 +19,13 @@ from app.telegram.bot.keyboards import (
     VACANCY_WHY_CALLBACK_PREFIX,
     get_vacancy_kb,
 )
-from app.telegram.bot.views import build_vacancy_reason_text
+from app.telegram.bot.views import (
+    build_reason_caveat_experience,
+    build_reason_caveat_format,
+    build_reason_caveat_grade,
+    build_reason_caveat_salary,
+    build_vacancy_reason_text,
+)
 
 router = Router()
 logger = get_app_logger(__name__)
@@ -49,6 +57,41 @@ async def _source_of(vacancy_id: UUID) -> tuple[str | None, str | None]:
     return row.source_channel, f"https://t.me/{row.source_channel[1:]}/{row.source_message_id}"
 
 
+def _caveats(vacancy: VacancyModel, user: UserModel) -> list[str]:
+    """Что объяснять: только поля, из-за отсутствия которых вакансия прошла
+    вопреки настройке человека.
+
+    Повторяет правила evaluate_match: там пустое поле означает «не отсеиваем»,
+    и именно это выглядит для человека необъяснимым.
+    """
+    lines: list[str] = []
+    if (
+        vacancy.work_format == "UNDEFINED"
+        and user.filter_work_format_mode == FilterMode.STRICT.value
+        and user.cv_work_format
+    ):
+        lines.append(build_reason_caveat_format(user.cv_work_format))
+    if (
+        vacancy.grade == "UNDEFINED"
+        and user.filter_grade_mode != LevelFilterMode.IGNORE.value
+        and user.cv_grade
+    ):
+        lines.append(build_reason_caveat_grade())
+    if (
+        vacancy.experience_level == "UNDEFINED"
+        and user.filter_experience_mode != LevelFilterMode.IGNORE.value
+        and user.cv_experience_level
+    ):
+        lines.append(build_reason_caveat_experience())
+    if (
+        vacancy.salary_amount is None
+        and user.filter_salary_mode == FilterMode.STRICT.value
+        and user.cv_salary_amount
+    ):
+        lines.append(build_reason_caveat_salary())
+    return lines
+
+
 @router.callback_query(F.data.startswith(VACANCY_WHY_CALLBACK_PREFIX))
 async def explain_vacancy(callback: CallbackQuery) -> None:
     vacancy_id = _vacancy_id(callback.data or "", VACANCY_WHY_CALLBACK_PREFIX)
@@ -59,8 +102,14 @@ async def explain_vacancy(callback: CallbackQuery) -> None:
     async with async_session_factory() as session:
         row = (
             await session.execute(
-                select(VacancyDispatchLog.matched_skills, VacancyModel)
+                select(
+                    VacancyDispatchLog.matched_skills,
+                    VacancyDispatchLog.matched_specializations,
+                    VacancyModel,
+                    UserModel,
+                )
                 .join(VacancyModel, VacancyModel.id == VacancyDispatchLog.vacancy_id)
+                .join(UserModel, UserModel.tg_id == VacancyDispatchLog.user_tg_id)
                 .where(VacancyDispatchLog.vacancy_id == vacancy_id)
                 .where(VacancyDispatchLog.user_tg_id == callback.from_user.id)
             )
@@ -71,10 +120,16 @@ async def explain_vacancy(callback: CallbackQuery) -> None:
         return
 
     observe_feature(Feature.VACANCY_WHY)
-    matched_skills, vacancy = row
+    matched_skills, matched_specializations, vacancy, user = row
     # Отвечаем на само сообщение с вакансией: во всплывающем окне лимит
     # 200 символов, и оно исчезает без следа.
-    await callback.message.reply(build_vacancy_reason_text(vacancy, matched_skills or []))
+    await callback.message.reply(
+        build_vacancy_reason_text(
+            matched_specializations or [],
+            matched_skills or [],
+            _caveats(vacancy, user),
+        )
+    )
 
 
 @router.callback_query(F.data.startswith(VACANCY_REJECT_CALLBACK_PREFIX))
