@@ -76,13 +76,6 @@ def build_resume_prompt_text() -> str:
     )
 
 
-def build_resume_scope_text() -> str:
-    return (
-        "Бот учитывает вашу специализацию и основные навыки.\n\n"
-        "Если бот найдет лишнее, настройте ваш профиль через форму."
-    )
-
-
 def build_resume_waiting_fallback_text() -> str:
     return (
         "Для продолжения нужен PDF-файл с резюме.\n"
@@ -101,10 +94,6 @@ def build_resume_processing_text() -> str:
 
 def build_resume_processed_text() -> str:
     return "Резюме обработано."
-
-
-def build_resume_success_text() -> str:
-    return "Профиль обновлен по резюме. Теперь бот будет присылать более точные совпадения."
 
 
 def build_resume_processing_cancel_text() -> str:
