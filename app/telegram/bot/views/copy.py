@@ -269,3 +269,16 @@ def build_privacy_text(url: str) -> str:
         f"Подробно: {url}\n\n"
         "Удалить все данные — /delete_me"
     )
+
+
+def build_developer_info_text(operator_name: str, contact_email: str, url: str) -> str:
+    """Стандартная политика Telegram называет /developer_info способом
+    узнать, кто стоит за ботом."""
+    lines = [
+        f"Оператор данных — {operator_name}.",
+        "",
+        f"Связаться можно через {SUPPORT_BOT_HANDLE} в Telegram или по почте {contact_email}.",
+    ]
+    if url:
+        lines += ["", f"Политика конфиденциальности: {url}"]
+    return "\n".join(lines)

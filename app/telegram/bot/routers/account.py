@@ -3,6 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
 
 from app.application.services.user_service import UserService
+from app.core.config import config
 from app.core.logger import get_app_logger
 from app.core.privacy import user_ref
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
@@ -17,6 +18,7 @@ from app.telegram.bot.views import (
     build_delete_done_text,
     build_delete_keyboard_reset_text,
     build_delete_nothing_text,
+    build_developer_info_text,
     build_privacy_text,
     build_privacy_url,
 )
@@ -28,6 +30,18 @@ logger = get_app_logger(__name__)
 @router.message(Command("privacy"))
 async def cmd_privacy(message: Message) -> None:
     await message.answer(build_privacy_text(build_privacy_url()), disable_web_page_preview=True)
+
+
+@router.message(Command("developer_info"))
+async def cmd_developer_info(message: Message) -> None:
+    await message.answer(
+        build_developer_info_text(
+            config.PRIVACY_OPERATOR_NAME,
+            config.PRIVACY_CONTACT_EMAIL,
+            build_privacy_url(),
+        ),
+        disable_web_page_preview=True,
+    )
 
 
 @router.message(Command("delete_me"))
