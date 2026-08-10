@@ -1,6 +1,7 @@
 from datetime import datetime
+from typing import Any, cast
 
-from sqlalchemy import delete, func, select
+from sqlalchemy import CursorResult, delete, func, select
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -105,8 +106,12 @@ class UserRepository(IUserRepository):
         """Профиль и оба лога. Внешних ключей нет, каскад не сработает."""
         for model in (VacancyDispatchLogModel, ResumeUploadLogModel):
             await self._session.execute(delete(model).where(model.user_tg_id == tg_id.value))
-        result = await self._session.execute(
-            delete(UserModel).where(UserModel.tg_id == tg_id.value)
+        # execute() объявлен как Result, но на DML возвращает CursorResult —
+        # только у него есть rowcount. Приведение вместо ignore, чтобы не
+        # глушить настоящие ошибки в этой строке.
+        result = cast(
+            "CursorResult[Any]",
+            await self._session.execute(delete(UserModel).where(UserModel.tg_id == tg_id.value)),
         )
         await self._session.flush()
         return bool(result.rowcount)
