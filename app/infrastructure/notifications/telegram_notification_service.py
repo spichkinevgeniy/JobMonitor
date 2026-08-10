@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.application.ports.notification_port import DispatchTarget, INotificationService
 from app.core.logger import get_app_logger
+from app.core.privacy import user_ref
 from app.domain.user.value_objects import UserId
 from app.infrastructure.db.models import VacancyDispatchLog
 from app.infrastructure.db.uow.base import SQLAlchemyUnitOfWork
@@ -57,14 +58,14 @@ class TelegramNotificationService(INotificationService):
                 logger.warning(
                     "Failed to send vacancy %s to user %s: bot forbidden",
                     vacancy_id,
-                    user_id,
+                    user_ref(user_id),
                 )
                 await self._deactivate_user(user_id)
             except Exception:
                 logger.exception(
                     "Failed to send vacancy %s to user %s",
                     vacancy_id,
-                    user_id,
+                    user_ref(user_id),
                 )
 
         logger.info("Dispatch finished for vacancy %s", vacancy_id)
@@ -82,7 +83,9 @@ class TelegramNotificationService(INotificationService):
                     )
                 )
         except Exception:
-            logger.exception("Failed to log dispatch of vacancy %s to user %s", vacancy_id, user_id)
+            logger.exception(
+                "Failed to log dispatch of vacancy %s to user %s", vacancy_id, user_ref(user_id)
+            )
 
     async def _deactivate_user(self, user_id: int) -> None:
         try:
@@ -92,4 +95,6 @@ class TelegramNotificationService(INotificationService):
                     user.is_active = False
                     await uow.users.update(user)
         except Exception:
-            logger.exception("Failed to deactivate user %s after bot-forbidden error", user_id)
+            logger.exception(
+                "Failed to deactivate user %s after bot-forbidden error", user_ref(user_id)
+            )

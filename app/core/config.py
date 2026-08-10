@@ -51,6 +51,10 @@ class BaseAppSettings(BaseSettings):
     LOGFIRE_SERVICE_NAME: str
     LOGFIRE_ENV: str
 
+    # Соль для псевдонимов в логах. Своя, не от токена бота: утечка логов
+    # не должна давать ничего, кроме самих логов.
+    TELEMETRY_SALT: str = ""
+
     METRICS_ENABLED: bool = True
     METRICS_ADDR: str = "0.0.0.0"
     METRICS_PORT: int = 8000
@@ -134,6 +138,8 @@ class BaseAppSettings(BaseSettings):
             "POSTGRES_USER": self.POSTGRES_USER,
             "POSTGRES_PASSWORD": self.POSTGRES_PASSWORD,
             "POSTGRES_DB": self.POSTGRES_DB,
+            # Без соли псевдоним в логах подбирается перебором tg_id.
+            "TELEMETRY_SALT": self.TELEMETRY_SALT,
         }
         missing: list[str] = []
         for key, value in required_strings.items():
