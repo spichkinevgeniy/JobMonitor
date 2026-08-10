@@ -27,6 +27,10 @@ class UserService:
         async with self._uow:
             return await self._uow.users.get_by_tg_id(UserId(tg_id))
 
+    async def delete_user(self, tg_id: int) -> bool:
+        async with self._uow:
+            return await self._uow.users.delete_by_tg_id(UserId(tg_id))
+
     async def get_or_create_user(self, tg_id: int, username: str | None) -> tuple[User, bool]:
         async with self._uow:
             user = await self._uow.users.get_by_tg_id(UserId(tg_id))

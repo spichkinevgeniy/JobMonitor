@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,6 +10,7 @@ from app.domain.user.value_objects import UserId
 from app.infrastructure.db.mappers.user import apply_user, user_from_model, user_to_model
 from app.infrastructure.db.models import ResumeUploadLog as ResumeUploadLogModel
 from app.infrastructure.db.models import User as UserModel
+from app.infrastructure.db.models import VacancyDispatchLog as VacancyDispatchLogModel
 
 
 class UserRepository(IUserRepository):
@@ -99,3 +100,13 @@ class UserRepository(IUserRepository):
     async def log_resume_upload(self, tg_id: int) -> None:
         self._session.add(ResumeUploadLogModel(user_tg_id=tg_id))
         await self._session.flush()
+
+    async def delete_by_tg_id(self, tg_id: UserId) -> bool:
+        """Профиль и оба лога. Внешних ключей нет, каскад не сработает."""
+        for model in (VacancyDispatchLogModel, ResumeUploadLogModel):
+            await self._session.execute(delete(model).where(model.user_tg_id == tg_id.value))
+        result = await self._session.execute(
+            delete(UserModel).where(UserModel.tg_id == tg_id.value)
+        )
+        await self._session.flush()
+        return bool(result.rowcount)

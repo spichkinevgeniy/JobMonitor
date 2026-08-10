@@ -1,5 +1,6 @@
 from aiogram import Router
 
+from app.telegram.bot.routers.account import router as account_router
 from app.telegram.bot.routers.broadcast import router as broadcast_router
 from app.telegram.bot.routers.help import router as help_router
 from app.telegram.bot.routers.onboarding import router as onboarding_router
@@ -18,4 +19,5 @@ def get_router() -> Router:
     router.include_router(profile_router)
     router.include_router(vacancy_feedback_router)
     router.include_router(help_router)
+    router.include_router(account_router)
     return router

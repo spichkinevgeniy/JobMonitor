@@ -226,3 +226,29 @@ def build_reason_caveat_experience() -> str:
 
 def build_reason_caveat_salary() -> str:
     return "Зарплата в объявлении не указана — поэтому прошла, хотя у вас есть фильтр по деньгам"
+
+
+def build_delete_confirm_text() -> str:
+    return (
+        "Удаление данных\n\n"
+        "Будут удалены профиль поиска, история присланных вакансий "
+        "и отметки о загрузках резюме.\n\n"
+        "Действие необратимо. Чтобы снова пользоваться ботом, "
+        "профиль придётся собрать заново."
+    )
+
+
+def build_delete_done_text() -> str:
+    return "Данные удалены.\n\nВакансии больше не придут. Если захотите вернуться — /start."
+
+
+def build_delete_cancelled_text() -> str:
+    return "Удаление отменено, данные на месте."
+
+
+def build_delete_nothing_text() -> str:
+    return "Удалять нечего: данных о вас не сохранено."
+
+
+def build_delete_keyboard_reset_text() -> str:
+    return "Меню скрыто. Вернуть его можно командой /start."

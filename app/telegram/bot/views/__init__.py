@@ -1,6 +1,11 @@
 from app.telegram.bot.views.copy import (
     SUPPORT_BOT_HANDLE,
     build_available_commands_text,
+    build_delete_cancelled_text,
+    build_delete_confirm_text,
+    build_delete_done_text,
+    build_delete_keyboard_reset_text,
+    build_delete_nothing_text,
     build_help_text,
     build_main_menu_fallback_text,
     build_reason_caveat_experience,
@@ -50,6 +55,11 @@ from app.telegram.bot.views.tracking_settings import (
 __all__ = [
     "SUPPORT_BOT_HANDLE",
     "build_available_commands_text",
+    "build_delete_cancelled_text",
+    "build_delete_confirm_text",
+    "build_delete_done_text",
+    "build_delete_keyboard_reset_text",
+    "build_delete_nothing_text",
     "build_help_text",
     "build_main_menu_fallback_text",
     "build_resume_busy_text",
