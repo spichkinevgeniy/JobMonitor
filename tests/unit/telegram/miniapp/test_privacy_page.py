@@ -9,7 +9,9 @@ from app.telegram.miniapp.app import build_miniapp_app
 
 @pytest.fixture(scope="module")
 def page() -> str:
-    return TestClient(build_miniapp_app()).get("/privacy").text
+    """Переносы строк в шаблоне не должны ломать поиск по фразам."""
+    raw = TestClient(build_miniapp_app()).get("/privacy").text
+    return " ".join(raw.split())
 
 
 class TestPage:
@@ -25,13 +27,15 @@ class TestPage:
     @pytest.mark.parametrize(
         "claim",
         [
-            "OpenRouter",  # передача резюме наружу
-            "Нидерландах",  # где стоят серверы
+            "ИИ",  # резюме уходит внешнему сервису распознавания
+            "Европейского союза",  # обработка за пределами России
             "/delete_me",  # как удалить данные
             "30 дней",  # срок ответа на запрос
         ],
     )
     def test_discloses_what_code_actually_does(self, page: str, claim: str) -> None:
+        """Названия вендоров вынесены из политики, но сами факты передачи —
+        внешнему ИИ и за границу — остаются: ради них политика и пишется."""
         assert claim in page
 
 
