@@ -37,12 +37,14 @@ from app.application.services.stats_service import (
     TrendGranularity,
 )
 from app.application.services.user_service import UserService
+from app.core.config import config
 from app.domain.matching.entities import MatchRejectionReason
 from app.domain.shared.value_objects import ExperienceLevel, Grade, WorkFormat
 from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode, LevelFilterMode
 from app.infrastructure.notifications import TelegramDocumentSender
 from app.infrastructure.observability import observe_feature
+from app.telegram.bot.views import SUPPORT_BOT_HANDLE
 from app.telegram.miniapp.deps import (
     get_current_user,
     get_document_sender,
@@ -72,7 +74,24 @@ _EXPORT_FEATURES = {
     ExportFormat.TXT: Feature.EXPORT_TXT,
 }
 
+PRIVACY_UPDATED_AT = "10 августа 2026"
+
 router = APIRouter()
+
+
+@router.get("/privacy", response_class=HTMLResponse, name="privacy")
+async def privacy_page(request: Request) -> HTMLResponse:
+    """Публичная страница: открывается и вне Telegram, авторизации не требует."""
+    return templates.TemplateResponse(
+        request,
+        "pages/privacy.html",
+        {
+            "updated_at": PRIVACY_UPDATED_AT,
+            "operator_name": config.PRIVACY_OPERATOR_NAME,
+            "support_handle": SUPPORT_BOT_HANDLE,
+            "contact_email": config.PRIVACY_CONTACT_EMAIL,
+        },
+    )
 
 
 @router.get("/miniapp", include_in_schema=False)

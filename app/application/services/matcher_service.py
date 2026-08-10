@@ -6,6 +6,7 @@ from app.application.ports.notification_port import DispatchTarget, INotificatio
 from app.application.ports.observability_port import IObservabilityService
 from app.application.ports.unit_of_work import MatchingUnitOfWork
 from app.core.logger import get_app_logger
+from app.core.privacy import user_ref
 from app.domain.matching.policy import evaluate_match
 from app.domain.user.entities import User
 from app.domain.user.value_objects import UserId
@@ -76,7 +77,7 @@ class MatcherService:
                         self._observability.observe_match_rejected(decision.reason.value)
                     logger.debug(
                         "User %s rejected by %s",
-                        candidate.tg_id.value,
+                        user_ref(candidate.tg_id.value),
                         decision.reason.value if decision.reason else "unknown",
                     )
 

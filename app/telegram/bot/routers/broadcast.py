@@ -7,6 +7,7 @@ from aiogram.types import Message
 
 from app.core.config import config
 from app.core.logger import get_app_logger
+from app.core.privacy import user_ref
 from app.domain.user.value_objects import UserId
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
 from app.telegram.bot.keyboards import get_main_menu_kb
@@ -49,13 +50,13 @@ async def cmd_broadcast(message: Message, command: CommandObject) -> None:
                 await bot.send_message(chat_id=tg_id, text=text, reply_markup=get_main_menu_kb())
                 sent += 1
             except Exception:
-                logger.exception("Broadcast retry failed for user %s", tg_id)
+                logger.exception("Broadcast retry failed for user %s", user_ref(tg_id))
                 failed += 1
         except TelegramForbiddenError:
             blocked += 1
             await _deactivate_user(tg_id)
         except Exception:
-            logger.exception("Broadcast failed for user %s", tg_id)
+            logger.exception("Broadcast failed for user %s", user_ref(tg_id))
             failed += 1
         await asyncio.sleep(SEND_DELAY_SECONDS)
 
@@ -72,4 +73,6 @@ async def _deactivate_user(tg_id: int) -> None:
                 user.is_active = False
                 await uow.users.update(user)
     except Exception:
-        logger.exception("Failed to deactivate user %s after broadcast-forbidden error", tg_id)
+        logger.exception(
+            "Failed to deactivate user %s after broadcast-forbidden error", user_ref(tg_id)
+        )

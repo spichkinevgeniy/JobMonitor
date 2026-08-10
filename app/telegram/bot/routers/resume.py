@@ -14,6 +14,7 @@ from app.application.services.resume_quota_service import (
 )
 from app.application.services.user_service import UserService
 from app.core.logger import get_app_logger
+from app.core.privacy import file_ext, user_ref
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
 from app.infrastructure.llm_runtime import TemporaryLLMUnavailableError
 from app.infrastructure.observability import observe_feature
@@ -114,21 +115,21 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
 
     with bot_logfire.span(
         "bot.handle_resume_document",
-        tg_id=tg_id,
-        file_name=file_name,
+        user=user_ref(tg_id),
+        file_ext=file_ext(file_name),
         file_size=file_size,
     ):
         bot_logfire.info(
             "Resume upload started",
-            tg_id=tg_id,
-            file_name=file_name,
+            user=user_ref(tg_id),
+            file_ext=file_ext(file_name),
             file_size=file_size,
         )
         if file_size > 15 * 1024 * 1024:
             bot_logfire.info(
                 "Resume rejected: file too large",
-                tg_id=tg_id,
-                file_name=file_name,
+                user=user_ref(tg_id),
+                file_ext=file_ext(file_name),
                 file_size=file_size,
             )
             await message.answer(build_resume_file_too_large_text())
@@ -140,8 +141,8 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
             if tg_id in _active_resume_uploads:
                 bot_logfire.info(
                     "Resume rejected: upload already in progress",
-                    tg_id=tg_id,
-                    file_name=file_name,
+                    user=user_ref(tg_id),
+                    file_ext=file_ext(file_name),
                     file_size=file_size,
                 )
                 await message.answer(build_resume_processing_text())
@@ -167,9 +168,9 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
                 if not decision.allowed:
                     bot_logfire.info(
                         "Resume rejected: quota",
-                        tg_id=tg_id,
+                        user=user_ref(tg_id),
                         rejection=decision.rejection,
-                        file_name=file_name,
+                        file_ext=file_ext(file_name),
                     )
                     if decision.rejection is QuotaRejection.COOLDOWN:
                         await reset_to_menu(
@@ -187,7 +188,7 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
             if user is None:
                 bot_logfire.warning(
                     "Resume processing skipped: user context missing",
-                    file_name=file_name,
+                    file_ext=file_ext(file_name),
                     file_size=file_size,
                 )
                 await reset_to_menu(build_start_required_text())
@@ -197,8 +198,8 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
             if bot is None:
                 bot_logfire.warning(
                     "Resume processing skipped: bot context missing",
-                    tg_id=user.id,
-                    file_name=file_name,
+                    user=user_ref(user.id),
+                    file_ext=file_ext(file_name),
                     file_size=file_size,
                 )
                 await reset_to_menu(build_resume_context_error_text())
@@ -208,8 +209,8 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
                 if not granted:
                     bot_logfire.warning(
                         "Resume rejected: no free parse slot",
-                        tg_id=tg_id,
-                        file_name=file_name,
+                        user=user_ref(tg_id),
+                        file_ext=file_ext(file_name),
                     )
                     await reset_to_menu(build_resume_busy_text())
                     return
@@ -224,8 +225,8 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
             if not updated:
                 bot_logfire.info(
                     "Resume processing skipped: user not found",
-                    tg_id=user.id,
-                    file_name=file_name,
+                    user=user_ref(user.id),
+                    file_ext=file_ext(file_name),
                     file_size=file_size,
                 )
                 await reset_to_menu(build_start_required_text())
@@ -238,8 +239,8 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
 
             bot_logfire.info(
                 "Resume processed successfully",
-                tg_id=user.id,
-                file_name=file_name,
+                user=user_ref(user.id),
+                file_ext=file_ext(file_name),
                 file_size=file_size,
             )
             await state.set_state(BotStates.main_menu)
@@ -254,48 +255,48 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
         except ValueError:
             bot_logfire.info(
                 "Resume rejected: unsupported format",
-                tg_id=tg_id,
-                file_name=file_name,
+                user=user_ref(tg_id),
+                file_ext=file_ext(file_name),
                 file_size=file_size,
             )
             await reset_to_menu(build_resume_unsupported_format_text())
         except NotAResumeError:
             bot_logfire.info(
                 "Resume rejected: not a resume",
-                tg_id=tg_id,
-                file_name=file_name,
+                user=user_ref(tg_id),
+                file_ext=file_ext(file_name),
                 file_size=file_size,
             )
             await reset_to_menu(build_resume_not_a_resume_text())
         except TooManyPagesError:
             bot_logfire.info(
                 "Resume rejected: too many pages",
-                tg_id=tg_id,
-                file_name=file_name,
+                user=user_ref(tg_id),
+                file_ext=file_ext(file_name),
                 file_size=file_size,
             )
             await reset_to_menu(build_resume_too_many_pages_text())
         except ParserError:
             bot_logfire.warning(
                 "Resume rejected: parser error",
-                tg_id=tg_id,
-                file_name=file_name,
+                user=user_ref(tg_id),
+                file_ext=file_ext(file_name),
                 file_size=file_size,
             )
             await reset_to_menu(build_resume_parser_error_text())
         except TemporaryLLMUnavailableError:
             bot_logfire.warning(
                 "Resume processing delayed: llm temporarily unavailable",
-                tg_id=tg_id,
-                file_name=file_name,
+                user=user_ref(tg_id),
+                file_ext=file_ext(file_name),
                 file_size=file_size,
             )
             await reset_to_menu(build_resume_llm_unavailable_text())
         except Exception:
             logger.exception(
-                "Resume processing failed unexpectedly (tg_id=%s, file_name=%s, file_size=%s)",
-                tg_id,
-                file_name,
+                "Resume processing failed unexpectedly (user=%s, ext=%s, size=%s)",
+                user_ref(tg_id),
+                file_ext(file_name),
                 file_size,
             )
             await reset_to_menu(build_resume_unknown_error_text())

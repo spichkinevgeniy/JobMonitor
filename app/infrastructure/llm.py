@@ -205,7 +205,6 @@ def get_resume_parse_agent() -> Agent[None, OutResumeParse]:
         f"6. experience_level — только одно значение из {allowed_experience_levels}. "
         "Ориентируйся на подтвержденный коммерческий опыт. Если опыт не ясен, верни UNDEFINED.\n"
         "7. work_format — одно из REMOTE, HYBRID, ONSITE, UNDEFINED.\n"
-        "8. full_relevant_text_from_resume сохраняй без искажений.\n"
     )
 
     return Agent[None, OutResumeParse](

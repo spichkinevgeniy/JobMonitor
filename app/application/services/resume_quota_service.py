@@ -6,6 +6,7 @@ from enum import StrEnum
 
 from app.application.ports.unit_of_work import UserUnitOfWork
 from app.core.logger import get_app_logger
+from app.core.privacy import user_ref
 
 logger = get_app_logger(__name__)
 
@@ -54,7 +55,7 @@ class ResumeQuotaService:
                 )
 
         if uploads_in_window >= DAILY_QUOTA:
-            logger.info("Resume rejected: daily quota reached (tg_id=%s)", tg_id)
+            logger.info("Resume rejected: daily quota reached (user=%s)", user_ref(tg_id))
             return QuotaDecision(
                 allowed=False,
                 rejection=QuotaRejection.DAILY_QUOTA,

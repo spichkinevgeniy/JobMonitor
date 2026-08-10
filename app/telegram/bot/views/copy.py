@@ -44,7 +44,8 @@ def build_help_text() -> str:
         "возможно, фильтры были настроены слишком строго или нужного Telegram-канала "
         "пока нет в подборке.\n\n"
         f"💬 Связаться, предложить канал для мониторинга или оставить обратную связь "
-        f"можно через {SUPPORT_BOT_HANDLE}."
+        f"можно через {SUPPORT_BOT_HANDLE}.\n\n"
+        "🔒 Что бот хранит о вас и как это удалить — /privacy"
     )
 
 
@@ -226,3 +227,58 @@ def build_reason_caveat_experience() -> str:
 
 def build_reason_caveat_salary() -> str:
     return "Зарплата в объявлении не указана — поэтому прошла, хотя у вас есть фильтр по деньгам"
+
+
+def build_delete_confirm_text() -> str:
+    return (
+        "Удаление данных\n\n"
+        "Будут удалены профиль поиска, история присланных вакансий "
+        "и отметки о загрузках резюме.\n\n"
+        "Действие необратимо. Чтобы снова пользоваться ботом, "
+        "профиль придётся собрать заново."
+    )
+
+
+def build_delete_done_text() -> str:
+    return "Данные удалены.\n\nВакансии больше не придут. Если захотите вернуться — /start."
+
+
+def build_delete_cancelled_text() -> str:
+    return "Удаление отменено, данные на месте."
+
+
+def build_delete_nothing_text() -> str:
+    return "Удалять нечего: данных о вас не сохранено."
+
+
+def build_delete_keyboard_reset_text() -> str:
+    return "Меню скрыто. Вернуть его можно командой /start."
+
+
+def build_privacy_text(url: str) -> str:
+    if not url:
+        return (
+            "Политика конфиденциальности временно недоступна.\n"
+            f"Написать нам можно через {SUPPORT_BOT_HANDLE}."
+        )
+    return (
+        "Что бот знает о вас\n\n"
+        "Храним профиль поиска: специализации, навыки, грейд, опыт и фильтры. "
+        "Файл резюме и его текст не сохраняются — из PDF берём только "
+        "специализации и навыки.\n\n"
+        f"Подробно: {url}\n\n"
+        "Удалить все данные — /delete_me"
+    )
+
+
+def build_developer_info_text(operator_name: str, contact_email: str, url: str) -> str:
+    """Стандартная политика Telegram называет /developer_info способом
+    узнать, кто стоит за ботом."""
+    lines = [
+        f"Оператор данных — {operator_name}.",
+        "",
+        f"Связаться можно через {SUPPORT_BOT_HANDLE} в Telegram или по почте {contact_email}.",
+    ]
+    if url:
+        lines += ["", f"Политика конфиденциальности: {url}"]
+    return "\n".join(lines)

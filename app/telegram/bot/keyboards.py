@@ -23,6 +23,11 @@ RESUME_CONFIRM_BUTTON_TEXT = "Всё верно"
 RESUME_FIX_BUTTON_TEXT = "Поправить"
 RESUME_CONFIRM_CALLBACK = "resume:confirm"
 
+DELETE_CONFIRM_BUTTON_TEXT = "Удалить безвозвратно"
+DELETE_CANCEL_BUTTON_TEXT = "Отмена"
+DELETE_CONFIRM_CALLBACK = "delete:confirm"
+DELETE_CANCEL_CALLBACK = "delete:cancel"
+
 SETTINGS_DONE_BUTTON_TEXT = "✅ Готов"
 SETTINGS_DONE_CALLBACK = "settings:done"
 
@@ -175,4 +180,12 @@ def get_resume_result_kb(specialty_url: str = "") -> InlineKeyboardMarkup:
         builder.adjust(2)
     else:
         builder.adjust(1)
+    return builder.as_markup()
+
+
+def get_delete_confirm_kb() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.button(text=DELETE_CANCEL_BUTTON_TEXT, callback_data=DELETE_CANCEL_CALLBACK)
+    builder.button(text=DELETE_CONFIRM_BUTTON_TEXT, callback_data=DELETE_CONFIRM_CALLBACK)
+    builder.adjust(1)
     return builder.as_markup()
