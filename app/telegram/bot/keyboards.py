@@ -19,6 +19,10 @@ VACANCY_UNDO_CALLBACK_PREFIX = "vac:undo:"
 VACANCY_WHY_CALLBACK_PREFIX = "vac:why:"
 VACANCY_REJECT_CALLBACK_PREFIX = "vac:no:"
 
+RESUME_CONFIRM_BUTTON_TEXT = "Всё верно"
+RESUME_FIX_BUTTON_TEXT = "Поправить"
+RESUME_CONFIRM_CALLBACK = "resume:confirm"
+
 SETTINGS_DONE_BUTTON_TEXT = "✅ Готов"
 SETTINGS_DONE_CALLBACK = "settings:done"
 
@@ -158,4 +162,17 @@ def get_vacancy_kb(
         rows += [1]
 
     builder.adjust(*rows)
+    return builder.as_markup()
+
+
+def get_resume_result_kb(specialty_url: str = "") -> InlineKeyboardMarkup:
+    """Подтверждение разбора резюме. «Поправить» ведёт сразу в настройку
+    профиля, чтобы человеку не пришлось искать её самому."""
+    builder = InlineKeyboardBuilder()
+    builder.button(text=RESUME_CONFIRM_BUTTON_TEXT, callback_data=RESUME_CONFIRM_CALLBACK)
+    if specialty_url:
+        builder.button(text=RESUME_FIX_BUTTON_TEXT, web_app=WebAppInfo(url=specialty_url))
+        builder.adjust(2)
+    else:
+        builder.adjust(1)
     return builder.as_markup()

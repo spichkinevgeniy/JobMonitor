@@ -76,13 +76,6 @@ def build_resume_prompt_text() -> str:
     )
 
 
-def build_resume_scope_text() -> str:
-    return (
-        "Бот учитывает вашу специализацию и основные навыки.\n\n"
-        "Если бот найдет лишнее, настройте ваш профиль через форму."
-    )
-
-
 def build_resume_waiting_fallback_text() -> str:
     return (
         "Для продолжения нужен PDF-файл с резюме.\n"
@@ -101,10 +94,6 @@ def build_resume_processing_text() -> str:
 
 def build_resume_processed_text() -> str:
     return "Резюме обработано."
-
-
-def build_resume_success_text() -> str:
-    return "Профиль обновлен по резюме. Теперь бот будет присылать более точные совпадения."
 
 
 def build_resume_processing_cancel_text() -> str:
@@ -173,45 +162,67 @@ def build_stats_unavailable_text() -> str:
     )
 
 
-_GRADE_TITLES = {
-    "INTERN": "Intern",
-    "JUNIOR": "Junior",
-    "MIDDLE": "Middle",
-    "SENIOR": "Senior",
-    "LEAD": "Lead",
-}
+def build_resume_result_text(specializations: list[str], skills: list[str]) -> str:
+    """Показываем, что поняли, и просим подтвердить.
 
-_FORMAT_TITLES = {
-    "REMOTE": "удалённо",
-    "ONSITE": "офис",
-    "HYBRID": "гибрид",
-}
-
-
-def build_vacancy_reason_text(vacancy: object, matched_skills: list[str]) -> str:
-    specializations = getattr(vacancy, "specializations", None) or []
-    grade = getattr(vacancy, "grade", "UNDEFINED")
-    work_format = getattr(vacancy, "work_format", "UNDEFINED")
-
-    lines = ["Почему эта вакансия у вас"]
-    if specializations:
-        lines.append(f"Специализация: {', '.join(specializations)}")
+    Раньше бот заранее предупреждал «если найдёт лишнее — настройте профиль»
+    и на этом всё. Что именно извлеклось, человек не видел никогда: отсюда
+    профили с одним навыком и с чужими специализациями, о которых владельцы
+    не подозревали.
+    """
+    lines = ["Разобрал резюме. Понял так:", ""]
     lines.append(
-        f"Совпали навыки: {', '.join(matched_skills)}"
-        if matched_skills
-        else "Совпадений по навыкам нет"
+        f"Специализация: {', '.join(specializations)}"
+        if specializations
+        else "Специализация: не нашёл"
     )
-
-    if grade == "UNDEFINED":
-        lines.append("Грейд: в вакансии не указан, поэтому не отсеивали")
-    else:
-        lines.append(f"Грейд: {_GRADE_TITLES.get(grade, grade)}")
-
-    if work_format == "UNDEFINED":
-        lines.append("Формат: в вакансии не указан, поэтому не отсеивали")
-    else:
-        lines.append(f"Формат: {_FORMAT_TITLES.get(work_format, work_format)}")
-
+    lines.append(f"Навыки: {', '.join(skills)}" if skills else "Навыки: не нашёл")
     lines.append("")
-    lines.append("Слишком много лишнего? Настройте фильтры в /settings.")
+    lines.append("По ним бот и подбирает вакансии. Всё верно?")
     return "\n".join(lines)
+
+
+def build_resume_confirmed_text() -> str:
+    return "Отлично, профиль сохранён. Вакансии начнут приходить по нему."
+
+
+_USER_FORMAT_TITLES = {
+    "REMOTE": "только удалёнка",
+    "ONSITE": "только офис",
+    "HYBRID": "только гибрид",
+}
+
+
+def build_vacancy_reason_text(
+    matched_specializations: list[str],
+    matched_skills: list[str],
+    caveats: list[str],
+) -> str:
+    """Отвечает на «почему мне», а не пересказывает вакансию.
+
+    Грейд, формат и зарплату человек читает в самом объявлении — оно прямо
+    над кнопкой. Единственное, чего он знать не может, — какая часть его
+    профиля сработала. Остальное объясняем, только когда вакансия прошла
+    вопреки его же настройке: иначе это отчёт алгоритма, а не помощь.
+    """
+    matched = " · ".join(matched_specializations + matched_skills)
+    lines = [f"Совпало с вашим профилем: {matched}" if matched else "Совпадений с профилем нет"]
+    lines.extend(caveats)
+    return "\n".join(lines)
+
+
+def build_reason_caveat_format(user_format: str) -> str:
+    title = _USER_FORMAT_TITLES.get(user_format, user_format)
+    return f"Формат работы в объявлении не указан — поэтому прошла, хотя у вас «{title}»"
+
+
+def build_reason_caveat_grade() -> str:
+    return "Грейд в объявлении не указан — поэтому прошла, хотя у вас есть фильтр по уровню"
+
+
+def build_reason_caveat_experience() -> str:
+    return "Опыт в объявлении не указан — поэтому прошла, хотя у вас есть фильтр по опыту"
+
+
+def build_reason_caveat_salary() -> str:
+    return "Зарплата в объявлении не указана — поэтому прошла, хотя у вас есть фильтр по деньгам"

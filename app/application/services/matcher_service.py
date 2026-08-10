@@ -56,8 +56,17 @@ class MatcherService:
                         matched = sorted(
                             item.value for item in vacancy.skills.items & candidate.cv_skills.items
                         )
+                        matched_specs = sorted(
+                            item.value
+                            for item in vacancy.specializations.items
+                            & candidate.cv_specializations.items
+                        )
                         targets.append(
-                            DispatchTarget(user_id=candidate.tg_id.value, matched_skills=matched)
+                            DispatchTarget(
+                                user_id=candidate.tg_id.value,
+                                matched_skills=matched,
+                                matched_specializations=matched_specs,
+                            )
                         )
                         self._observe_skill_matches(vacancy=vacancy, user=candidate)
                         continue

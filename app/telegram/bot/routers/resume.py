@@ -28,15 +28,18 @@ from app.telegram.bot.keyboards import (
     CANCEL_BUTTON_TEXT,
     MAIN_MENU_BUTTON_TEXTS,
     PROFILE_UPLOAD_RESUME_CALLBACK,
+    RESUME_CONFIRM_CALLBACK,
     UPLOAD_BUTTON_TEXT,
     get_cancel_kb,
     get_main_menu_kb,
+    get_resume_result_kb,
 )
 from app.telegram.bot.states import BotStates
 from app.telegram.bot.views import (
     build_main_menu_fallback_text,
     build_resume_busy_text,
     build_resume_cancel_text,
+    build_resume_confirmed_text,
     build_resume_context_error_text,
     build_resume_cooldown_text,
     build_resume_daily_quota_text,
@@ -48,12 +51,12 @@ from app.telegram.bot.views import (
     build_resume_processing_cancel_text,
     build_resume_processing_text,
     build_resume_prompt_text,
-    build_resume_scope_text,
-    build_resume_success_text,
+    build_resume_result_text,
     build_resume_too_many_pages_text,
     build_resume_unknown_error_text,
     build_resume_unsupported_format_text,
     build_resume_waiting_fallback_text,
+    build_specialty_url,
     build_start_required_text,
 )
 
@@ -180,10 +183,6 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
             processing_message = await message.answer(
                 build_resume_processing_text(),
             )
-            await message.answer(
-                build_resume_scope_text(),
-                reply_markup=get_main_menu_kb(),
-            )
             user = message.from_user
             if user is None:
                 bot_logfire.warning(
@@ -244,7 +243,13 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
                 file_size=file_size,
             )
             await state.set_state(BotStates.main_menu)
-            await message.answer(build_resume_success_text())
+            await message.answer(
+                build_resume_result_text(
+                    sorted({item.specialization.value for item in dto.specializations}),
+                    sorted({item.skill.value for item in dto.skills}),
+                ),
+                reply_markup=get_resume_result_kb(build_specialty_url()),
+            )
 
         except ValueError:
             bot_logfire.info(
@@ -340,3 +345,15 @@ async def main_menu_fallback(message: Message) -> None:
         build_main_menu_fallback_text(),
         reply_markup=get_main_menu_kb(),
     )
+
+
+@router.callback_query(F.data == RESUME_CONFIRM_CALLBACK)
+async def confirm_resume_result(callback: CallbackQuery) -> None:
+    await callback.answer()
+    if not isinstance(callback.message, Message):
+        return
+    try:
+        await callback.message.edit_reply_markup(reply_markup=None)
+    except Exception:
+        logger.debug("Failed to drop resume confirmation keyboard", exc_info=True)
+    await callback.message.answer(build_resume_confirmed_text(), reply_markup=get_main_menu_kb())
