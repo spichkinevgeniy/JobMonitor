@@ -173,6 +173,30 @@ def build_stats_unavailable_text() -> str:
     )
 
 
+def build_resume_result_text(specializations: list[str], skills: list[str]) -> str:
+    """Показываем, что поняли, и просим подтвердить.
+
+    Раньше бот заранее предупреждал «если найдёт лишнее — настройте профиль»
+    и на этом всё. Что именно извлеклось, человек не видел никогда: отсюда
+    профили с одним навыком и с чужими специализациями, о которых владельцы
+    не подозревали.
+    """
+    lines = ["Разобрал резюме. Понял так:", ""]
+    lines.append(
+        f"Специализация: {', '.join(specializations)}"
+        if specializations
+        else "Специализация: не нашёл"
+    )
+    lines.append(f"Навыки: {', '.join(skills)}" if skills else "Навыки: не нашёл")
+    lines.append("")
+    lines.append("По ним бот и подбирает вакансии. Всё верно?")
+    return "\n".join(lines)
+
+
+def build_resume_confirmed_text() -> str:
+    return "Отлично, профиль сохранён. Вакансии начнут приходить по нему."
+
+
 _USER_FORMAT_TITLES = {
     "REMOTE": "только удалёнка",
     "ONSITE": "только офис",

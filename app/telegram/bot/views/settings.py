@@ -81,6 +81,10 @@ def build_settings_menu_text() -> str:
     return build_settings_intro_text()
 
 
+def build_specialty_url() -> str:
+    return _build_entry_url(SETTINGS_ENTRY_SPECIALTY)
+
+
 def build_stats_url() -> str:
     return _build_entry_url(SETTINGS_ENTRY_STATS)
 

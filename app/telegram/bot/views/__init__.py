@@ -9,6 +9,7 @@ from app.telegram.bot.views.copy import (
     build_reason_caveat_salary,
     build_resume_busy_text,
     build_resume_cancel_text,
+    build_resume_confirmed_text,
     build_resume_context_error_text,
     build_resume_cooldown_text,
     build_resume_daily_quota_text,
@@ -20,6 +21,7 @@ from app.telegram.bot.views.copy import (
     build_resume_processing_cancel_text,
     build_resume_processing_text,
     build_resume_prompt_text,
+    build_resume_result_text,
     build_resume_scope_text,
     build_resume_success_text,
     build_resume_too_many_pages_text,
@@ -39,6 +41,7 @@ from app.telegram.bot.views.profile import build_search_profile_text
 from app.telegram.bot.views.settings import (
     build_settings_menu_text,
     build_settings_menu_view,
+    build_specialty_url,
     build_stats_url,
 )
 from app.telegram.bot.views.tracking_settings import (
@@ -53,6 +56,7 @@ __all__ = [
     "build_main_menu_fallback_text",
     "build_resume_busy_text",
     "build_resume_cancel_text",
+    "build_resume_confirmed_text",
     "build_resume_context_error_text",
     "build_resume_file_too_large_text",
     "build_resume_llm_unavailable_text",
@@ -64,6 +68,7 @@ __all__ = [
     "build_resume_processing_cancel_text",
     "build_resume_processing_text",
     "build_resume_prompt_text",
+    "build_resume_result_text",
     "build_resume_scope_text",
     "build_resume_success_text",
     "build_resume_too_many_pages_text",
@@ -89,6 +94,7 @@ __all__ = [
     "build_vacancy_reason_text",
     "build_stats_unavailable_text",
     "build_start_required_text",
+    "build_specialty_url",
     "build_stats_url",
     "format_salary",
     "format_work_format",
