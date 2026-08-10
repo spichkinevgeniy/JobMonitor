@@ -29,10 +29,6 @@ class OutResumeParse(BaseModel):
         ...,
         description="Признак того, является ли документ резюме или профилем кандидата.",
     )
-    full_relevant_text_from_resume: str | None = Field(
-        default=None,
-        description="Полный релевантный текст резюме. Если это не резюме, верни None.",
-    )
     specializations: list[SpecializationWithEvidence] = Field(
         default_factory=list,
         description=(

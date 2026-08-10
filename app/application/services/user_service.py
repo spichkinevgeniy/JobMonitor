@@ -67,7 +67,6 @@ class UserService:
             if user is None:
                 return False
 
-            user.cv_text = dto.full_relevant_text_from_resume
             user.cv_specializations = Specializations.from_strs(
                 [item.specialization.value for item in dto.specializations]
             )

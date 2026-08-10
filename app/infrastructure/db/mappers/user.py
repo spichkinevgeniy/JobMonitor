@@ -27,7 +27,6 @@ def user_to_model(user: User) -> UserModel:
     return UserModel(
         tg_id=user.tg_id.value,
         username=user.username,
-        cv_text=user.cv_text,
         cv_specializations=[item.value for item in user.cv_specializations.items],
         cv_skills=[item.value for item in user.cv_skills.items],
         cv_salary_amount=user.cv_salary.amount if user.cv_salary else None,
@@ -47,7 +46,6 @@ def user_to_model(user: User) -> UserModel:
 
 def apply_user(model: UserModel, user: User) -> None:
     model.username = user.username
-    model.cv_text = user.cv_text
     model.cv_specializations = [item.value for item in user.cv_specializations.items]
     model.cv_skills = [item.value for item in user.cv_skills.items]
     model.cv_salary_amount = user.cv_salary.amount if user.cv_salary else None
@@ -102,7 +100,6 @@ def user_from_model(model: UserModel) -> User:
     return User(
         tg_id=UserId(model.tg_id),
         username=model.username,
-        cv_text=model.cv_text,
         cv_specializations=UserSpecializations.from_strs(model.cv_specializations or []),
         cv_skills=UserSkills.from_strs(model.cv_skills or []),
         cv_salary=salary,

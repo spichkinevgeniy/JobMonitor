@@ -49,7 +49,6 @@ class User(Base):
 
     tg_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     username: Mapped[str | None] = mapped_column(String, nullable=True)
-    cv_text: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     cv_specializations: Mapped[list[str]] = mapped_column(JSONB, default=list)
     cv_skills: Mapped[list[str]] = mapped_column(JSONB, default=list)
