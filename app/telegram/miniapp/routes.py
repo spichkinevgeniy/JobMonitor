@@ -89,6 +89,7 @@ async def privacy_page(request: Request) -> HTMLResponse:
             "updated_at": PRIVACY_UPDATED_AT,
             "operator_name": config.PRIVACY_OPERATOR_NAME,
             "support_handle": SUPPORT_BOT_HANDLE,
+            "contact_email": config.PRIVACY_CONTACT_EMAIL,
         },
     )
 

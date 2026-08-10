@@ -24,6 +24,10 @@ class TestPage:
     def test_all_placeholders_rendered(self, page: str) -> None:
         assert "{{" not in page
 
+    def test_has_contact_outside_telegram(self, page: str) -> None:
+        """Единственный канал связи внутри Telegram исчезнет вместе с ботом."""
+        assert "mailto:" in page
+
     @pytest.mark.parametrize(
         "claim",
         [

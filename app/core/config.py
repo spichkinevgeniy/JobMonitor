@@ -56,7 +56,8 @@ class BaseAppSettings(BaseSettings):
     TELEMETRY_SALT: str = ""
 
     # Кто указан оператором данных в политике конфиденциальности.
-    PRIVACY_OPERATOR_NAME: str = "независимый разработчик проекта"
+    PRIVACY_OPERATOR_NAME: str = "независимый разработчик проекта JobMonitor"
+    PRIVACY_CONTACT_EMAIL: str = "simaca.business@gmail.com"
 
     METRICS_ENABLED: bool = True
     METRICS_ADDR: str = "0.0.0.0"
