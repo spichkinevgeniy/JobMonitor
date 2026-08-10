@@ -55,6 +55,9 @@ class BaseAppSettings(BaseSettings):
     # не должна давать ничего, кроме самих логов.
     TELEMETRY_SALT: str = ""
 
+    # Кто указан оператором данных в политике конфиденциальности.
+    PRIVACY_OPERATOR_NAME: str = "независимый разработчик проекта"
+
     METRICS_ENABLED: bool = True
     METRICS_ADDR: str = "0.0.0.0"
     METRICS_PORT: int = 8000

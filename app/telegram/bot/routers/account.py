@@ -17,10 +17,17 @@ from app.telegram.bot.views import (
     build_delete_done_text,
     build_delete_keyboard_reset_text,
     build_delete_nothing_text,
+    build_privacy_text,
+    build_privacy_url,
 )
 
 router = Router()
 logger = get_app_logger(__name__)
+
+
+@router.message(Command("privacy"))
+async def cmd_privacy(message: Message) -> None:
+    await message.answer(build_privacy_text(build_privacy_url()), disable_web_page_preview=True)
 
 
 @router.message(Command("delete_me"))

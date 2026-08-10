@@ -89,6 +89,18 @@ def build_stats_url() -> str:
     return _build_entry_url(SETTINGS_ENTRY_STATS)
 
 
+def build_privacy_url() -> str:
+    raw_base = config.MINI_APP_BASE_URL.strip()
+    if not raw_base:
+        return ""
+
+    parsed = urlsplit(raw_base)
+    target_path = posixpath.join(_resolve_base_dir(parsed.path), "privacy")
+    if not target_path.startswith("/"):
+        target_path = f"/{target_path}"
+    return urlunsplit((parsed.scheme, parsed.netloc, target_path, "", ""))
+
+
 def _format_label(user: User) -> str:
     if user.filter_work_format_mode != FilterMode.STRICT or user.cv_work_format is None:
         return "Любой"

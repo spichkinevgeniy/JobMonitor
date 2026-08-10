@@ -8,6 +8,7 @@ from app.telegram.bot.views.copy import (
     build_delete_nothing_text,
     build_help_text,
     build_main_menu_fallback_text,
+    build_privacy_text,
     build_reason_caveat_experience,
     build_reason_caveat_format,
     build_reason_caveat_grade,
@@ -42,6 +43,7 @@ from app.telegram.bot.views.copy import (
 )
 from app.telegram.bot.views.profile import build_search_profile_text
 from app.telegram.bot.views.settings import (
+    build_privacy_url,
     build_settings_menu_text,
     build_settings_menu_view,
     build_specialty_url,
@@ -89,6 +91,7 @@ __all__ = [
     "build_settings_unavailable_text",
     "build_start_message",
     "build_stats_prompt_text",
+    "build_privacy_text",
     "build_reason_caveat_experience",
     "build_reason_caveat_format",
     "build_reason_caveat_grade",
@@ -100,6 +103,7 @@ __all__ = [
     "build_vacancy_reason_text",
     "build_stats_unavailable_text",
     "build_start_required_text",
+    "build_privacy_url",
     "build_specialty_url",
     "build_stats_url",
     "format_salary",

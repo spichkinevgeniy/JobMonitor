@@ -10,6 +10,7 @@ async def setup_bot_commands(bot: Bot) -> None:
             BotCommand(command="settings", description="Настроить профиль и фильтры"),
             BotCommand(command="stats", description="Аналитика по вашему профилю"),
             BotCommand(command="help", description="Как это работает?"),
+            BotCommand(command="privacy", description="Данные и приватность"),
             BotCommand(command="delete_me", description="Удалить мои данные"),
         ]
     )
