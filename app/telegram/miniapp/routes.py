@@ -35,6 +35,7 @@ from app.application.services.stats_service import (
     ProfileStats,
     StatsService,
     TrendGranularity,
+    TrendPoint,
 )
 from app.application.services.user_service import UserService
 from app.core.config import config
@@ -396,6 +397,24 @@ _TREND_HEADLINE_LABELS = {
 }
 
 
+_TREND_LAST_LABELS = {
+    TrendGranularity.WEEK: "эта неделя",
+    TrendGranularity.DAY: "сегодня",
+}
+
+
+def _trend_point_label(point: TrendPoint, granularity: TrendGranularity, *, is_last: bool) -> str:
+    """Подпись корзины — дата её начала, но у последней это сбивает с толку.
+
+    Последняя корзина идёт от «сейчас минус окно» до «сейчас», то есть 10.08
+    она подписана 03.08 — и выглядит как данные недельной давности, хотя
+    включает сегодняшний день.
+    """
+    if is_last:
+        return _TREND_LAST_LABELS[granularity]
+    return point.bucket_start.strftime("%d.%m")
+
+
 def _to_stats_response(
     user: User,
     stats: ProfileStats,
@@ -418,10 +437,14 @@ def _to_stats_response(
                 headline_label=_TREND_HEADLINE_LABELS[series.granularity],
                 points=[
                     StatsTrendPointResponse(
-                        label=point.bucket_start.strftime("%d.%m"),
+                        label=_trend_point_label(
+                            point,
+                            series.granularity,
+                            is_last=index == len(series.points) - 1,
+                        ),
                         count=point.count,
                     )
-                    for point in series.points
+                    for index, point in enumerate(series.points)
                 ],
             )
             for series in stats.trends
