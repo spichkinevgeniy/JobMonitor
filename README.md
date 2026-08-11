@@ -60,12 +60,22 @@ JobMonitor начинался как учебный проект. Поэтому
 
 ### Локально
 
-```bash
-cp .env.sample .env
-uv sync --dev
-uv run alembic upgrade head
-uv run -m app.main
+```text
+copy .env.sample .env
+uv sync
+cd frontend
+npm ci
+cd ..
+uv run python scripts/dev.py
 ```
+
+Команда сама поднимает PostgreSQL, ждёт healthcheck, применяет миграции и
+запускает FastAPI, Vite, HTTPS-туннель и Telegram-бот без scraper/Telethon.
+После первой установки последующие запуски требуют только последней команды.
+
+Для работы только в браузере используйте `uv run python scripts/dev.py --browser`.
+Для запуска вместе с Telethon scraper —
+`uv run python scripts/dev.py --with-scraper`.
 
 ### В Docker
 
@@ -80,16 +90,14 @@ docker compose -f docker-compose.yml -f docker-compose.override.yml up -d --buil
 
 ## Разработка
 
-Основные команды:
+Основная команда локальной разработки Mini App:
 
-```bash
-make install
-make quality
-make lint
-make test
-make dev-up
-make obs-up
+```text
+uv run python scripts/dev.py
 ```
+
+Подробности, режимы запуска и требования к HTTPS-туннелю описаны в
+[инструкции по установке](docs/INSTALL.md).
 
 О правилах работы с проектом читайте в [руководстве для участников](CONTRIBUTING.md). Самый простой полезный вклад — добавить подходящий канал в `channels_map.json`.
 

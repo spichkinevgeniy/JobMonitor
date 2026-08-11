@@ -120,30 +120,93 @@ MIRROR_CHANNEL="-1001234567890"
 
 ## Локальный запуск
 
-Установите зависимости:
+Для первого запуска установите backend и frontend зависимости:
 
-```bash
-uv sync --dev
+```text
+uv sync
+cd frontend
+npm ci
+cd ..
 ```
 
-Запустите PostgreSQL локально или поднимите только базу в Docker:
+Установите `cloudflared` один раз и убедитесь, что команда доступна через
+`PATH`. В Windows это можно сделать через Winget:
 
-```bash
-docker compose up -d db
+```powershell
+winget install --id Cloudflare.cloudflared
 ```
 
-Примените миграции и запустите приложение:
+Если executable хранится вне `PATH`, перед запуском можно задать
+`JOBMONITOR_CLOUDFLARED` с полным путём к нему. Runner также распознаёт
+`%TEMP%\jobmonitor-cloudflared.exe`, использовавшийся в предыдущем локальном
+workflow.
 
-```bash
-uv run alembic upgrade head
-uv run -m app.main
+Полный Mini App dev-режим запускается из корня одной командой:
+
+```text
+uv run python scripts/dev.py
 ```
 
-Только мини-приложение:
+Runner последовательно:
 
-```bash
-make run-miniapp
+1. запускает `docker compose up -d db`;
+2. ждёт реальный Docker healthcheck PostgreSQL;
+3. выполняет `alembic upgrade head`;
+4. запускает FastAPI на `127.0.0.1:8081`;
+5. запускает onboarding Vite на `127.0.0.1:5173`;
+6. запускает Dashboard Vite на `127.0.0.1:5174`;
+7. создаёт HTTPS quick tunnel к onboarding Vite, который проксирует Dashboard;
+8. передаёт origin туннеля bot-процессу через `MINI_APP_BASE_URL`;
+9. запускает Telegram bot без Telethon scraper.
+
+Vite проксирует относительные `/miniapp/api/*` запросы в FastAPI. Поэтому
+обе страницы и API доступны через один публичный origin, а tunnel URL не нужно
+копировать в `.env` или исходный код.
+
+Режим без Telegram и туннеля:
+
+```text
+uv run python scripts/dev.py --browser
 ```
+
+Он запускает только БД, миграции, FastAPI и Vite. Локальная страница:
+<http://127.0.0.1:5173/miniapp/react/>.
+Dashboard доступен по адресу
+<http://127.0.0.1:5174/miniapp/dashboard/>.
+
+Режим с Telethon scraper:
+
+```text
+uv run python scripts/dev.py --with-scraper
+```
+
+Для него дополнительно нужны корректные `API_ID`, `API_HASH`, данные входа
+Telethon и `OPENROUTER_API_KEY`.
+
+`Ctrl+C` останавливает backend, frontend, tunnel и bot/scraper. Контейнер БД и
+Docker volume не удаляются.
+
+### Повторная проверка регистрации и onboarding
+
+В локальном `APP_ENV="development"` можно разрешить destructive dev-команды
+только своим Telegram-аккаунтам. Укажите числовые ID через запятую:
+
+```text
+DEV_TELEGRAM_USER_IDS="123456789"
+```
+
+- `/dev_reset_me` очищает профиль и onboarding, но сохраняет запись пользователя;
+  в ответе появляется WebApp-кнопка для открытия текущего React onboarding;
+- `/dev_delete_me` транзакционно удаляет пользователя и связанные локальные данные.
+  Следующий `/start` заново проходит обычный `get_or_create` flow и для
+  allowlisted dev-пользователя присылает кнопку React onboarding.
+
+После завершения onboarding Mini App автоматически открывает Dashboard с
+сохранённым профилем. Повторный `/start` для завершившего onboarding
+allowlisted dev-пользователя присылает кнопку `Open Dashboard`.
+
+ID берётся из Telegram update; аргументы команд не принимаются. В production
+router этих команд не подключается, а сами команды не регистрируются в меню бота.
 
 ## Запуск в Docker Compose
 
