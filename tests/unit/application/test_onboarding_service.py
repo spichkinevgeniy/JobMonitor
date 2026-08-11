@@ -9,6 +9,7 @@ from app.application.services.onboarding_service import (
     InvalidOnboardingDraftError,
     OnboardingService,
 )
+from app.domain import user
 from app.domain.shared import Grade, WorkFormat
 from app.domain.user.entities import User
 from app.domain.user.onboarding import OnboardingLevel, OnboardingStep
@@ -83,7 +84,7 @@ async def _save_complete_draft(service: OnboardingService) -> None:
                 "step": "SPECIALTY",
                 "navigate_to": "WORK_FORMAT",
                 "data": {
-                    "specialty": "UI/UX & Product Design",
+                    "specializations": ["UI/UX & Product Design", "Frontend"],
                     "skills": ["JavaScript", "Docker"],
                 },
             }
@@ -130,6 +131,7 @@ async def test_new_user_get_returns_empty_server_draft() -> None:
     assert state.completed is False
     assert state.current_step is OnboardingStep.SPECIALTY
     assert state.max_visited_step is OnboardingStep.SPECIALTY
+    assert state.draft.specializations == []
     assert state.draft.specialty is None
     assert state.draft.work_formats is None
 
@@ -155,14 +157,18 @@ async def test_each_patch_restores_full_draft_and_max_visited_never_decreases() 
             {
                 "step": "SPECIALTY",
                 "navigate_to": "WORK_FORMAT",
-                "data": {"specialty": "Frontend", "skills": ["React"]},
+                "data": {
+                    "specializations": ["Frontend", "Backend"],
+                    "skills": ["React"],
+                },
             }
         ),
     )
 
     assert state.current_step is OnboardingStep.WORK_FORMAT
     assert state.max_visited_step is OnboardingStep.LEVEL
-    assert state.draft.specialty == "Frontend"
+    assert state.draft.specializations == ["Backend", "Frontend"]
+    assert state.draft.specialty == "Backend"
     assert state.draft.work_formats == ["HYBRID", "REMOTE"]
     assert state.draft.salary is not None
     assert state.draft.salary.amount_rub == 150000
@@ -180,7 +186,7 @@ async def test_navigation_cannot_skip_unvisited_steps() -> None:
                 {
                     "step": "SPECIALTY",
                     "navigate_to": "LEVEL",
-                    "data": {"specialty": "Frontend", "skills": []},
+                    "data": {"specializations": ["Frontend"], "skills": []},
                 }
             ),
         )
@@ -195,7 +201,7 @@ async def test_navigation_only_patch_moves_backward_without_persisting_empty_ste
             {
                 "step": "SPECIALTY",
                 "navigate_to": "WORK_FORMAT",
-                "data": {"specialty": "QA", "skills": ["TypeScript"]},
+                "data": {"specializations": ["QA"], "skills": ["TypeScript"]},
             }
         ),
     )
@@ -214,6 +220,7 @@ async def test_navigation_only_patch_moves_backward_without_persisting_empty_ste
 
     assert state.current_step is OnboardingStep.SPECIALTY
     assert state.max_visited_step is OnboardingStep.WORK_FORMAT
+    assert state.draft.specializations == ["QA"]
     assert state.draft.specialty == "QA"
     assert state.draft.skills == ["TypeScript"]
     assert state.draft.work_formats is None
@@ -248,7 +255,10 @@ async def test_incomplete_complete_is_rejected_without_applying_filters() -> Non
             {
                 "step": "SPECIALTY",
                 "navigate_to": "WORK_FORMAT",
-                "data": {"specialty": "UI/UX & Product Design", "skills": []},
+                "data": {
+                    "specializations": ["UI/UX & Product Design"],
+                    "skills": [],
+                },
             }
         ),
     )
@@ -270,7 +280,10 @@ async def test_complete_applies_all_filters_and_junior_plus() -> None:
     user = repository.user
     assert state.completed is True
     assert user.onboarding_draft is None
-    assert {item.value for item in user.cv_specializations.items} == {"UI/UX & Product Design"}
+    assert {item.value for item in user.cv_specializations.items} == {
+    "UI/UX & Product Design",
+    "Frontend",
+    }
     assert {item.value for item in user.cv_skills.items} == {"JavaScript", "Docker"}
     assert user.effective_work_formats.items == {WorkFormat.REMOTE, WorkFormat.HYBRID}
     assert user.cv_work_format is None

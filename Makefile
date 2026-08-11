@@ -51,7 +51,7 @@ help:
 	@echo "  prod-down         - Stop prod stack (keep volumes)"
 	@echo "  prod-destroy      - Stop prod stack and remove volumes/orphans"
 	@echo "  prod-ps           - Show prod services status"
-	@echo "  prod-logs         - Follow prod logs (use SERVICE=app|db)"
+	@echo "  prod-logs         - Follow prod logs (use SERVICE=app|db|web)"
 	@echo "  prod-restart      - Restart prod stack"
 	@echo "  prod-migrate      - Run Alembic migrations in prod stack"
 	@echo "  prod-db-up        - Start only postgres in prod stack"

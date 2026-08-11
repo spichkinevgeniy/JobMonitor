@@ -84,6 +84,16 @@ cp .env.sample .env
 docker compose -f docker-compose.yml -f docker-compose.override.yml up -d --build
 ```
 
+Для production deployment с React shell, Dashboard и Nginx:
+
+```bash
+make prod-deploy
+```
+
+Nginx становится единой HTTP-точкой входа на `PUBLIC_HTTP_PORT`
+(по умолчанию `8080`). Подробности и публичные URL описаны в
+[инструкции по установке](docs/INSTALL.md#production-deployment).
+
 Подробная настройка описана в [инструкции по установке](docs/INSTALL.md).
 
 Репозиторий можно использовать как основу для своего бота: сделайте форк, укажите токены и каналы, затем настройте фильтры, промпты и отправку вакансий.

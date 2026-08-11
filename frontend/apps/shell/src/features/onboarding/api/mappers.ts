@@ -63,9 +63,7 @@ export const workFormatsFromApi = (
 export const onboardingStateToDraft = (
   response: OnboardingStateResponse,
 ): SearchProfileFormValues => ({
-  specialty: isSpecialtyId(response.draft.specialty)
-    ? response.draft.specialty
-    : null,
+  specializations: response.draft.specializations.filter(isSpecialtyId),
   skills: response.draft.skills.filter(isSkill),
   workFormats: workFormatsFromApi(response.draft.work_formats),
   salary: response.draft.salary
@@ -83,7 +81,7 @@ export const specialtyDraftRequest = (
 ): SpecialtyDraftRequest => ({
   step: 'SPECIALTY',
   navigate_to: navigateTo,
-  data: { specialty: value.specialty, skills: value.skills },
+  data: { specializations: value.specializations, skills: value.skills },
 })
 
 export const workFormatDraftRequest = (

@@ -12,7 +12,7 @@ const LevelStepPreview = () => (
       <LevelStep
         initialValue={{ level: 'JUNIOR' }}
         summary={{
-          specialty: 'Frontend',
+          specializations: ['Frontend', 'Backend'],
           skills: ['React', 'TypeScript'],
           workFormats: ['remote', 'hybrid'],
           salary: {

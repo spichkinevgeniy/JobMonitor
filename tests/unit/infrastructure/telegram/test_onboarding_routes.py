@@ -45,6 +45,7 @@ def _empty_state(completed: bool = False) -> OnboardingStateResponse:
             "current_step": "SPECIALTY",
             "max_visited_step": "SPECIALTY",
             "draft": {
+                "specializations": [],
                 "specialty": None,
                 "skills": [],
                 "work_formats": None,
@@ -111,12 +112,17 @@ def test_patch_is_discriminated_and_returns_full_state() -> None:
         json={
             "step": "SPECIALTY",
             "navigate_to": "WORK_FORMAT",
-            "data": {"specialty": "Frontend", "skills": ["React"]},
+            "data": {
+                "specializations": ["Frontend", "Backend"],
+                "skills": ["React"],
+            },
         },
     )
 
     assert response.status_code == 200
     assert service.saved_payload.step == OnboardingStep.SPECIALTY
+    assert service.saved_payload.data is not None
+    assert service.saved_payload.data.specializations == ["Frontend", "Backend"]
 
 
 def test_patch_rejects_any_combined_with_concrete_format() -> None:

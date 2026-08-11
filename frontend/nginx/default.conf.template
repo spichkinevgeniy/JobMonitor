@@ -1,0 +1,60 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name _;
+    server_tokens off;
+
+    location = /miniapp/react {
+        return 308 /miniapp/react/;
+    }
+
+    location ^~ /miniapp/react/assets/ {
+        root /usr/share/nginx/html;
+        try_files $uri =404;
+        access_log off;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    location ^~ /miniapp/react/ {
+        root /usr/share/nginx/html;
+        try_files $uri $uri/ /miniapp/react/index.html;
+        add_header Cache-Control "no-cache";
+    }
+
+    location = /miniapp/dashboard {
+        return 308 /miniapp/dashboard/;
+    }
+
+    location ^~ /miniapp/dashboard/assets/ {
+        root /usr/share/nginx/html;
+        try_files $uri =404;
+        access_log off;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    location ^~ /miniapp/dashboard/ {
+        root /usr/share/nginx/html;
+        try_files $uri $uri/ /miniapp/dashboard/index.html;
+        add_header Cache-Control "no-cache";
+    }
+
+    location ^~ /miniapp/api/ {
+        proxy_pass http://app:${MINI_APP_SERVER_PORT};
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location / {
+        proxy_pass http://app:${MINI_APP_SERVER_PORT};
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

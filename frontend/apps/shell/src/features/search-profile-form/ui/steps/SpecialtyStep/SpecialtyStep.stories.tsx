@@ -32,7 +32,7 @@ export const Default: Story = {}
 export const Filled: Story = {
   args: {
     initialValue: {
-      specialty: 'Frontend',
+      specializations: ['Frontend', 'Backend'],
       skills: ['React', 'TypeScript'],
     },
   },

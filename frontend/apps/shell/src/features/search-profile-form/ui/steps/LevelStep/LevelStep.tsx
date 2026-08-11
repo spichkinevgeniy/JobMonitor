@@ -33,7 +33,7 @@ const specialtyLabels = {
   Analytics: 'Аналитика',
   'Infrastructure & DevOps': 'DevOps',
   Design: 'Дизайн',
-} as const satisfies Record<LevelStepSummary['specialty'], string>
+} as const satisfies Record<LevelStepSummary['specializations'][number], string>
 
 const SkillsToggle = styled(ButtonBase)({
   width: 'fit-content',
@@ -113,7 +113,9 @@ export const LevelStep = ({
     {
       id: 'specialty',
       label: 'Специальность',
-      value: specialtyLabels[summary.specialty],
+      value: summary.specializations
+        .map((specialty) => specialtyLabels[specialty])
+        .join(' · '),
       icon: <CategoryOutlinedIcon />,
     },
     {

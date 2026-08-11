@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -13,8 +13,23 @@ from app.domain.user.onboarding import (
 
 
 class SpecialtyDraftData(BaseModel):
-    specialty: SpecializationType
+    specializations: list[SpecializationType] = Field(min_length=1)
     skills: list[SkillType] = Field(default_factory=list)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_legacy_specialty(cls, value: Any) -> Any:
+        if not isinstance(value, dict) or "specializations" in value:
+            return value
+        if "specialty" not in value:
+            return value
+        return {**value, "specializations": [value["specialty"]]}
+
+    @model_validator(mode="after")
+    def validate_specializations(self) -> "SpecialtyDraftData":
+        if len(set(self.specializations)) != len(self.specializations):
+            raise ValueError("Specializations must be unique")
+        return self
 
 
 class WorkFormatDraftData(BaseModel):
@@ -86,6 +101,8 @@ class SalaryDraftResponse(BaseModel):
 
 
 class OnboardingDraftResponse(BaseModel):
+    specializations: list[SpecializationType]
+    # Temporary response compatibility for already deployed singleton clients.
     specialty: SpecializationType | None
     skills: list[SkillType]
     work_formats: list[WorkFormatChoice] | None

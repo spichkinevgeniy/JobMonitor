@@ -112,7 +112,7 @@ class OnboardingService:
             assert request.data is not None
             return draft.with_specialty(
                 SpecialtyDraft(
-                    specialty=request.data.specialty,
+                    specializations=frozenset(request.data.specializations),
                     skills=frozenset(request.data.skills),
                 )
             )
@@ -140,7 +140,9 @@ class OnboardingService:
         assert draft.salary is not None
         assert draft.level is not None
 
-        user.cv_specializations = Specializations.from_strs([draft.specialty.specialty.value])
+        user.cv_specializations = Specializations.from_strs(
+            [specialization.value for specialization in draft.specialty.specializations]
+        )
         user.cv_skills = Skills.from_strs([skill.value for skill in draft.specialty.skills])
         user.set_work_formats(draft.work_formats)
 
@@ -169,7 +171,7 @@ class OnboardingService:
         specialties = sorted(user.cv_specializations.items, key=lambda item: item.value)
         specialty = (
             SpecialtyDraft(
-                specialty=specialties[0],
+                specializations=frozenset(specialties),
                 skills=frozenset(user.cv_skills.items),
             )
             if specialties
@@ -237,8 +239,14 @@ class OnboardingService:
                 (WorkFormatChoice(item.value) for item in draft.work_formats.items),
                 key=lambda item: item.value,
             )
+        specializations = (
+            sorted(draft.specialty.specializations, key=lambda item: item.value)
+            if draft.specialty
+            else []
+        )
         return OnboardingDraftResponse(
-            specialty=draft.specialty.specialty if draft.specialty else None,
+            specializations=specializations,
+            specialty=specializations[0] if specializations else None,
             skills=sorted(draft.specialty.skills, key=lambda item: item.value)
             if draft.specialty
             else [],

@@ -78,9 +78,11 @@ export const isSpecialtyId = (
 export const isSkill = (skill: string): skill is Skill =>
   skills.some((supportedSkill) => supportedSkill === skill);
 
-const getSupportedSpecialty = (
-  specialty: string | null | undefined,
-): SpecialtyId | null => (isSpecialtyId(specialty) ? specialty : null);
+const getSupportedSpecialties = (
+  selectedSpecialties: string[] | undefined,
+): SpecialtyId[] => [
+  ...new Set((selectedSpecialties ?? []).filter(isSpecialtyId)),
+];
 
 const getSupportedSkills = (selectedSkills: string[] | undefined): Skill[] =>
   (selectedSkills ?? []).filter(isSkill);
@@ -94,10 +96,9 @@ export const SpecialtyStep = ({
   onContinue,
   onNavigateToStep,
 }: SpecialtyStepProps) => {
-  const [selectedSpecialty, setSelectedSpecialty] =
-    useState<SpecialtyId | null>(() =>
-      getSupportedSpecialty(initialValue?.specialty),
-    );
+  const [selectedSpecialties, setSelectedSpecialties] = useState<SpecialtyId[]>(
+    () => getSupportedSpecialties(initialValue?.specializations),
+  );
 
   const [selectedSkills, setSelectedSkills] = useState<Skill[]>(() =>
     getSupportedSkills(initialValue?.skills),
@@ -122,24 +123,32 @@ export const SpecialtyStep = ({
     );
   };
 
+  const toggleSpecialty = (specialty: SpecialtyId) => {
+    setSelectedSpecialties((currentSpecialties) =>
+      currentSpecialties.includes(specialty)
+        ? currentSpecialties.filter((item) => item !== specialty)
+        : [...currentSpecialties, specialty],
+    );
+  };
+
   const handleContinue = () => {
-    if (!selectedSpecialty) {
+    if (selectedSpecialties.length === 0) {
       return;
     }
 
     onContinue?.({
-      specialty: selectedSpecialty,
+      specializations: selectedSpecialties,
       skills: selectedSkills,
     });
   };
 
   const handleStepNavigation = (step: number) => {
-    if (!selectedSpecialty) {
+    if (selectedSpecialties.length === 0) {
       return;
     }
 
     onNavigateToStep?.(step, {
-      specialty: selectedSpecialty,
+      specializations: selectedSpecialties,
       skills: selectedSkills,
     });
   };
@@ -203,7 +212,7 @@ export const SpecialtyStep = ({
               lineHeight: "22px",
             }}
           >
-            Выберите специальность и ключевые навыки
+            Выберите одну или несколько специальностей и ключевые навыки
           </Typography>
         </Box>
       </Box>
@@ -241,8 +250,8 @@ export const SpecialtyStep = ({
               icon={specialty.icon}
               title={specialty.title}
               description={specialty.description}
-              selected={selectedSpecialty === specialty.id}
-              onClick={() => setSelectedSpecialty(specialty.id)}
+              selected={selectedSpecialties.includes(specialty.id)}
+              onClick={() => toggleSpecialty(specialty.id)}
             />
           ))}
         </Box>
@@ -333,7 +342,7 @@ export const SpecialtyStep = ({
         )}
         <Button
           fullWidth
-          disabled={!selectedSpecialty || saving}
+          disabled={selectedSpecialties.length === 0 || saving}
           loading={saving}
           onClick={handleContinue}
         >

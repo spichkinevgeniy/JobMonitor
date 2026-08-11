@@ -150,13 +150,15 @@ def _onboarding_draft_to_json(draft: OnboardingDraft | None) -> dict[str, object
     if draft is None:
         return None
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "current_step": draft.current_step.value,
         "max_visited_step": draft.max_visited_step.value,
         "data": {
             "specialty": (
                 {
-                    "specialty": draft.specialty.specialty.value,
+                    "specializations": sorted(
+                        item.value for item in draft.specialty.specializations
+                    ),
                     "skills": sorted(item.value for item in draft.specialty.skills),
                 }
                 if draft.specialty
@@ -179,7 +181,8 @@ def _onboarding_draft_to_json(draft: OnboardingDraft | None) -> dict[str, object
 def _onboarding_draft_from_json(payload: dict[str, object] | None) -> OnboardingDraft | None:
     if payload is None:
         return None
-    if payload.get("schema_version") != 1:
+    schema_version = payload.get("schema_version")
+    if schema_version not in {1, 2}:
         raise ValueError("Unsupported onboarding draft schema version")
     data = payload.get("data")
     if not isinstance(data, dict):
@@ -188,12 +191,18 @@ def _onboarding_draft_from_json(payload: dict[str, object] | None) -> Onboarding
     specialty_payload = data.get("specialty")
     specialty: SpecialtyDraft | None = None
     if isinstance(specialty_payload, dict):
-        raw_specialty = specialty_payload.get("specialty")
         raw_skills = specialty_payload.get("skills", [])
-        if not isinstance(raw_specialty, str) or not isinstance(raw_skills, list):
+        if schema_version == 1:
+            raw_specialty = specialty_payload.get("specialty")
+            raw_specializations = [raw_specialty] if isinstance(raw_specialty, str) else None
+        else:
+            raw_specializations = specialty_payload.get("specializations")
+        if not isinstance(raw_specializations, list) or not isinstance(raw_skills, list):
             raise ValueError("Invalid onboarding specialty draft")
         specialty = SpecialtyDraft(
-            specialty=UserSpecializationType(raw_specialty),
+            specializations=frozenset(
+                UserSpecializationType(str(item)) for item in raw_specializations
+            ),
             skills=frozenset(UserSkillType(str(item)) for item in raw_skills),
         )
 

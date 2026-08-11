@@ -43,9 +43,7 @@ type SearchProfileFormStep = 1 | 2 | 3 | 4
 const createInitialDraft = (
   initialValues: SpecialtyStepInitialValue | undefined,
 ): SearchProfileFormValues => ({
-  specialty: isSpecialtyId(initialValues?.specialty)
-    ? initialValues.specialty
-    : null,
+  specializations: (initialValues?.specializations ?? []).filter(isSpecialtyId),
   skills: (initialValues?.skills ?? []).filter(isSkill),
   workFormats: [],
   salary: { mode: 'any', amount: null },
@@ -243,7 +241,11 @@ export const SearchProfileForm = ({
       await navigateBackward(target)
       return
     }
-    const nextDraft = { ...draft, specialty: value.specialty, skills: value.skills }
+    const nextDraft = {
+      ...draft,
+      specializations: value.specializations,
+      skills: value.skills,
+    }
     if (standalone) {
       applyStandaloneNavigation(nextDraft, target)
       return
@@ -254,7 +256,11 @@ export const SearchProfileForm = ({
   }
 
   const handleSpecialtyContinue = async (value: SpecialtyStepValue) => {
-    const nextDraft = { ...draft, specialty: value.specialty, skills: value.skills }
+    const nextDraft = {
+      ...draft,
+      specializations: value.specializations,
+      skills: value.skills,
+    }
     if (standalone) {
       applyStandaloneNavigation(nextDraft, 2)
       return
@@ -358,7 +364,7 @@ export const SearchProfileForm = ({
     const completedDraft = { ...draft, level: value.level }
     if (standalone) {
       setDraft(completedDraft)
-      onComplete?.({ ...completedDraft, specialty: completedDraft.specialty! })
+      onComplete?.(completedDraft)
       return
     }
     const savedResponse = await persistDraft(levelDraftRequest(value.level, 'LEVEL'))
@@ -373,7 +379,6 @@ export const SearchProfileForm = ({
       setShowSuccess(true)
       onComplete?.({
         ...onboardingStateToDraft(response),
-        specialty: completedDraft.specialty!,
         level: value.level,
       })
     } catch (error) {
@@ -418,7 +423,7 @@ export const SearchProfileForm = ({
     )
   }
 
-  if (currentStep === 4 && draft.specialty !== null) {
+  if (currentStep === 4 && draft.specializations.length > 0) {
     return (
       <LevelStep
         initialValue={{ level: draft.level }}
@@ -426,7 +431,7 @@ export const SearchProfileForm = ({
         saving={saving}
         saveError={saveError}
         summary={{
-          specialty: draft.specialty,
+          specializations: draft.specializations,
           skills: draft.skills,
           workFormats: draft.workFormats,
           salary: draft.salary,
@@ -474,7 +479,10 @@ export const SearchProfileForm = ({
 
   return (
     <SpecialtyStep
-      initialValue={{ specialty: draft.specialty, skills: draft.skills }}
+      initialValue={{
+        specializations: draft.specializations,
+        skills: draft.skills,
+      }}
       maxVisitedStep={maxVisitedStep}
       saving={saving}
       saveError={saveError}

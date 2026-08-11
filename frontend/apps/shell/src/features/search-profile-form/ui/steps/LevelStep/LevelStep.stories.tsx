@@ -6,7 +6,7 @@ import { LevelStep } from './LevelStep'
 import type { LevelStepSummary } from './LevelStep.types'
 
 const demoSummary: LevelStepSummary = {
-  specialty: 'Frontend',
+  specializations: ['Frontend', 'Backend'],
   skills: [
     'React',
     'TypeScript',

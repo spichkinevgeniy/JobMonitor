@@ -16,12 +16,12 @@ export type Skill =
   | 'Docker'
 
 export interface SpecialtyStepValue {
-  specialty: SpecialtyId
+  specializations: SpecialtyId[]
   skills: Skill[]
 }
 
 export interface SpecialtyStepInitialValue {
-  specialty: string | null
+  specializations: string[]
   skills: string[]
 }
 

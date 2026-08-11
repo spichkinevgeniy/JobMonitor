@@ -55,7 +55,7 @@ def test_user_mapper_round_trip_preserves_multi_formats_and_onboarding_draft() -
         current_step=OnboardingStep.LEVEL,
         max_visited_step=OnboardingStep.LEVEL,
         specialty=SpecialtyDraft(
-            specialty=SpecializationType.UI_UX_DESIGN,
+            specializations=frozenset({SpecializationType.UI_UX_DESIGN, SpecializationType.FRONTEND}),
             skills=frozenset({SkillType.JAVASCRIPT, SkillType.DOCKER}),
         ),
         work_formats=WorkFormats.from_values([WorkFormat.REMOTE, WorkFormat.HYBRID]),
@@ -71,6 +71,35 @@ def test_user_mapper_round_trip_preserves_multi_formats_and_onboarding_draft() -
     assert model.cv_work_formats == ["HYBRID", "REMOTE"]
     assert restored.cv_work_formats == user.cv_work_formats
     assert restored.onboarding_draft == draft
+    assert model.onboarding_draft is not None
+    assert model.onboarding_draft["schema_version"] == 2
+
+
+def test_user_mapper_reads_legacy_single_specialty_onboarding_draft() -> None:
+    model = UserModel(
+        tg_id=123,
+        cv_specializations=[],
+        cv_skills=[],
+        onboarding_draft={
+            "schema_version": 1,
+            "current_step": "SPECIALTY",
+            "max_visited_step": "SPECIALTY",
+            "data": {
+                "specialty": {"specialty": "Backend", "skills": ["Python"]},
+                "work_formats": None,
+                "salary": None,
+                "level": None,
+            },
+        },
+    )
+
+    restored = user_from_model(model)
+
+    assert restored.onboarding_draft is not None
+    assert restored.onboarding_draft.specialty is not None
+    assert restored.onboarding_draft.specialty.specializations == frozenset(
+        {SpecializationType.BACKEND}
+    )
 
 
 def test_user_mapper_dual_reads_legacy_scalar_when_collection_is_null() -> None:

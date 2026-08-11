@@ -13,6 +13,10 @@ services:
       SENTRY_ENV: development
       LOGFIRE_ENV: development
 
+  web:
+    container_name: job_monitor_web
+    restart: always
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: job_monitor_pgadmin

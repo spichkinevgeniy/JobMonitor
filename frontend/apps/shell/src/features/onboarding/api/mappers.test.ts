@@ -1,6 +1,31 @@
 import { describe, expect, it } from 'vitest'
 
-import { workFormatsFromApi, workFormatsToApi } from './mappers'
+import {
+  specialtyDraftRequest,
+  workFormatsFromApi,
+  workFormatsToApi,
+} from './mappers'
+
+describe('specialization transport mapping', () => {
+  it('keeps every selected specialization in the draft request', () => {
+    expect(
+      specialtyDraftRequest(
+        {
+          specializations: ['Frontend', 'Backend'],
+          skills: ['React'],
+        },
+        'WORK_FORMAT',
+      ),
+    ).toEqual({
+      step: 'SPECIALTY',
+      navigate_to: 'WORK_FORMAT',
+      data: {
+        specializations: ['Frontend', 'Backend'],
+        skills: ['React'],
+      },
+    })
+  })
+})
 
 describe('work format transport mapping', () => {
   it('maps frontend values to backend values explicitly', () => {

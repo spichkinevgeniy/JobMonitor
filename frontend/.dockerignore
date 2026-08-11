@@ -1,0 +1,9 @@
+.env
+.env.*
+node_modules/
+**/node_modules/
+**/dist/
+**/test-results/
+storybook-static/
+visual-artifacts/
+*.log

@@ -19,6 +19,7 @@ docs/
 grafana/
 prometheus/
 scripts/
+frontend/
 
 docker-compose*.yml
 *.md

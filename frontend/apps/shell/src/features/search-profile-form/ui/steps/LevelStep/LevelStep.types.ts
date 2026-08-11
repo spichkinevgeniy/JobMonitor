@@ -17,7 +17,7 @@ export interface LevelStepInitialValue {
 }
 
 export interface LevelStepSummary {
-  specialty: SpecialtyId
+  specializations: SpecialtyId[]
   skills: Skill[]
   workFormats: WorkFormatId[]
   salary: SalaryStepValue

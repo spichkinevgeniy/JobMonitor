@@ -38,8 +38,12 @@ class OnboardingLevel(StrEnum):
 
 @dataclass(frozen=True, slots=True)
 class SpecialtyDraft:
-    specialty: SpecializationType
+    specializations: frozenset[SpecializationType]
     skills: frozenset[SkillType]
+
+    def __post_init__(self) -> None:
+        if not self.specializations:
+            raise ValueError("Choose at least one specialization")
 
 
 @dataclass(frozen=True, slots=True)

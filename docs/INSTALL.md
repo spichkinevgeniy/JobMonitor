@@ -210,6 +210,8 @@ router этих команд не подключается, а сами кома
 
 ## Запуск в Docker Compose
 
+### Development stack
+
 Приложение, база и pgAdmin:
 
 ```bash
@@ -223,6 +225,47 @@ make dev-up
 make dev-down
 make dev-logs SERVICE=app
 make dev-ps
+```
+
+### Production deployment
+
+Production Compose содержит три сервиса:
+
+- `db` — PostgreSQL без опубликованного host port;
+- `app` — существующий Python runtime: bot, scraper, FastAPI и metrics;
+- `web` — Nginx с production builds shell и Dashboard.
+
+Укажите в `.env` публичный HTTPS origin в
+`MINI_APP_BASE_URL`, а при необходимости измените host port Nginx:
+
+```text
+MINI_APP_BASE_URL="https://jobmonitor.example.com"
+PUBLIC_HTTP_PORT="8080"
+```
+
+Соберите stack, запустите его и примените Alembic migrations:
+
+```bash
+make prod-deploy
+```
+
+Это эквивалентно production Compose flow из `docker-compose.yml` без
+development override. Nginx — единая HTTP-точка входа:
+
+- `http://SERVER:PUBLIC_HTTP_PORT/miniapp/react/` — onboarding/settings shell;
+- `http://SERVER:PUBLIC_HTTP_PORT/miniapp/dashboard/` — Dashboard;
+- `http://SERVER:PUBLIC_HTTP_PORT/miniapp/api/` — FastAPI Mini App API;
+- остальные backend URL, включая legacy Mini App, также проксируются в
+  Python app.
+
+Nginx в этом stack принимает HTTP. Для Telegram WebApp нужен HTTPS:
+завершайте TLS на host reverse proxy/load balancer и направляйте трафик на
+`PUBLIC_HTTP_PORT`. `.env` не копируется ни в backend, ни в frontend image.
+
+Логи публичного entrypoint:
+
+```bash
+make prod-logs SERVICE=web
 ```
 
 ## Метрики и графики

@@ -14,7 +14,7 @@ from app.domain.user.value_objects import FilterMode, LevelFilterMode
 def _completed_user(**overrides: object) -> User:
     values: dict[str, object] = {
         "tg_id": 1,
-        "cv_specializations_raw": ["Frontend"],
+        "cv_specializations_raw": ["Frontend", "Backend"],
         "cv_skills_raw": ["React", "TypeScript"],
         "cv_work_formats_raw": ["REMOTE", "HYBRID"],
         "cv_salary_amount": 150000,
@@ -29,10 +29,10 @@ def _completed_user(**overrides: object) -> User:
     return User.create(**values)  # type: ignore[arg-type]
 
 
-def test_profile_uses_canonical_filters_and_preserves_multiple_formats() -> None:
+def test_profile_uses_canonical_filters_and_preserves_collections() -> None:
     response = SearchProfileService.get_profile(_completed_user(is_active=False))
 
-    assert response.specializations == ["Frontend"]
+    assert response.specializations == ["Backend", "Frontend"]
     assert response.skills == ["React", "TypeScript"]
     assert response.work_formats == ["HYBRID", "REMOTE"]
     assert response.salary.mode == "FROM"

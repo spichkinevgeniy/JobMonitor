@@ -7,6 +7,7 @@ from app.application.dto.miniapp.onboarding import (
     SpecialtyDraftRequest,
     WorkFormatDraftRequest,
 )
+from app.domain.shared.value_objects import SpecializationType
 
 adapter = TypeAdapter(OnboardingDraftRequest)
 
@@ -16,16 +17,48 @@ def test_patch_uses_step_discriminator() -> None:
         {
             "step": "SPECIALTY",
             "navigate_to": "WORK_FORMAT",
-            "data": {"specialty": "UI/UX & Product Design", "skills": ["JavaScript", "Docker"]},
+            "data": {
+                "specializations": ["UI/UX & Product Design", "Frontend"],
+                "skills": ["JavaScript", "Docker"],
+            },
         }
     )
 
     assert isinstance(request, SpecialtyDraftRequest)
+    assert request.data is not None
+    assert request.data.specializations == [
+        SpecializationType.UI_UX_DESIGN,
+        SpecializationType.FRONTEND,
+    ]
+
+
+def test_specialty_patch_accepts_legacy_singleton_payload() -> None:
+    request = adapter.validate_python(
+        {
+            "step": "SPECIALTY",
+            "navigate_to": "WORK_FORMAT",
+            "data": {"specialty": "Design", "skills": []},
+        }
+    )
+
+    assert isinstance(request, SpecialtyDraftRequest)
+    assert request.data is not None
+    assert request.data.specializations == [SpecializationType.DESIGN]
 
 
 @pytest.mark.parametrize(
     "payload",
     [
+        {
+            "step": "SPECIALTY",
+            "navigate_to": "WORK_FORMAT",
+            "data": {"specializations": [], "skills": []},
+        },
+        {
+            "step": "SPECIALTY",
+            "navigate_to": "WORK_FORMAT",
+            "data": {"specializations": ["Frontend", "Frontend"], "skills": []},
+        },
         {
             "step": "WORK_FORMAT",
             "navigate_to": "SALARY",

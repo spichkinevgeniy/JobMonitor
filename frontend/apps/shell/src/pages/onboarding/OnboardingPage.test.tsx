@@ -14,6 +14,7 @@ import { SettingsPage } from '@/pages/settings'
 import { OnboardingPage } from './OnboardingPage'
 
 const emptyDraft: OnboardingStateResponse['draft'] = {
+  specializations: [],
   specialty: null,
   skills: [],
   work_formats: null,
@@ -33,6 +34,7 @@ const state = (
 })
 
 const completeDraft: OnboardingStateResponse['draft'] = {
+  specializations: ['Frontend', 'Backend'],
   specialty: 'Frontend',
   skills: ['React', 'TypeScript'],
   work_formats: ['REMOTE', 'HYBRID'],
@@ -100,7 +102,12 @@ describe('OnboardingPage server integration', () => {
     const fetchMock = vi.fn((_input: RequestInfo | URL) =>
       response(
         state({
-          draft: { ...emptyDraft, specialty: 'Frontend', skills: ['React'] },
+          draft: {
+            ...emptyDraft,
+            specializations: ['Frontend'],
+            specialty: 'Frontend',
+            skills: ['React'],
+          },
         }),
       ),
     )
@@ -118,6 +125,46 @@ describe('OnboardingPage server integration', () => {
     expect(request.headers.get('X-Telegram-Init-Data')).toBe(
       'signed-test-init-data',
     )
+  })
+
+  it('saves multiple selected specializations in one draft request', async () => {
+    const selectedState = state({
+      current_step: 'WORK_FORMAT',
+      max_visited_step: 'WORK_FORMAT',
+      draft: {
+        ...emptyDraft,
+        specializations: ['Frontend', 'Backend'],
+        specialty: 'Backend',
+      },
+    })
+    const fetchMock = vi
+      .fn()
+      .mockImplementationOnce(() => response(state()))
+      .mockImplementationOnce(() => response(selectedState))
+    vi.stubGlobal('fetch', fetchMock)
+    const user = userEvent.setup()
+
+    renderPage()
+
+    const frontend = await screen.findByRole('button', { name: /Frontend/ })
+    const backend = screen.getByRole('button', { name: /Backend/ })
+    await user.click(frontend)
+    await user.click(backend)
+
+    expect(frontend).toHaveAttribute('aria-pressed', 'true')
+    expect(backend).toHaveAttribute('aria-pressed', 'true')
+    await user.click(screen.getByRole('button', { name: 'Продолжить' }))
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2))
+    const request = fetchMock.mock.calls[1][0] as Request
+    expect(await request.clone().json()).toEqual({
+      step: 'SPECIALTY',
+      navigate_to: 'WORK_FORMAT',
+      data: {
+        specializations: ['Frontend', 'Backend'],
+        skills: [],
+      },
+    })
   })
 
   it('returns a client authorization error without issuing a malformed request', async () => {
@@ -179,6 +226,7 @@ describe('OnboardingPage server integration', () => {
       max_visited_step: 'WORK_FORMAT',
       draft: {
         ...emptyDraft,
+        specializations: ['QA'],
         specialty: 'QA',
         skills: ['TypeScript'],
       },
@@ -214,7 +262,12 @@ describe('OnboardingPage server integration', () => {
     const restoredWorkFormat = state({
       current_step: 'WORK_FORMAT',
       max_visited_step: 'WORK_FORMAT',
-      draft: { ...emptyDraft, specialty: 'QA', skills: ['TypeScript'] },
+      draft: {
+        ...emptyDraft,
+        specializations: ['QA'],
+        specialty: 'QA',
+        skills: ['TypeScript'],
+      },
     })
     const fetchMock = vi
       .fn((_input: RequestInfo | URL) => response(restoredWorkFormat))
@@ -241,6 +294,7 @@ describe('OnboardingPage server integration', () => {
       max_visited_step: 'SALARY',
       draft: {
         ...emptyDraft,
+        specializations: ['Frontend'],
         specialty: 'Frontend',
         work_formats: ['REMOTE'],
       },
@@ -292,7 +346,11 @@ describe('OnboardingPage server integration', () => {
     const restoredWorkFormat = state({
       current_step: 'WORK_FORMAT',
       max_visited_step: 'WORK_FORMAT',
-      draft: { ...emptyDraft, specialty: 'Frontend' },
+      draft: {
+        ...emptyDraft,
+        specializations: ['Frontend'],
+        specialty: 'Frontend',
+      },
     })
     const fetchMock = vi.fn((_input: RequestInfo | URL) =>
       response(restoredWorkFormat),
@@ -315,7 +373,13 @@ describe('OnboardingPage server integration', () => {
       .fn()
       .mockImplementationOnce(() =>
         response(
-          state({ draft: { ...emptyDraft, specialty: 'Frontend' } }),
+          state({
+            draft: {
+              ...emptyDraft,
+              specializations: ['Frontend'],
+              specialty: 'Frontend',
+            },
+          }),
         ),
       )
       .mockImplementationOnce(() => pendingPatch)
@@ -331,7 +395,12 @@ describe('OnboardingPage server integration', () => {
         state({
           current_step: 'WORK_FORMAT',
           max_visited_step: 'WORK_FORMAT',
-          draft: { ...emptyDraft, specialty: 'Frontend', skills: [] },
+          draft: {
+            ...emptyDraft,
+            specializations: ['Frontend'],
+            specialty: 'Frontend',
+            skills: [],
+          },
         }),
       ),
     )
@@ -351,6 +420,7 @@ describe('OnboardingPage server integration', () => {
             max_visited_step: 'WORK_FORMAT',
             draft: {
               ...emptyDraft,
+              specializations: ['Frontend'],
               specialty: 'Frontend',
               skills: ['React'],
             },
@@ -456,7 +526,7 @@ describe('OnboardingPage server integration', () => {
 
     await waitFor(() => expect(onComplete).toHaveBeenCalledOnce())
     expect(onComplete.mock.calls[0][0]).toMatchObject({
-      specialty: 'Frontend',
+      specializations: ['Frontend', 'Backend'],
       skills: ['React', 'TypeScript'],
       workFormats: ['remote', 'hybrid'],
       salary: { mode: 'from', amount: 150000 },
@@ -535,7 +605,13 @@ describe('OnboardingPage server integration', () => {
       .mockImplementationOnce(() => response(state()))
       .mockImplementationOnce(() =>
         response(
-          state({ draft: { ...emptyDraft, specialty: 'Backend' } }),
+          state({
+            draft: {
+              ...emptyDraft,
+              specializations: ['Backend'],
+              specialty: 'Backend',
+            },
+          }),
         ),
       )
     vi.stubGlobal('fetch', fetchMock)

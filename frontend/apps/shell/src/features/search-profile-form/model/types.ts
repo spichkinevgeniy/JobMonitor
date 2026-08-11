@@ -7,7 +7,7 @@ import type {
 import type { WorkFormatId } from '@/features/search-profile-form/ui/steps/WorkFormatStep'
 
 export interface SearchProfileFormValues {
-  specialty: SpecialtyId | null
+  specializations: SpecialtyId[]
   skills: Skill[]
   workFormats: WorkFormatId[]
   salary: SalaryStepValue
@@ -15,6 +15,5 @@ export interface SearchProfileFormValues {
 }
 
 export interface CompletedSearchProfileValue extends SearchProfileFormValues {
-  specialty: SpecialtyId
   level: LevelId
 }

@@ -67,6 +67,8 @@ export interface ApiSalaryDraft {
 }
 
 export interface ApiOnboardingDraft {
+  specializations: ApiSpecialty[]
+  /** Temporary backend compatibility field for older clients. */
   specialty: ApiSpecialty | null
   skills: ApiSkill[]
   work_formats: ApiWorkFormat[] | null
@@ -90,7 +92,7 @@ interface DraftRequest<TStep extends ApiOnboardingStep, TData> {
 
 export type SpecialtyDraftRequest = DraftRequest<
   'SPECIALTY',
-  { specialty: ApiSpecialty; skills: ApiSkill[] }
+  { specializations: ApiSpecialty[]; skills: ApiSkill[] }
 >
 export type WorkFormatDraftRequest = DraftRequest<
   'WORK_FORMAT',
