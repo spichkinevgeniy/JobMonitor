@@ -1,6 +1,7 @@
 from types import TracebackType
 from typing import Protocol
 
+from app.application.ports.developer_user_data import IDeveloperUserDataRepository
 from app.domain.user.repository import IUserRepository
 from app.domain.vacancy.repository import IVacancyRepository
 
@@ -30,6 +31,14 @@ class VacancyUnitOfWork(UnitOfWork, Protocol):
 class UserUnitOfWork(UnitOfWork, Protocol):
     @property
     def users(self) -> IUserRepository: ...
+
+
+class DeveloperUserUnitOfWork(UnitOfWork, Protocol):
+    @property
+    def users(self) -> IUserRepository: ...
+
+    @property
+    def developer_user_data(self) -> IDeveloperUserDataRepository: ...
 
 
 class MatchingUnitOfWork(UnitOfWork, Protocol):

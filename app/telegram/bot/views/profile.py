@@ -20,6 +20,7 @@ _LEVEL_MODE_HINTS = {
     LevelFilterMode.IGNORE: "не учитываем 🟢",
     LevelFilterMode.UP_TO: "показываем этот уровень и ниже 🔴",
     LevelFilterMode.EXACT: "показываем только точное совпадение 🔴",
+    LevelFilterMode.AT_LEAST: "показываем этот уровень и выше 🔴",
 }
 
 

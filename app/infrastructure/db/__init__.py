@@ -2,10 +2,17 @@ from .models import Base, User, Vacancy, init_db
 from .repositories.user_repository import UserRepository
 from .repositories.vacancy_repository import VacancyRepository
 from .session import async_session_factory, engine
-from .uow import MatchingUnitOfWork, SQLAlchemyUnitOfWork, UserUnitOfWork, VacancyUnitOfWork
+from .uow import (
+    DeveloperUserUnitOfWork,
+    MatchingUnitOfWork,
+    SQLAlchemyUnitOfWork,
+    UserUnitOfWork,
+    VacancyUnitOfWork,
+)
 
 __all__ = [
     "Base",
+    "DeveloperUserUnitOfWork",
     "SQLAlchemyUnitOfWork",
     "MatchingUnitOfWork",
     "Vacancy",

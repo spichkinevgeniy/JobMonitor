@@ -22,6 +22,15 @@ class UserRepository(IUserRepository):
             return None
         return user_from_model(model)
 
+    async def get_by_tg_id_for_update(self, tg_id: UserId) -> User | None:
+        result = await self._session.execute(
+            select(UserModel).where(UserModel.tg_id == tg_id.value).with_for_update()
+        )
+        model = result.scalar_one_or_none()
+        if model is None:
+            return None
+        return user_from_model(model)
+
     async def add(self, user: User) -> None:
         self._session.add(user_to_model(user))
 

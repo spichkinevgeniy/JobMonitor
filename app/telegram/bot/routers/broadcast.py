@@ -66,7 +66,7 @@ async def cmd_broadcast(message: Message, command: CommandObject) -> None:
 async def _deactivate_user(tg_id: int) -> None:
     try:
         async with UserUnitOfWork(async_session_factory) as uow:
-            user = await uow.users.get_by_tg_id(UserId(tg_id))
+            user = await uow.users.get_by_tg_id_for_update(UserId(tg_id))
             if user is not None and user.is_active:
                 user.is_active = False
                 await uow.users.update(user)

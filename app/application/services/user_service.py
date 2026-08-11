@@ -29,7 +29,7 @@ class UserService:
 
     async def get_or_create_user(self, tg_id: int, username: str | None) -> tuple[User, bool]:
         async with self._uow:
-            user = await self._uow.users.get_by_tg_id(UserId(tg_id))
+            user = await self._uow.users.get_by_tg_id_for_update(UserId(tg_id))
             if user is None:
                 total_users = await self._uow.users.count_total()
                 active_users = await self._uow.users.count_active()
@@ -63,7 +63,7 @@ class UserService:
 
     async def update_resume(self, tg_id: int, dto: OutResumeParse) -> bool:
         async with self._uow:
-            user = await self._uow.users.get_by_tg_id(UserId(tg_id))
+            user = await self._uow.users.get_by_tg_id_for_update(UserId(tg_id))
             if user is None:
                 return False
 
@@ -99,11 +99,10 @@ class UserService:
             )
 
             work_format = dto.work_format
-            user.cv_work_format = None if work_format == WorkFormat.UNDEFINED else work_format
-            if user.cv_work_format is not None:
-                user.filter_work_format_mode = FilterMode.STRICT
-            else:
-                user.filter_work_format_mode = FilterMode.SOFT
+            user.set_legacy_work_format(
+                None if work_format == WorkFormat.UNDEFINED else work_format,
+                FilterMode.STRICT if work_format != WorkFormat.UNDEFINED else FilterMode.SOFT,
+            )
 
             await self._uow.users.update(user)
         return True
@@ -115,7 +114,7 @@ class UserService:
         skills: list[str],
     ) -> bool:
         async with self._uow:
-            user = await self._uow.users.get_by_tg_id(UserId(tg_id))
+            user = await self._uow.users.get_by_tg_id_for_update(UserId(tg_id))
             if user is None:
                 return False
 
@@ -131,15 +130,12 @@ class UserService:
         work_format_mode: FilterMode,
     ) -> bool:
         async with self._uow:
-            user = await self._uow.users.get_by_tg_id(UserId(tg_id))
+            user = await self._uow.users.get_by_tg_id_for_update(UserId(tg_id))
             if user is None:
                 return False
 
             normalized_work_format = None if work_format == WorkFormat.UNDEFINED else work_format
-            user.cv_work_format = normalized_work_format
-            user.filter_work_format_mode = (
-                work_format_mode if normalized_work_format is not None else FilterMode.SOFT
-            )
+            user.set_legacy_work_format(normalized_work_format, work_format_mode)
             await self._uow.users.update(user)
         return True
 
@@ -152,7 +148,7 @@ class UserService:
         experience_mode: LevelFilterMode,
     ) -> bool:
         async with self._uow:
-            user = await self._uow.users.get_by_tg_id(UserId(tg_id))
+            user = await self._uow.users.get_by_tg_id_for_update(UserId(tg_id))
             if user is None:
                 return False
 
@@ -180,7 +176,7 @@ class UserService:
         salary_mode: FilterMode,
     ) -> bool:
         async with self._uow:
-            user = await self._uow.users.get_by_tg_id(UserId(tg_id))
+            user = await self._uow.users.get_by_tg_id_for_update(UserId(tg_id))
             if user is None:
                 return False
 

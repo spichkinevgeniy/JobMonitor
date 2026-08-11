@@ -49,6 +49,7 @@ class SpecializationType(StrEnum):
     QA = "QA"
     INFRASTRUCTURE_DEVOPS = "Infrastructure & DevOps"
     ANALYTICS = "Analytics"
+    DESIGN = "Design"
 
 
 class SkillType(StrEnum):
@@ -64,6 +65,7 @@ class SkillType(StrEnum):
     PHP = "PHP"
     NODE_JS = "Node.js"
     TYPESCRIPT = "TypeScript"
+    JAVASCRIPT = "JavaScript"
     KOTLIN = "Kotlin"
 
     # Frontend
@@ -93,6 +95,7 @@ class SkillType(StrEnum):
 
     # Infrastructure & DevOps
     DEVOPS = "DevOps"
+    DOCKER = "Docker"
     SRE = "SRE"
     SYSTEM_ADMINISTRATION = "System Administration"
 
@@ -135,6 +138,27 @@ class Skills:
                 continue
 
         return cls(items=frozenset(valid_items))
+
+
+@dataclass(frozen=True, slots=True)
+class WorkFormats:
+    items: frozenset[WorkFormat]
+
+    @classmethod
+    def from_values(cls, values: list[WorkFormat]) -> "WorkFormats":
+        return cls(items=frozenset(value for value in values if value is not WorkFormat.UNDEFINED))
+
+    @classmethod
+    def from_strs(cls, values: list[str]) -> "WorkFormats":
+        formats: list[WorkFormat] = []
+        for value in values:
+            try:
+                work_format = WorkFormat(value.strip().upper())
+            except ValueError:
+                continue
+            if work_format is not WorkFormat.UNDEFINED:
+                formats.append(work_format)
+        return cls.from_values(formats)
 
 
 @dataclass(frozen=True, slots=True)
@@ -192,6 +216,7 @@ __all__ = [
     "SkillType",
     "Specializations",
     "Skills",
+    "WorkFormats",
     "Salary",
     "GRADE_ORDER",
     "EXPERIENCE_LEVEL_ORDER",

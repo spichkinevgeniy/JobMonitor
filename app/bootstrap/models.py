@@ -1,12 +1,17 @@
+from __future__ import annotations
+
 import asyncio
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from aiogram import Bot, Dispatcher
 
 from app.application.services.user_service import UserService
 from app.infrastructure.telegram.miniapp_server import MiniAppServer
-from app.infrastructure.telegram.telethon_client import TelethonClientProvider
-from app.telegram.scrapper.handlers import TelegramScraper
+
+if TYPE_CHECKING:
+    from app.infrastructure.telegram.telethon_client import TelethonClientProvider
+    from app.telegram.scrapper.handlers import TelegramScraper
 
 
 @dataclass(slots=True)

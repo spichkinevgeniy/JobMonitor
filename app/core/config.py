@@ -56,11 +56,17 @@ class BaseAppSettings(BaseSettings):
     METRICS_PORT: int = 8000
 
     ADMIN_TG_IDS: str = ""
+    DEV_TELEGRAM_USER_IDS: str = ""
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def ADMIN_IDS(self) -> set[int]:
         return {int(item.strip()) for item in self.ADMIN_TG_IDS.split(",") if item.strip()}
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def DEV_TELEGRAM_IDS(self) -> set[int]:
+        return {int(item.strip()) for item in self.DEV_TELEGRAM_USER_IDS.split(",") if item.strip()}
 
     @computed_field  # type: ignore[prop-decorator]
     @property

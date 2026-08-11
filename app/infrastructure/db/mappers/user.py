@@ -2,9 +2,20 @@ from app.domain.shared.value_objects import ExperienceLevel as UserExperienceLev
 from app.domain.shared.value_objects import Grade as UserGrade
 from app.domain.shared.value_objects import Salary as UserSalary
 from app.domain.shared.value_objects import Skills as UserSkills
+from app.domain.shared.value_objects import SkillType as UserSkillType
 from app.domain.shared.value_objects import Specializations as UserSpecializations
+from app.domain.shared.value_objects import SpecializationType as UserSpecializationType
 from app.domain.shared.value_objects import WorkFormat as UserWorkFormat
+from app.domain.shared.value_objects import WorkFormats as UserWorkFormats
 from app.domain.user.entities import User
+from app.domain.user.onboarding import (
+    OnboardingDraft,
+    OnboardingLevel,
+    OnboardingSalaryMode,
+    OnboardingStep,
+    SalaryDraft,
+    SpecialtyDraft,
+)
 from app.domain.user.value_objects import FilterMode, LevelFilterMode, UserId
 from app.infrastructure.db.models import User as UserModel
 
@@ -41,6 +52,9 @@ def user_to_model(user: User) -> UserModel:
         filter_experience_mode=user.filter_experience_mode.value,
         cv_work_format=user.cv_work_format.value if user.cv_work_format else None,
         filter_work_format_mode=user.filter_work_format_mode.value,
+        cv_work_formats=_work_formats_to_json(user.cv_work_formats),
+        onboarding_draft=_onboarding_draft_to_json(user.onboarding_draft),
+        onboarding_completed_at=user.onboarding_completed_at,
         is_active=user.is_active,
     )
 
@@ -61,6 +75,9 @@ def apply_user(model: UserModel, user: User) -> None:
     model.filter_experience_mode = user.filter_experience_mode.value
     model.cv_work_format = user.cv_work_format.value if user.cv_work_format else None
     model.filter_work_format_mode = user.filter_work_format_mode.value
+    model.cv_work_formats = _work_formats_to_json(user.cv_work_formats)
+    model.onboarding_draft = _onboarding_draft_to_json(user.onboarding_draft)
+    model.onboarding_completed_at = user.onboarding_completed_at
     model.is_active = user.is_active
 
 
@@ -115,5 +132,97 @@ def user_from_model(model: UserModel) -> User:
         filter_experience_mode=experience_mode,
         cv_work_format=work_format,
         filter_work_format_mode=work_format_mode,
+        cv_work_formats=(
+            UserWorkFormats.from_strs(model.cv_work_formats)
+            if model.cv_work_formats is not None
+            else None
+        ),
+        onboarding_draft=_onboarding_draft_from_json(model.onboarding_draft),
+        onboarding_completed_at=model.onboarding_completed_at,
         is_active=model.is_active,
+    )
+
+
+def _work_formats_to_json(work_formats: UserWorkFormats | None) -> list[str] | None:
+    if work_formats is None:
+        return None
+    return sorted(item.value for item in work_formats.items)
+
+
+def _onboarding_draft_to_json(draft: OnboardingDraft | None) -> dict[str, object] | None:
+    if draft is None:
+        return None
+    return {
+        "schema_version": 1,
+        "current_step": draft.current_step.value,
+        "max_visited_step": draft.max_visited_step.value,
+        "data": {
+            "specialty": (
+                {
+                    "specialty": draft.specialty.specialty.value,
+                    "skills": sorted(item.value for item in draft.specialty.skills),
+                }
+                if draft.specialty
+                else None
+            ),
+            "work_formats": _work_formats_to_json(draft.work_formats),
+            "salary": (
+                {
+                    "mode": draft.salary.mode.value,
+                    "amount_rub": draft.salary.amount_rub,
+                }
+                if draft.salary
+                else None
+            ),
+            "level": draft.level.value if draft.level else None,
+        },
+    }
+
+
+def _onboarding_draft_from_json(payload: dict[str, object] | None) -> OnboardingDraft | None:
+    if payload is None:
+        return None
+    if payload.get("schema_version") != 1:
+        raise ValueError("Unsupported onboarding draft schema version")
+    data = payload.get("data")
+    if not isinstance(data, dict):
+        raise ValueError("Invalid onboarding draft data")
+
+    specialty_payload = data.get("specialty")
+    specialty: SpecialtyDraft | None = None
+    if isinstance(specialty_payload, dict):
+        raw_specialty = specialty_payload.get("specialty")
+        raw_skills = specialty_payload.get("skills", [])
+        if not isinstance(raw_specialty, str) or not isinstance(raw_skills, list):
+            raise ValueError("Invalid onboarding specialty draft")
+        specialty = SpecialtyDraft(
+            specialty=UserSpecializationType(raw_specialty),
+            skills=frozenset(UserSkillType(str(item)) for item in raw_skills),
+        )
+
+    raw_work_formats = data.get("work_formats")
+    work_formats = None
+    if isinstance(raw_work_formats, list):
+        work_formats = UserWorkFormats.from_strs([str(item) for item in raw_work_formats])
+
+    salary_payload = data.get("salary")
+    salary: SalaryDraft | None = None
+    if isinstance(salary_payload, dict):
+        raw_amount = salary_payload.get("amount_rub")
+        if raw_amount is not None and not isinstance(raw_amount, int):
+            raise ValueError("Invalid onboarding salary amount")
+        salary = SalaryDraft(
+            mode=OnboardingSalaryMode(str(salary_payload.get("mode"))),
+            amount_rub=raw_amount,
+        )
+
+    raw_level = data.get("level")
+    level = OnboardingLevel(raw_level) if isinstance(raw_level, str) else None
+    return OnboardingDraft(
+        current_step=OnboardingStep(str(payload.get("current_step"))),
+        max_visited_step=OnboardingStep(str(payload.get("max_visited_step"))),
+        specialty=specialty,
+        work_formats=work_formats,
+        salary=salary,
+        level=level,
     )

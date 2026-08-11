@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from app.application.services.user_service import UserService
+from app.core.config import config
 from app.core.logger import get_app_logger
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
 from app.infrastructure.observability import build_observability_service
@@ -44,6 +45,16 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
         build_start_message(is_new=is_new),
         reply_markup=get_main_menu_kb(),
     )
+    if config.APP_ENV == "development" and user_id in config.DEV_TELEGRAM_IDS:
+        from app.telegram.bot.routers.developer import build_developer_miniapp_keyboard
+
+        onboarding_completed = user.onboarding_completed_at is not None
+        keyboard = build_developer_miniapp_keyboard(onboarding_completed=onboarding_completed)
+        if keyboard is not None:
+            await message.answer(
+                ("Dev: open Dashboard." if onboarding_completed else "Dev: open React onboarding."),
+                reply_markup=keyboard,
+            )
 
 
 @router.message(F.text == START_BUTTON_TEXT)

@@ -15,7 +15,7 @@ SETTINGS_ENTRY_SALARY = "salary"
 SETTINGS_ENTRY_LEVEL = "level"
 
 ENTRY_TO_PAGE = {
-    SETTINGS_ENTRY_SPECIALTY: "specialty",
+    SETTINGS_ENTRY_SPECIALTY: "react",
     SETTINGS_ENTRY_FORMAT: "format",
     SETTINGS_ENTRY_SALARY: "salary",
     SETTINGS_ENTRY_LEVEL: "level",
@@ -123,6 +123,8 @@ def _single_level_label(mode: LevelFilterMode, value: str | None) -> str | None:
         return None
     if mode == LevelFilterMode.UP_TO:
         return f"до {value}"
+    if mode == LevelFilterMode.AT_LEAST:
+        return f"от {value}"
     return f"точно {value}"
 
 

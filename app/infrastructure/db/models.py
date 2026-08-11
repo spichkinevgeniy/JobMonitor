@@ -62,6 +62,13 @@ class User(Base):
 
     cv_work_format: Mapped[str | None] = mapped_column(String, nullable=True)
     filter_work_format_mode: Mapped[str] = mapped_column(String, default="SOFT")
+    cv_work_formats: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)
+
+    onboarding_draft: Mapped[dict[str, object] | None] = mapped_column(JSONB, nullable=True)
+    onboarding_completed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 

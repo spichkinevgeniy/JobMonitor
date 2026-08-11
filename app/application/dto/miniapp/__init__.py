@@ -17,6 +17,20 @@ from app.application.dto.miniapp.models import (
     WorkFormatChoice,
     parse_miniapp_payload,
 )
+from app.application.dto.miniapp.onboarding import (
+    LevelDraftRequest,
+    OnboardingDraftRequest,
+    OnboardingDraftResponse,
+    OnboardingStateResponse,
+    SalaryDraftRequest,
+    SpecialtyDraftRequest,
+    WorkFormatDraftRequest,
+)
+from app.application.dto.miniapp.search_profile import (
+    SearchProfileLevelResponse,
+    SearchProfileResponse,
+    SearchProfileSalaryResponse,
+)
 
 __all__ = [
     "ChoiceOptionDto",
@@ -36,4 +50,14 @@ __all__ = [
     "SpecialtySaveRequest",
     "WorkFormatChoice",
     "parse_miniapp_payload",
+    "LevelDraftRequest",
+    "OnboardingDraftRequest",
+    "OnboardingDraftResponse",
+    "OnboardingStateResponse",
+    "SalaryDraftRequest",
+    "SpecialtyDraftRequest",
+    "WorkFormatDraftRequest",
+    "SearchProfileLevelResponse",
+    "SearchProfileResponse",
+    "SearchProfileSalaryResponse",
 ]

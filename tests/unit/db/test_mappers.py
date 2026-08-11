@@ -1,5 +1,13 @@
-from app.domain.shared import WorkFormat
+from app.domain.shared import SkillType, SpecializationType, WorkFormat, WorkFormats
 from app.domain.user.entities import User
+from app.domain.user.onboarding import (
+    OnboardingDraft,
+    OnboardingLevel,
+    OnboardingSalaryMode,
+    OnboardingStep,
+    SalaryDraft,
+    SpecialtyDraft,
+)
 from app.domain.user.value_objects import FilterMode
 from app.infrastructure.db.mappers.user import user_from_model, user_to_model
 from app.infrastructure.db.models import User as UserModel
@@ -42,3 +50,42 @@ def test_user_mapper_normalizes_undefined_work_format_to_any() -> None:
 
     assert restored.cv_work_format is None
     assert restored.filter_work_format_mode == FilterMode.SOFT
+
+
+def test_user_mapper_round_trip_preserves_multi_formats_and_onboarding_draft() -> None:
+    draft = OnboardingDraft(
+        current_step=OnboardingStep.LEVEL,
+        max_visited_step=OnboardingStep.LEVEL,
+        specialty=SpecialtyDraft(
+            specialty=SpecializationType.DESIGN,
+            skills=frozenset({SkillType.JAVASCRIPT, SkillType.DOCKER}),
+        ),
+        work_formats=WorkFormats.from_values([WorkFormat.REMOTE, WorkFormat.HYBRID]),
+        salary=SalaryDraft(OnboardingSalaryMode.FROM, 150000),
+        level=OnboardingLevel.JUNIOR_PLUS,
+    )
+    user = User.create(tg_id=123, onboarding_draft=draft)
+    user.set_work_formats(WorkFormats.from_values([WorkFormat.REMOTE, WorkFormat.HYBRID]))
+
+    model = user_to_model(user)
+    restored = user_from_model(model)
+
+    assert model.cv_work_formats == ["HYBRID", "REMOTE"]
+    assert restored.cv_work_formats == user.cv_work_formats
+    assert restored.onboarding_draft == draft
+
+
+def test_user_mapper_dual_reads_legacy_scalar_when_collection_is_null() -> None:
+    model = UserModel(
+        tg_id=123,
+        cv_specializations=[],
+        cv_skills=[],
+        cv_work_format=WorkFormat.REMOTE.value,
+        filter_work_format_mode=FilterMode.STRICT.value,
+        cv_work_formats=None,
+    )
+
+    restored = user_from_model(model)
+
+    assert restored.cv_work_formats is None
+    assert restored.effective_work_formats == WorkFormats.from_values([WorkFormat.REMOTE])

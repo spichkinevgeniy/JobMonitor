@@ -50,6 +50,9 @@ def _rejected_by_grade(vacancy: Vacancy, user: User) -> bool:
     if user.filter_grade_mode == LevelFilterMode.EXACT:
         return vacancy.grade != user.cv_grade
 
+    if user.filter_grade_mode == LevelFilterMode.AT_LEAST:
+        return GRADE_ORDER[vacancy.grade] < GRADE_ORDER[user.cv_grade]
+
     return GRADE_ORDER[vacancy.grade] > GRADE_ORDER[user.cv_grade]
 
 
@@ -64,6 +67,12 @@ def _rejected_by_experience(vacancy: Vacancy, user: User) -> bool:
     if user.filter_experience_mode == LevelFilterMode.EXACT:
         return vacancy.experience_level != user.cv_experience_level
 
+    if user.filter_experience_mode == LevelFilterMode.AT_LEAST:
+        return (
+            EXPERIENCE_LEVEL_ORDER[vacancy.experience_level]
+            < EXPERIENCE_LEVEL_ORDER[user.cv_experience_level]
+        )
+
     return (
         EXPERIENCE_LEVEL_ORDER[vacancy.experience_level]
         > EXPERIENCE_LEVEL_ORDER[user.cv_experience_level]
@@ -71,11 +80,10 @@ def _rejected_by_experience(vacancy: Vacancy, user: User) -> bool:
 
 
 def _rejected_by_work_format(vacancy: Vacancy, user: User) -> bool:
-    if user.filter_work_format_mode != FilterMode.STRICT:
-        return False
-    if user.cv_work_format is None:
+    work_formats = user.effective_work_formats.items
+    if not work_formats:
         return False
     if vacancy.work_format == WorkFormat.UNDEFINED:
         return True
 
-    return vacancy.work_format != user.cv_work_format
+    return vacancy.work_format not in work_formats

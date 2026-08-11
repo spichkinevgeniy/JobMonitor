@@ -75,6 +75,11 @@ _SKILL_OPTION_VIEWS: tuple[SkillOptionView, ...] = (
         SkillType.TYPESCRIPT.value,
         SpecializationType.FRONTEND,
     ),
+    SkillOptionView(
+        SkillType.JAVASCRIPT.value,
+        SkillType.JAVASCRIPT.value,
+        SpecializationType.FRONTEND,
+    ),
     SkillOptionView(SkillType.VUE.value, SkillType.VUE.value, SpecializationType.FRONTEND),
     SkillOptionView(SkillType.ANGULAR.value, SkillType.ANGULAR.value, SpecializationType.FRONTEND),
     SkillOptionView(
@@ -123,6 +128,11 @@ _SKILL_OPTION_VIEWS: tuple[SkillOptionView, ...] = (
         SpecializationType.INFRASTRUCTURE_DEVOPS,
     ),
     SkillOptionView(
+        SkillType.DOCKER.value,
+        SkillType.DOCKER.value,
+        SpecializationType.INFRASTRUCTURE_DEVOPS,
+    ),
+    SkillOptionView(
         SkillType.SRE.value,
         SkillType.SRE.value,
         SpecializationType.INFRASTRUCTURE_DEVOPS,
@@ -168,6 +178,7 @@ _LEVEL_MODE_LABELS = {
     LevelModeChoice.IGNORE.value: "Не учитывать",
     LevelModeChoice.UP_TO.value: "Не выше",
     LevelModeChoice.EXACT.value: "Только этот",
+    LevelModeChoice.AT_LEAST.value: "Не ниже",
 }
 
 

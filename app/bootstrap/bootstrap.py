@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
@@ -6,7 +10,6 @@ from app.application.services.user_service import UserService
 from app.bootstrap.models import RuntimeComponents
 from app.core.config import config
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
-from app.infrastructure.extractors.vacancy_extractor import GoogleVacancyLLMExtractor
 from app.infrastructure.observability import (
     build_observability_service,
     init_logfire,
@@ -14,11 +17,13 @@ from app.infrastructure.observability import (
 )
 from app.infrastructure.sentry import init_sentry
 from app.infrastructure.telegram.miniapp_server import build_miniapp_server
-from app.infrastructure.telegram.telethon_client import TelethonClientProvider
 from app.telegram.bot import get_router as get_bot_router
 from app.telegram.bot.commands import setup_bot_commands
 from app.telegram.bot.middlewares import UserGuardMiddleware
-from app.telegram.scrapper.handlers import TelegramScraper
+
+if TYPE_CHECKING:
+    from app.infrastructure.telegram.telethon_client import TelethonClientProvider
+    from app.telegram.scrapper.handlers import TelegramScraper
 
 
 def init_infrastructure() -> None:
@@ -40,6 +45,10 @@ async def build_scraper(
     bot: Bot,
     observability: IObservabilityService,
 ) -> tuple[TelegramScraper, TelethonClientProvider]:
+    from app.infrastructure.extractors.vacancy_extractor import GoogleVacancyLLMExtractor
+    from app.infrastructure.telegram.telethon_client import TelethonClientProvider
+    from app.telegram.scrapper.handlers import TelegramScraper
+
     provider = TelethonClientProvider()
     client = await provider.start()
     extractor = GoogleVacancyLLMExtractor()

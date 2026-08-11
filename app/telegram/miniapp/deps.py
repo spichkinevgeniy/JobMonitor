@@ -2,6 +2,8 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request
 
+from app.application.services.onboarding_service import OnboardingService
+from app.application.services.search_profile_service import SearchProfileService
 from app.application.services.user_service import UserService
 from app.core.config import config
 from app.domain.user.entities import User
@@ -11,6 +13,14 @@ from app.telegram.miniapp.auth import MiniAppUserContext, validate_init_data
 
 def get_user_service() -> UserService:
     return UserService(UserUnitOfWork(async_session_factory))
+
+
+def get_onboarding_service() -> OnboardingService:
+    return OnboardingService(UserUnitOfWork(async_session_factory))
+
+
+def get_search_profile_service() -> SearchProfileService:
+    return SearchProfileService()
 
 
 def parse_user_context(init_data: str) -> MiniAppUserContext:

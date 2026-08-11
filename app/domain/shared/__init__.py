@@ -11,11 +11,13 @@ from .value_objects import (
     Specializations,
     SpecializationType,
     WorkFormat,
+    WorkFormats,
 )
 
 __all__ = [
     "DomainError",
     "WorkFormat",
+    "WorkFormats",
     "Grade",
     "ExperienceLevel",
     "CurrencyType",

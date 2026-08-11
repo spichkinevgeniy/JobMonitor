@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 
 from app.domain.shared.value_objects import (
     ExperienceLevel,
@@ -7,7 +8,9 @@ from app.domain.shared.value_objects import (
     Skills,
     Specializations,
     WorkFormat,
+    WorkFormats,
 )
+from app.domain.user.onboarding import OnboardingDraft
 from app.domain.user.value_objects import FilterMode, LevelFilterMode, UserId
 
 
@@ -32,6 +35,10 @@ class User:
     cv_work_format: WorkFormat | None
     filter_work_format_mode: FilterMode
 
+    cv_work_formats: WorkFormats | None = None
+    onboarding_draft: OnboardingDraft | None = None
+    onboarding_completed_at: datetime | None = None
+
     is_active: bool = True
 
     @classmethod
@@ -51,6 +58,9 @@ class User:
         filter_experience_mode: LevelFilterMode | str | None = None,
         cv_work_format: WorkFormat | str | None = None,
         filter_work_format_mode: FilterMode | str | None = None,
+        cv_work_formats_raw: list[str] | None = None,
+        onboarding_draft: OnboardingDraft | None = None,
+        onboarding_completed_at: datetime | None = None,
         is_active: bool = True,
     ) -> "User":
         specs = Specializations.from_strs(cv_specializations_raw or [])
@@ -76,7 +86,10 @@ class User:
 
         work_format = cls._normalize_work_format(cv_work_format)
         work_format_mode = cls._normalize_mode(filter_work_format_mode)
-        if work_format is None:
+        work_formats = (
+            WorkFormats.from_strs(cv_work_formats_raw) if cv_work_formats_raw is not None else None
+        )
+        if work_format is None and work_formats is None:
             work_format_mode = FilterMode.SOFT
 
         return cls(
@@ -93,8 +106,38 @@ class User:
             filter_experience_mode=experience_mode,
             cv_work_format=work_format,
             filter_work_format_mode=work_format_mode,
+            cv_work_formats=work_formats,
+            onboarding_draft=onboarding_draft,
+            onboarding_completed_at=onboarding_completed_at,
             is_active=is_active,
         )
+
+    @property
+    def effective_work_formats(self) -> WorkFormats:
+        if self.cv_work_formats is not None:
+            return self.cv_work_formats
+        if self.filter_work_format_mode is FilterMode.STRICT and self.cv_work_format is not None:
+            return WorkFormats.from_values([self.cv_work_format])
+        return WorkFormats.from_values([])
+
+    def set_work_formats(self, work_formats: WorkFormats) -> None:
+        self.cv_work_formats = work_formats
+        if len(work_formats.items) == 1:
+            self.cv_work_format = next(iter(work_formats.items))
+            self.filter_work_format_mode = FilterMode.STRICT
+            return
+        self.cv_work_format = None
+        self.filter_work_format_mode = FilterMode.SOFT
+
+    def set_legacy_work_format(
+        self,
+        work_format: WorkFormat | None,
+        mode: FilterMode,
+    ) -> None:
+        normalized = self._normalize_work_format(work_format)
+        self.cv_work_format = normalized
+        self.filter_work_format_mode = mode if normalized is not None else FilterMode.SOFT
+        self.cv_work_formats = WorkFormats.from_values([normalized] if normalized else [])
 
     @staticmethod
     def _normalize_mode(raw: FilterMode | str | None) -> FilterMode:

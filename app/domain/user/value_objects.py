@@ -16,3 +16,4 @@ class LevelFilterMode(StrEnum):
     IGNORE = "IGNORE"
     UP_TO = "UP_TO"
     EXACT = "EXACT"
+    AT_LEAST = "AT_LEAST"

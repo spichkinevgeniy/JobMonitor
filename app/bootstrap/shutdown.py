@@ -1,12 +1,17 @@
+from __future__ import annotations
+
 import asyncio
 import signal
 from contextlib import suppress
+from typing import TYPE_CHECKING
 
 from aiogram import Bot, Dispatcher
 
 from app.bootstrap.models import RuntimeComponents, RuntimeTasks
 from app.core.logger import get_app_logger
-from app.infrastructure.telegram.telethon_client import TelethonClientProvider
+
+if TYPE_CHECKING:
+    from app.infrastructure.telegram.telethon_client import TelethonClientProvider
 
 logger = get_app_logger(__name__)
 

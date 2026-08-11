@@ -41,6 +41,7 @@ class LevelModeChoice(StrEnum):
     IGNORE = LevelFilterMode.IGNORE.value
     UP_TO = LevelFilterMode.UP_TO.value
     EXACT = LevelFilterMode.EXACT.value
+    AT_LEAST = LevelFilterMode.AT_LEAST.value
 
 
 @dataclass(frozen=True, slots=True)
