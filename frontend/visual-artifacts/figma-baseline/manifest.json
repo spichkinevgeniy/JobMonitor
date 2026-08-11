@@ -1,0 +1,1475 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-09T13:19:47.143Z",
+  "source": {
+    "fileName": "JobMonitor Design System",
+    "page": "multiple"
+  },
+  "items": {
+    "button--default": {
+      "id": "button--default",
+      "png": "button--default.png",
+      "source": {
+        "nodeId": "41:67",
+        "nodeName": "button.MuiButtonBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 210,
+        "height": 48,
+        "borderWidth": 1,
+        "borderRadius": 12,
+        "borderRadii": {
+          "topLeft": 12,
+          "topRight": 12,
+          "bottomRight": 12,
+          "bottomLeft": 12
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#2563EB",
+          "opacity": 1,
+          "token": "color/bg/primary"
+        },
+        "border": null,
+        "text": {
+          "hex": "#FFFFFF",
+          "opacity": 1,
+          "token": "color/text/inverse"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "fontSize": 16,
+        "fontWeight": 600,
+        "lineHeight": 24
+      },
+      "spacing": {
+        "paddingTop": 6,
+        "paddingRight": 20,
+        "paddingBottom": 6,
+        "paddingLeft": 20,
+        "gap": 0,
+        "contentInsets": {
+          "top": 11,
+          "right": 52.5,
+          "bottom": 11,
+          "left": 52.5
+        }
+      }
+    },
+    "button--disabled": {
+      "id": "button--disabled",
+      "png": "button--disabled.png",
+      "source": {
+        "nodeId": "41:74",
+        "nodeName": "button.MuiButtonBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 210,
+        "height": 48,
+        "borderWidth": 1,
+        "borderRadius": 12,
+        "borderRadii": {
+          "topLeft": 12,
+          "topRight": 12,
+          "bottomRight": 12,
+          "bottomLeft": 12
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#E4E7EC",
+          "opacity": 1,
+          "token": "color/bg/disabled"
+        },
+        "border": null,
+        "text": {
+          "hex": "#98A2B3",
+          "opacity": 1,
+          "token": "color/text/disabled"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "fontSize": 16,
+        "fontWeight": 600,
+        "lineHeight": 24
+      },
+      "spacing": {
+        "paddingTop": 6,
+        "paddingRight": 20,
+        "paddingBottom": 6,
+        "paddingLeft": 20,
+        "gap": 0,
+        "contentInsets": {
+          "top": 11,
+          "right": 52.5,
+          "bottom": 11,
+          "left": 52.5
+        }
+      }
+    },
+    "button--loading": {
+      "id": "button--loading",
+      "png": "button--loading.png",
+      "source": {
+        "nodeId": "41:81",
+        "nodeName": "button#_r_3_",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 210,
+        "height": 48,
+        "borderWidth": 1,
+        "borderRadius": 12,
+        "borderRadii": {
+          "topLeft": 12,
+          "topRight": 12,
+          "bottomRight": 12,
+          "bottomLeft": 12
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#2563EB",
+          "opacity": 1,
+          "token": "color/bg/primary"
+        },
+        "border": null,
+        "text": null
+      },
+      "typography": null,
+      "spacing": {
+        "paddingTop": 6,
+        "paddingRight": 20,
+        "paddingBottom": 6,
+        "paddingLeft": 20,
+        "gap": 0,
+        "contentInsets": null
+      }
+    },
+    "button--hug-width": {
+      "id": "button--hug-width",
+      "png": "button--hug-width.png",
+      "source": {
+        "nodeId": "41:95",
+        "nodeName": "button.MuiButtonBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 143,
+        "height": 48,
+        "borderWidth": 1,
+        "borderRadius": 12,
+        "borderRadii": {
+          "topLeft": 12,
+          "topRight": 12,
+          "bottomRight": 12,
+          "bottomLeft": 12
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#2563EB",
+          "opacity": 1,
+          "token": "color/bg/primary"
+        },
+        "border": null,
+        "text": {
+          "hex": "#FFFFFF",
+          "opacity": 1,
+          "token": "color/text/inverse"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "fontSize": 16,
+        "fontWeight": 600,
+        "lineHeight": 24
+      },
+      "spacing": {
+        "paddingTop": 6,
+        "paddingRight": 20,
+        "paddingBottom": 6,
+        "paddingLeft": 20,
+        "gap": 0,
+        "contentInsets": {
+          "top": 11,
+          "right": 19,
+          "bottom": 11,
+          "left": 19
+        }
+      }
+    },
+    "back-button--default": {
+      "id": "back-button--default",
+      "png": "back-button--default.png",
+      "source": {
+        "nodeId": "45:171",
+        "nodeName": "button.MuiButtonBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 81,
+        "height": 44,
+        "borderWidth": 1,
+        "borderRadius": 8,
+        "borderRadii": {
+          "topLeft": 8,
+          "topRight": 8,
+          "bottomRight": 8,
+          "bottomLeft": 8
+        }
+      },
+      "colors": {
+        "background": null,
+        "border": null,
+        "text": {
+          "hex": "#2563EB",
+          "opacity": 1,
+          "token": "color/text/brand"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Medium",
+        "fontSize": 14,
+        "fontWeight": 500,
+        "lineHeight": 20
+      },
+      "spacing": {
+        "paddingTop": 11.5,
+        "paddingRight": 8,
+        "paddingBottom": 12.5,
+        "paddingLeft": 8,
+        "gap": 4,
+        "contentInsets": {
+          "top": 10.5,
+          "right": 7,
+          "bottom": 11.5,
+          "left": 29
+        }
+      }
+    },
+    "icon-button--default": {
+      "id": "icon-button--default",
+      "png": "icon-button--default.png",
+      "source": {
+        "nodeId": "88:2",
+        "nodeName": "Открыть меню",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 44,
+        "height": 44,
+        "borderWidth": 1,
+        "borderRadius": 8,
+        "borderRadii": {
+          "topLeft": 8,
+          "topRight": 8,
+          "bottomRight": 8,
+          "bottomLeft": 8
+        }
+      },
+      "colors": {
+        "background": null,
+        "border": null,
+        "text": null
+      },
+      "typography": null,
+      "spacing": {
+        "paddingTop": 8,
+        "paddingRight": 8,
+        "paddingBottom": 8,
+        "paddingLeft": 8,
+        "gap": 0,
+        "contentInsets": null
+      }
+    },
+    "icon-button--hover": {
+      "id": "icon-button--hover",
+      "png": "icon-button--hover.png",
+      "source": {
+        "nodeId": "49:247",
+        "nodeName": "Открыть меню",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 44,
+        "height": 44,
+        "borderWidth": 1,
+        "borderRadius": 8,
+        "borderRadii": {
+          "topLeft": 8,
+          "topRight": 8,
+          "bottomRight": 8,
+          "bottomLeft": 8
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#F2F4F7",
+          "opacity": 1,
+          "token": null
+        },
+        "border": null,
+        "text": null
+      },
+      "typography": null,
+      "spacing": {
+        "paddingTop": 8,
+        "paddingRight": 8,
+        "paddingBottom": 8,
+        "paddingLeft": 8,
+        "gap": 0,
+        "contentInsets": null
+      }
+    },
+    "icon-button--close": {
+      "id": "icon-button--close",
+      "png": "icon-button--close.png",
+      "source": {
+        "nodeId": "88:10",
+        "nodeName": "Открыть меню",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 44,
+        "height": 44,
+        "borderWidth": 1,
+        "borderRadius": 8,
+        "borderRadii": {
+          "topLeft": 8,
+          "topRight": 8,
+          "bottomRight": 8,
+          "bottomLeft": 8
+        }
+      },
+      "colors": {
+        "background": null,
+        "border": null,
+        "text": null
+      },
+      "typography": null,
+      "spacing": {
+        "paddingTop": 8,
+        "paddingRight": 8,
+        "paddingBottom": 8,
+        "paddingLeft": 8,
+        "gap": 0,
+        "contentInsets": null
+      }
+    },
+    "icon-button--disabled": {
+      "id": "icon-button--disabled",
+      "png": "icon-button--disabled.png",
+      "source": {
+        "nodeId": "88:17",
+        "nodeName": "Открыть меню",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 44,
+        "height": 44,
+        "borderWidth": 1,
+        "borderRadius": 8,
+        "borderRadii": {
+          "topLeft": 8,
+          "topRight": 8,
+          "bottomRight": 8,
+          "bottomLeft": 8
+        }
+      },
+      "colors": {
+        "background": null,
+        "border": null,
+        "text": null
+      },
+      "typography": null,
+      "spacing": {
+        "paddingTop": 8,
+        "paddingRight": 8,
+        "paddingBottom": 8,
+        "paddingLeft": 8,
+        "gap": 0,
+        "contentInsets": null
+      }
+    },
+    "selection-card--default": {
+      "id": "selection-card--default",
+      "png": "selection-card--default.png",
+      "source": {
+        "nodeId": "50:413",
+        "nodeName": "button.MuiButtonBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 328,
+        "height": 74,
+        "borderWidth": 1,
+        "borderRadius": 12,
+        "borderRadii": {
+          "topLeft": 12,
+          "topRight": 12,
+          "bottomRight": 12,
+          "bottomLeft": 12
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#FFFFFF",
+          "opacity": 1,
+          "token": "color/bg/surface"
+        },
+        "border": {
+          "hex": "#E4E7EC",
+          "opacity": 1,
+          "token": "color/border/default"
+        },
+        "text": {
+          "hex": "#101828",
+          "opacity": 1,
+          "token": "color/text/primary"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "fontSize": 14,
+        "fontWeight": 600,
+        "lineHeight": 20
+      },
+      "spacing": {
+        "paddingTop": 16,
+        "paddingRight": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "gap": 12,
+        "contentInsets": {
+          "top": 16,
+          "right": 48,
+          "bottom": 36,
+          "left": 60
+        }
+      }
+    },
+    "selection-card--selected": {
+      "id": "selection-card--selected",
+      "png": "selection-card--selected.png",
+      "source": {
+        "nodeId": "50:429",
+        "nodeName": "button.MuiButtonBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 328,
+        "height": 74,
+        "borderWidth": 1,
+        "borderRadius": 12,
+        "borderRadii": {
+          "topLeft": 12,
+          "topRight": 12,
+          "bottomRight": 12,
+          "bottomLeft": 12
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#EFF6FF",
+          "opacity": 1,
+          "token": "color/bg/primary-subtle"
+        },
+        "border": {
+          "hex": "#2563EB",
+          "opacity": 1,
+          "token": "color/border/brand"
+        },
+        "text": {
+          "hex": "#101828",
+          "opacity": 1,
+          "token": "color/text/primary"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "fontSize": 14,
+        "fontWeight": 600,
+        "lineHeight": 20
+      },
+      "spacing": {
+        "paddingTop": 16,
+        "paddingRight": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "gap": 12,
+        "contentInsets": {
+          "top": 16,
+          "right": 48,
+          "bottom": 36,
+          "left": 60
+        }
+      }
+    },
+    "selection-card--disabled": {
+      "id": "selection-card--disabled",
+      "png": "selection-card--disabled.png",
+      "source": {
+        "nodeId": "50:447",
+        "nodeName": "button.MuiButtonBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 328,
+        "height": 74,
+        "borderWidth": 1,
+        "borderRadius": 12,
+        "borderRadii": {
+          "topLeft": 12,
+          "topRight": 12,
+          "bottomRight": 12,
+          "bottomLeft": 12
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#F2F4F7",
+          "opacity": 1,
+          "token": null
+        },
+        "border": {
+          "hex": "#E4E7EC",
+          "opacity": 1,
+          "token": null
+        },
+        "text": {
+          "hex": "#98A2B3",
+          "opacity": 1,
+          "token": "color/text/disabled"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "fontSize": 14,
+        "fontWeight": 600,
+        "lineHeight": 20
+      },
+      "spacing": {
+        "paddingTop": 16,
+        "paddingRight": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "gap": 12,
+        "contentInsets": {
+          "top": 16,
+          "right": 48,
+          "bottom": 36,
+          "left": 60
+        }
+      }
+    },
+    "chip--selected": {
+      "id": "chip--selected",
+      "png": "chip--selected.png",
+      "source": {
+        "nodeId": "51:1008",
+        "nodeName": "div.MuiButtonBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 87,
+        "height": 32,
+        "borderWidth": 1,
+        "borderRadius": 999,
+        "borderRadii": {
+          "topLeft": 999,
+          "topRight": 999,
+          "bottomRight": 999,
+          "bottomLeft": 999
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#2563EB",
+          "opacity": 1,
+          "token": "color/bg/primary"
+        },
+        "border": {
+          "hex": "#2563EB",
+          "opacity": 1,
+          "token": "color/border/brand"
+        },
+        "text": {
+          "hex": "#FFFFFF",
+          "opacity": 1,
+          "token": "color/text/inverse"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Medium",
+        "fontSize": 14,
+        "fontWeight": 500,
+        "lineHeight": 20
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "gap": 0,
+        "contentInsets": {
+          "top": 5,
+          "right": 34,
+          "bottom": 5,
+          "left": 12
+        }
+      }
+    },
+    "chip--disabled": {
+      "id": "chip--disabled",
+      "png": "chip--disabled.png",
+      "source": {
+        "nodeId": "51:1021",
+        "nodeName": "div.MuiButtonBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 74,
+        "height": 32,
+        "borderWidth": 1,
+        "borderRadius": 999,
+        "borderRadii": {
+          "topLeft": 999,
+          "topRight": 999,
+          "bottomRight": 999,
+          "bottomLeft": 999
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#E4E7EC",
+          "opacity": 1,
+          "token": "color/bg/disabled"
+        },
+        "border": {
+          "hex": "#E4E7EC",
+          "opacity": 1,
+          "token": "color/border/disabled"
+        },
+        "text": {
+          "hex": "#98A2B3",
+          "opacity": 1,
+          "token": "color/text/disabled"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Medium",
+        "fontSize": 14,
+        "fontWeight": 500,
+        "lineHeight": 20
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "gap": 0,
+        "contentInsets": {
+          "top": 5,
+          "right": 12,
+          "bottom": 5,
+          "left": 12
+        }
+      }
+    },
+    "chip--default": {
+      "id": "chip--default",
+      "png": "chip--default.png",
+      "source": {
+        "nodeId": "51:1047",
+        "nodeName": "div.MuiButtonBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 97,
+        "height": 32,
+        "borderWidth": 1,
+        "borderRadius": 999,
+        "borderRadii": {
+          "topLeft": 999,
+          "topRight": 999,
+          "bottomRight": 999,
+          "bottomLeft": 999
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#FFFFFF",
+          "opacity": 1,
+          "token": "color/bg/surface"
+        },
+        "border": {
+          "hex": "#E4E7EC",
+          "opacity": 1,
+          "token": "color/border/default"
+        },
+        "text": {
+          "hex": "#101828",
+          "opacity": 1,
+          "token": "color/text/primary"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Medium",
+        "fontSize": 14,
+        "fontWeight": 500,
+        "lineHeight": 20
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "gap": 0,
+        "contentInsets": {
+          "top": 5,
+          "right": 12,
+          "bottom": 5,
+          "left": 12
+        }
+      }
+    },
+    "text-field--default": {
+      "id": "text-field--default",
+      "png": "text-field--default.png",
+      "source": {
+        "nodeId": "53:1237",
+        "nodeName": "div.MuiInputBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 226,
+        "height": 48,
+        "borderWidth": 1,
+        "borderRadius": 8,
+        "borderRadii": {
+          "topLeft": 8,
+          "topRight": 8,
+          "bottomRight": 8,
+          "bottomLeft": 8
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#FFFFFF",
+          "opacity": 1,
+          "token": "color/bg/surface"
+        },
+        "border": {
+          "hex": "#E4E7EC",
+          "opacity": 1,
+          "token": "color/border/default"
+        },
+        "text": {
+          "hex": "#98A2B3",
+          "opacity": 1,
+          "token": "color/text/tertiary"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Regular",
+        "fontSize": 15,
+        "fontWeight": 400,
+        "lineHeight": null
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 12,
+        "paddingBottom": 0,
+        "paddingLeft": 12,
+        "gap": 0,
+        "contentInsets": {
+          "top": 13.5,
+          "right": 12,
+          "bottom": 14.5,
+          "left": 12
+        }
+      }
+    },
+    "text-field--search": {
+      "id": "text-field--search",
+      "png": "text-field--search.png",
+      "source": {
+        "nodeId": "53:1248",
+        "nodeName": "div.MuiInputBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 226,
+        "height": 48,
+        "borderWidth": 1,
+        "borderRadius": 8,
+        "borderRadii": {
+          "topLeft": 8,
+          "topRight": 8,
+          "bottomRight": 8,
+          "bottomLeft": 8
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#FFFFFF",
+          "opacity": 1,
+          "token": "color/bg/surface"
+        },
+        "border": {
+          "hex": "#E4E7EC",
+          "opacity": 1,
+          "token": "color/border/default"
+        },
+        "text": {
+          "hex": "#98A2B3",
+          "opacity": 1,
+          "token": "color/text/tertiary"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Regular",
+        "fontSize": 15,
+        "fontWeight": 400,
+        "lineHeight": null
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 12,
+        "paddingBottom": 0,
+        "paddingLeft": 12,
+        "gap": 8,
+        "contentInsets": {
+          "top": 13.5,
+          "right": 12,
+          "bottom": 14.5,
+          "left": 40
+        }
+      }
+    },
+    "text-field--salary": {
+      "id": "text-field--salary",
+      "png": "text-field--salary.png",
+      "source": {
+        "nodeId": "53:1267",
+        "nodeName": "div.MuiInputBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 226,
+        "height": 48,
+        "borderWidth": 1,
+        "borderRadius": 8,
+        "borderRadii": {
+          "topLeft": 8,
+          "topRight": 8,
+          "bottomRight": 8,
+          "bottomLeft": 8
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#FFFFFF",
+          "opacity": 1,
+          "token": "color/bg/surface"
+        },
+        "border": {
+          "hex": "#E4E7EC",
+          "opacity": 1,
+          "token": "color/border/default"
+        },
+        "text": {
+          "hex": "#101828",
+          "opacity": 1,
+          "token": "color/text/primary"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Regular",
+        "fontSize": 15,
+        "fontWeight": 400,
+        "lineHeight": null
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 12,
+        "paddingBottom": 0,
+        "paddingLeft": 12,
+        "gap": 8,
+        "contentInsets": {
+          "top": 13.5,
+          "right": 32,
+          "bottom": 14.5,
+          "left": 12
+        }
+      }
+    },
+    "text-field--error": {
+      "id": "text-field--error",
+      "png": "text-field--error.png",
+      "source": {
+        "nodeId": "53:1285",
+        "nodeName": "div.MuiInputBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 226,
+        "height": 48,
+        "borderWidth": 1,
+        "borderRadius": 8,
+        "borderRadii": {
+          "topLeft": 8,
+          "topRight": 8,
+          "bottomRight": 8,
+          "bottomLeft": 8
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#FFFFFF",
+          "opacity": 1,
+          "token": "color/bg/surface"
+        },
+        "border": {
+          "hex": "#DC2626",
+          "opacity": 1,
+          "token": "color/state/error"
+        },
+        "text": {
+          "hex": "#101828",
+          "opacity": 1,
+          "token": "color/text/primary"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Regular",
+        "fontSize": 15,
+        "fontWeight": 400,
+        "lineHeight": null
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 12,
+        "paddingBottom": 0,
+        "paddingLeft": 12,
+        "gap": 0,
+        "contentInsets": {
+          "top": 13.5,
+          "right": 12,
+          "bottom": 14.5,
+          "left": 12
+        }
+      }
+    },
+    "text-field--disabled": {
+      "id": "text-field--disabled",
+      "png": "text-field--disabled.png",
+      "source": {
+        "nodeId": "53:1307",
+        "nodeName": "div.MuiInputBase-root",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 226,
+        "height": 48,
+        "borderWidth": 1,
+        "borderRadius": 8,
+        "borderRadii": {
+          "topLeft": 8,
+          "topRight": 8,
+          "bottomRight": 8,
+          "bottomLeft": 8
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#F2F4F7",
+          "opacity": 1,
+          "token": "color/bg/subtle"
+        },
+        "border": {
+          "hex": "#E4E7EC",
+          "opacity": 1,
+          "token": "color/border/disabled"
+        },
+        "text": {
+          "hex": "#98A2B3",
+          "opacity": 1,
+          "token": "color/text/disabled"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Regular",
+        "fontSize": 15,
+        "fontWeight": 400,
+        "lineHeight": null
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 12,
+        "paddingBottom": 0,
+        "paddingLeft": 12,
+        "gap": 0,
+        "contentInsets": {
+          "top": 13.5,
+          "right": 12,
+          "bottom": 14.5,
+          "left": 12
+        }
+      }
+    },
+    "progress-stepper--step-1": {
+      "id": "progress-stepper--step-1",
+      "png": "progress-stepper--step-1.png",
+      "source": {
+        "nodeId": "55:1495",
+        "nodeName": "Прогресс",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 294,
+        "height": 28,
+        "borderWidth": 1,
+        "borderRadius": 0,
+        "borderRadii": {
+          "topLeft": 0,
+          "topRight": 0,
+          "bottomRight": 0,
+          "bottomLeft": 0
+        }
+      },
+      "colors": {
+        "background": null,
+        "border": null,
+        "text": {
+          "hex": "#FFFFFF",
+          "opacity": 1,
+          "token": "color/text/inverse"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "fontSize": 14,
+        "fontWeight": 600,
+        "lineHeight": 14
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "gap": 0,
+        "contentInsets": {
+          "top": 5.5,
+          "right": 275.5,
+          "bottom": 6.5,
+          "left": 9.5
+        }
+      }
+    },
+    "progress-stepper--step-2": {
+      "id": "progress-stepper--step-2",
+      "png": "progress-stepper--step-2.png",
+      "source": {
+        "nodeId": "55:1519",
+        "nodeName": "Прогресс",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 294,
+        "height": 28,
+        "borderWidth": 1,
+        "borderRadius": 0,
+        "borderRadii": {
+          "topLeft": 0,
+          "topRight": 0,
+          "bottomRight": 0,
+          "bottomLeft": 0
+        }
+      },
+      "colors": {
+        "background": null,
+        "border": null,
+        "text": {
+          "hex": "#FFFFFF",
+          "opacity": 1,
+          "token": "color/text/inverse"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "fontSize": 14,
+        "fontWeight": 600,
+        "lineHeight": 14
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "gap": 0,
+        "contentInsets": {
+          "top": 5.5,
+          "right": 185.84,
+          "bottom": 6.5,
+          "left": 97.16
+        }
+      }
+    },
+    "progress-stepper--step-3": {
+      "id": "progress-stepper--step-3",
+      "png": "progress-stepper--step-3.png",
+      "source": {
+        "nodeId": "55:1544",
+        "nodeName": "Прогресс",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 294,
+        "height": 28,
+        "borderWidth": 1,
+        "borderRadius": 0,
+        "borderRadii": {
+          "topLeft": 0,
+          "topRight": 0,
+          "bottomRight": 0,
+          "bottomLeft": 0
+        }
+      },
+      "colors": {
+        "background": null,
+        "border": null,
+        "text": {
+          "hex": "#FFFFFF",
+          "opacity": 1,
+          "token": "color/text/inverse"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "fontSize": 14,
+        "fontWeight": 600,
+        "lineHeight": 14
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "gap": 0,
+        "contentInsets": {
+          "top": 5.5,
+          "right": 96.67,
+          "bottom": 6.5,
+          "left": 185.33
+        }
+      }
+    },
+    "progress-stepper--step-4": {
+      "id": "progress-stepper--step-4",
+      "png": "progress-stepper--step-4.png",
+      "source": {
+        "nodeId": "55:1570",
+        "nodeName": "Прогресс",
+        "nodeType": "FRAME",
+        "page": "Components"
+      },
+      "geometry": {
+        "width": 294,
+        "height": 28,
+        "borderWidth": 1,
+        "borderRadius": 0,
+        "borderRadii": {
+          "topLeft": 0,
+          "topRight": 0,
+          "bottomRight": 0,
+          "bottomLeft": 0
+        }
+      },
+      "colors": {
+        "background": null,
+        "border": null,
+        "text": {
+          "hex": "#FFFFFF",
+          "opacity": 1,
+          "token": "color/text/inverse"
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "fontSize": 14,
+        "fontWeight": 600,
+        "lineHeight": 14
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "gap": 0,
+        "contentInsets": {
+          "top": 5.5,
+          "right": 8,
+          "bottom": 6.5,
+          "left": 274
+        }
+      }
+    },
+    "specialty-step--header": {
+      "id": "specialty-step--header",
+      "png": "specialty-step--header.png",
+      "source": {
+        "nodeId": "90:26",
+        "nodeName": "header.MuiBox-root",
+        "nodeType": "FRAME",
+        "page": "Screens"
+      },
+      "geometry": {
+        "width": 388,
+        "height": 164,
+        "borderWidth": 1,
+        "borderRadius": 0,
+        "borderRadii": {
+          "topLeft": 0,
+          "topRight": 0,
+          "bottomRight": 0,
+          "bottomLeft": 0
+        }
+      },
+      "colors": {
+        "background": null,
+        "border": null,
+        "text": {
+          "hex": "#2563EB",
+          "opacity": 1,
+          "token": null
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Medium",
+        "fontSize": 14,
+        "fontWeight": 500,
+        "lineHeight": 20
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "gap": 0,
+        "contentInsets": {
+          "top": 10.5,
+          "right": 314,
+          "bottom": 131.5,
+          "left": 29
+        }
+      }
+    },
+    "specialty-step--specialties": {
+      "id": "specialty-step--specialties",
+      "png": "specialty-step--specialties.png",
+      "source": {
+        "nodeId": "90:55",
+        "nodeName": "Специальности",
+        "nodeType": "FRAME",
+        "page": "Screens"
+      },
+      "geometry": {
+        "width": 388,
+        "height": 336,
+        "borderWidth": 1,
+        "borderRadius": 0,
+        "borderRadii": {
+          "topLeft": 0,
+          "topRight": 0,
+          "bottomRight": 0,
+          "bottomLeft": 0
+        }
+      },
+      "colors": {
+        "background": null,
+        "border": null,
+        "text": {
+          "hex": "#101828",
+          "opacity": 1,
+          "token": null
+        }
+      },
+      "typography": {
+        "fontFamily": "Arial",
+        "fontStyle": "Bold",
+        "fontSize": 14,
+        "fontWeight": 700,
+        "lineHeight": 20
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "gap": 0,
+        "contentInsets": {
+          "top": 16,
+          "right": 244,
+          "bottom": 298,
+          "left": 60
+        }
+      }
+    },
+    "specialty-step--skills": {
+      "id": "specialty-step--skills",
+      "png": "specialty-step--skills.png",
+      "source": {
+        "nodeId": "90:116",
+        "nodeName": "section.MuiBox-root",
+        "nodeType": "FRAME",
+        "page": "Screens"
+      },
+      "geometry": {
+        "width": 388,
+        "height": 168,
+        "borderWidth": 1,
+        "borderRadius": 0,
+        "borderRadii": {
+          "topLeft": 0,
+          "topRight": 0,
+          "bottomRight": 0,
+          "bottomLeft": 0
+        }
+      },
+      "colors": {
+        "background": null,
+        "border": null,
+        "text": {
+          "hex": "#101828",
+          "opacity": 1,
+          "token": null
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "fontSize": 16,
+        "fontWeight": 600,
+        "lineHeight": 24
+      },
+      "spacing": {
+        "paddingTop": 0,
+        "paddingRight": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "gap": 12,
+        "contentInsets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 143,
+          "left": 0
+        }
+      }
+    },
+    "specialty-step--footer": {
+      "id": "specialty-step--footer",
+      "png": "specialty-step--footer.png",
+      "source": {
+        "nodeId": "90:161",
+        "nodeName": "footer.MuiBox-root",
+        "nodeType": "FRAME",
+        "page": "Screens"
+      },
+      "geometry": {
+        "width": 388,
+        "height": 76,
+        "borderWidth": 1,
+        "borderRadius": 0,
+        "borderRadii": {
+          "topLeft": 0,
+          "topRight": 0,
+          "bottomRight": 0,
+          "bottomLeft": 0
+        }
+      },
+      "colors": {
+        "background": {
+          "hex": "#F7F8FA",
+          "opacity": 1,
+          "token": null
+        },
+        "border": null,
+        "text": {
+          "hex": "#98A2B3",
+          "opacity": 1,
+          "token": null
+        }
+      },
+      "typography": {
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "fontSize": 16,
+        "fontWeight": 600,
+        "lineHeight": 24
+      },
+      "spacing": {
+        "paddingTop": 12,
+        "paddingRight": 0,
+        "paddingBottom": 16,
+        "paddingLeft": 0,
+        "gap": 0,
+        "contentInsets": {
+          "top": 23,
+          "right": 141.5,
+          "bottom": 27,
+          "left": 141.5
+        }
+      }
+    }
+  }
+}

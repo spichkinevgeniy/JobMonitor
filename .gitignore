@@ -49,3 +49,10 @@ node_modules/
 storybook-static/
 vite-dev.*.log
 .tmp-*/
+
+# Frontend test and generated visual outputs
+frontend/**/test-results/
+frontend/visual-artifacts/react-current/
+frontend/visual-artifacts/diff/
+frontend/visual-artifacts/visual-report.json
+frontend/visual-artifacts/dashboard-preview.png
