@@ -2,7 +2,10 @@ import hashlib
 import hmac
 import json
 from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 from urllib.parse import parse_qsl
+
+INIT_DATA_MAX_AGE = timedelta(hours=24)
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,6 +38,8 @@ def validate_init_data(init_data: str, bot_token: str) -> MiniAppUserContext:
     if not hmac.compare_digest(expected_hash, received_hash):
         raise ValueError("Некорректная подпись initData.")
 
+    _ensure_fresh(payload.get("auth_date"))
+
     user_raw = payload.get("user")
     if not user_raw:
         raise ValueError("В initData отсутствуют данные пользователя.")
@@ -56,3 +61,17 @@ def validate_init_data(init_data: str, bot_token: str) -> MiniAppUserContext:
         raise ValueError("Некорректный username в initData.")
 
     return MiniAppUserContext(tg_id=tg_id, username=username)
+
+
+def _ensure_fresh(auth_date_raw: str | None) -> None:
+    """Без этой проверки перехваченный initData годен бессрочно."""
+    if not auth_date_raw:
+        raise ValueError("В initData отсутствует auth_date.")
+
+    try:
+        auth_date = datetime.fromtimestamp(int(auth_date_raw), tz=UTC)
+    except (TypeError, ValueError, OSError, OverflowError):
+        raise ValueError("Некорректный auth_date в initData.") from None
+
+    if datetime.now(UTC) - auth_date > INIT_DATA_MAX_AGE:
+        raise ValueError("initData устарел.")

@@ -44,7 +44,8 @@ def build_help_text() -> str:
         "возможно, фильтры были настроены слишком строго или нужного Telegram-канала "
         "пока нет в подборке.\n\n"
         f"💬 Связаться, предложить канал для мониторинга или оставить обратную связь "
-        f"можно через {SUPPORT_BOT_HANDLE}."
+        f"можно через {SUPPORT_BOT_HANDLE}.\n\n"
+        "🔒 Что бот хранит о вас и как это удалить — /privacy"
     )
 
 
@@ -76,13 +77,6 @@ def build_resume_prompt_text() -> str:
     )
 
 
-def build_resume_scope_text() -> str:
-    return (
-        "Бот учитывает вашу специализацию и основные навыки.\n\n"
-        "Если бот найдет лишнее, настройте ваш профиль через форму."
-    )
-
-
 def build_resume_waiting_fallback_text() -> str:
     return (
         "Для продолжения нужен PDF-файл с резюме.\n"
@@ -101,10 +95,6 @@ def build_resume_processing_text() -> str:
 
 def build_resume_processed_text() -> str:
     return "Резюме обработано."
-
-
-def build_resume_success_text() -> str:
-    return "Профиль обновлен по резюме. Теперь бот будет присылать более точные совпадения."
 
 
 def build_resume_processing_cancel_text() -> str:
@@ -135,6 +125,21 @@ def build_resume_too_many_pages_text() -> str:
     return "В резюме больше 10 страниц. Нужен более компактный PDF."
 
 
+def build_resume_cooldown_text(seconds: int) -> str:
+    return f"Слишком часто. Следующее резюме можно прислать через {seconds} с."
+
+
+def build_resume_daily_quota_text(quota: int) -> str:
+    return (
+        f"На сегодня лимит исчерпан: {quota} резюме в сутки. "
+        "Попробуйте завтра — профиль при этом сохранён."
+    )
+
+
+def build_resume_busy_text() -> str:
+    return "Сейчас разбираем другие резюме. Попробуйте через пару минут."
+
+
 def build_resume_parser_error_text() -> str:
     return "Не удалось разобрать файл."
 
@@ -145,3 +150,135 @@ def build_resume_unknown_error_text() -> str:
 
 def build_resume_llm_unavailable_text() -> str:
     return "Сейчас модель временно перегружена. Попробуйте еще раз чуть позже."
+
+
+def build_stats_prompt_text() -> str:
+    return "Аналитика по вашему профилю: сколько вакансий подходит, что отсекают фильтры и кто нанимает."
+
+
+def build_stats_unavailable_text() -> str:
+    return (
+        "Страница аналитики сейчас недоступна.\n"
+        f"Если проблема повторяется, можно написать в {SUPPORT_BOT_HANDLE}."
+    )
+
+
+def build_resume_result_text(specializations: list[str], skills: list[str]) -> str:
+    """Показываем, что поняли, и просим подтвердить.
+
+    Раньше бот заранее предупреждал «если найдёт лишнее — настройте профиль»
+    и на этом всё. Что именно извлеклось, человек не видел никогда: отсюда
+    профили с одним навыком и с чужими специализациями, о которых владельцы
+    не подозревали.
+    """
+    lines = ["Разобрал резюме. Понял так:", ""]
+    lines.append(
+        f"Специализация: {', '.join(specializations)}"
+        if specializations
+        else "Специализация: не нашёл"
+    )
+    lines.append(f"Навыки: {', '.join(skills)}" if skills else "Навыки: не нашёл")
+    lines.append("")
+    lines.append("По ним бот и подбирает вакансии. Всё верно?")
+    return "\n".join(lines)
+
+
+def build_resume_confirmed_text() -> str:
+    return "Отлично, профиль сохранён. Вакансии начнут приходить по нему."
+
+
+_USER_FORMAT_TITLES = {
+    "REMOTE": "только удалёнка",
+    "ONSITE": "только офис",
+    "HYBRID": "только гибрид",
+}
+
+
+def build_vacancy_reason_text(
+    matched_specializations: list[str],
+    matched_skills: list[str],
+    caveats: list[str],
+) -> str:
+    """Отвечает на «почему мне», а не пересказывает вакансию.
+
+    Грейд, формат и зарплату человек читает в самом объявлении — оно прямо
+    над кнопкой. Единственное, чего он знать не может, — какая часть его
+    профиля сработала. Остальное объясняем, только когда вакансия прошла
+    вопреки его же настройке: иначе это отчёт алгоритма, а не помощь.
+    """
+    matched = " · ".join(matched_specializations + matched_skills)
+    lines = [f"Совпало с вашим профилем: {matched}" if matched else "Совпадений с профилем нет"]
+    lines.extend(caveats)
+    return "\n".join(lines)
+
+
+def build_reason_caveat_format(user_format: str) -> str:
+    title = _USER_FORMAT_TITLES.get(user_format, user_format)
+    return f"Формат работы в объявлении не указан — поэтому прошла, хотя у вас «{title}»"
+
+
+def build_reason_caveat_grade() -> str:
+    return "Грейд в объявлении не указан — поэтому прошла, хотя у вас есть фильтр по уровню"
+
+
+def build_reason_caveat_experience() -> str:
+    return "Опыт в объявлении не указан — поэтому прошла, хотя у вас есть фильтр по опыту"
+
+
+def build_reason_caveat_salary() -> str:
+    return "Зарплата в объявлении не указана — поэтому прошла, хотя у вас есть фильтр по деньгам"
+
+
+def build_delete_confirm_text() -> str:
+    return (
+        "Удаление данных\n\n"
+        "Будут удалены профиль поиска, история присланных вакансий "
+        "и отметки о загрузках резюме.\n\n"
+        "Действие необратимо. Чтобы снова пользоваться ботом, "
+        "профиль придётся собрать заново."
+    )
+
+
+def build_delete_done_text() -> str:
+    return "Данные удалены.\n\nВакансии больше не придут. Если захотите вернуться — /start."
+
+
+def build_delete_cancelled_text() -> str:
+    return "Удаление отменено, данные на месте."
+
+
+def build_delete_nothing_text() -> str:
+    return "Удалять нечего: данных о вас не сохранено."
+
+
+def build_delete_keyboard_reset_text() -> str:
+    return "Меню скрыто. Вернуть его можно командой /start."
+
+
+def build_privacy_text(url: str) -> str:
+    if not url:
+        return (
+            "Политика конфиденциальности временно недоступна.\n"
+            f"Написать нам можно через {SUPPORT_BOT_HANDLE}."
+        )
+    return (
+        "Что бот знает о вас\n\n"
+        "Храним профиль поиска: специализации, навыки, грейд, опыт и фильтры. "
+        "Файл резюме и его текст не сохраняются — из PDF берём только "
+        "специализации и навыки.\n\n"
+        f"Подробно: {url}\n\n"
+        "Удалить все данные — /delete_me"
+    )
+
+
+def build_developer_info_text(operator_name: str, contact_email: str, url: str) -> str:
+    """Стандартная политика Telegram называет /developer_info способом
+    узнать, кто стоит за ботом."""
+    lines = [
+        f"Оператор данных — {operator_name}.",
+        "",
+        f"Связаться можно через {SUPPORT_BOT_HANDLE} в Telegram или по почте {contact_email}.",
+    ]
+    if url:
+        lines += ["", f"Политика конфиденциальности: {url}"]
+    return "\n".join(lines)

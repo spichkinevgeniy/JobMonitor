@@ -1,7 +1,7 @@
 """add server-side onboarding and multi work formats
 
 Revision ID: a4b5c6d7e8f9
-Revises: d3e4f5a6b7c8
+Revises: a7b8c9d0e1f2
 Create Date: 2026-08-09 12:00:00.000000
 
 """
@@ -14,7 +14,7 @@ from sqlalchemy.dialects import postgresql
 from alembic import op
 
 revision: str = "a4b5c6d7e8f9"
-down_revision: str | Sequence[str] | None = "d3e4f5a6b7c8"
+down_revision: str | Sequence[str] | None = "a7b8c9d0e1f2"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 

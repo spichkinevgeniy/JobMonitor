@@ -4,9 +4,21 @@ from aiogram.types import Message
 
 from app.application.services.user_service import UserService
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
-from app.telegram.bot.keyboards import PROFILE_BUTTON_TEXT, get_profile_actions_kb, get_start_kb
+from app.telegram.bot.keyboards import (
+    PROFILE_BUTTON_TEXT,
+    PROFILE_STATS_BUTTON_TEXT,
+    get_profile_actions_kb,
+    get_start_kb,
+    get_stats_kb,
+)
 from app.telegram.bot.states import BotStates
-from app.telegram.bot.views import build_search_profile_text, build_start_required_text
+from app.telegram.bot.views import (
+    build_search_profile_text,
+    build_start_required_text,
+    build_stats_prompt_text,
+    build_stats_unavailable_text,
+    build_stats_url,
+)
 
 router = Router()
 
@@ -39,5 +51,25 @@ async def show_profile(message: Message) -> None:
     await message.answer(
         build_search_profile_text(user),
         parse_mode="HTML",
-        reply_markup=get_profile_actions_kb(),
+        reply_markup=get_profile_actions_kb(build_stats_url()),
+    )
+
+
+@router.message(
+    StateFilter(BotStates.main_menu, BotStates.processing_resume, None),
+    F.text == PROFILE_STATS_BUTTON_TEXT,
+)
+@router.message(
+    StateFilter(BotStates.main_menu, BotStates.processing_resume, None),
+    Command("stats"),
+)
+async def show_stats(message: Message) -> None:
+    stats_url = build_stats_url()
+    if not stats_url:
+        await message.answer(build_stats_unavailable_text())
+        return
+
+    await message.answer(
+        build_stats_prompt_text(),
+        reply_markup=get_stats_kb(stats_url),
     )

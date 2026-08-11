@@ -13,7 +13,7 @@ export type ApiSpecialty =
   | 'QA'
   | 'Infrastructure & DevOps'
   | 'Analytics'
-  | 'Design'
+  | 'UI/UX & Product Design'
 
 export type ApiSkill =
   | 'Python'

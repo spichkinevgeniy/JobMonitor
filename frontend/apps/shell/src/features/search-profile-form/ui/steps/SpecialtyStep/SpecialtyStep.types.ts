@@ -4,7 +4,7 @@ export type SpecialtyId =
   | 'QA'
   | 'Analytics'
   | 'Infrastructure & DevOps'
-  | 'Design'
+  | 'UI/UX & Product Design'
 
 export type Skill =
   | 'React'

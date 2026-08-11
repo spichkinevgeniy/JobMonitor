@@ -6,6 +6,7 @@ from aiogram.types import Message
 from app.application.services.user_service import UserService
 from app.core.config import config
 from app.core.logger import get_app_logger
+from app.core.privacy import user_ref
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
 from app.infrastructure.observability import build_observability_service
 from app.telegram.bot.keyboards import START_BUTTON_TEXT, get_main_menu_kb
@@ -24,7 +25,7 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
         return
 
     user_id = message.from_user.id
-    logger.info(f"Started onboarding for user {user_id}")
+    logger.info("Started onboarding for user %s", user_ref(user_id))
 
     uow = UserUnitOfWork(async_session_factory)
     service = UserService(uow, build_observability_service())
@@ -33,9 +34,9 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
             tg_id=user_id,
             username=message.from_user.username,
         )
-        logger.info(f"User {user.username} saved in db")
+        logger.info("User %s saved in db", user_ref(user_id))
     except Exception:
-        logger.exception(f"Failed to save user (tg_id={user_id})")
+        logger.exception("Failed to save user (user=%s)", user_ref(user_id))
         logger.info("/start aborted due to persistence failure")
         await state.clear()
         return

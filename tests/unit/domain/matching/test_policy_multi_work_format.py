@@ -67,4 +67,6 @@ def test_multiple_work_formats_accept_members_and_reject_others() -> None:
     assert evaluate_match(_vacancy(WorkFormat.REMOTE), user).accepted is True
     assert evaluate_match(_vacancy(WorkFormat.HYBRID), user).accepted is True
     assert evaluate_match(_vacancy(WorkFormat.ONSITE), user).accepted is False
-    assert evaluate_match(_vacancy(WorkFormat.UNDEFINED), user).accepted is False
+    # «Не указан» не равно «не подходит»: правило пришло из main и одинаково
+    # работает и для одного формата, и для нескольких.
+    assert evaluate_match(_vacancy(WorkFormat.UNDEFINED), user).accepted is True

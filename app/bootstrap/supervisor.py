@@ -3,7 +3,12 @@ import asyncio
 from app.bootstrap.metrics_sync import run_metrics_sync_loop
 from app.bootstrap.models import RuntimeComponents, RuntimeTasks
 from app.bootstrap.shutdown import graceful_shutdown, install_shutdown_handlers
+from app.infrastructure.db import async_session_factory
 from app.infrastructure.telegram.miniapp_server import run_miniapp_server
+
+# Потолок одновременно обрабатываемых апдейтов: по умолчанию aiogram не
+# ограничивает их числом вовсе.
+BOT_TASKS_CONCURRENCY_LIMIT = 50
 
 
 def start_runtime_tasks(
@@ -17,6 +22,7 @@ def start_runtime_tasks(
                 components.bot,
                 handle_signals=False,
                 close_bot_session=False,
+                tasks_concurrency_limit=BOT_TASKS_CONCURRENCY_LIMIT,
             ),
             name="telegram-bot",
         ),
@@ -25,7 +31,7 @@ def start_runtime_tasks(
             name="miniapp-server",
         ),
         metrics_sync_task=asyncio.create_task(
-            run_metrics_sync_loop(components.user_service),
+            run_metrics_sync_loop(async_session_factory, components.counter_store),
             name="metrics-sync",
         ),
         stop_task=asyncio.create_task(stop_event.wait(), name="shutdown-signal"),

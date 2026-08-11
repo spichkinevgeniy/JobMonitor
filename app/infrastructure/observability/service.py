@@ -1,4 +1,5 @@
-from app.application.ports.observability_port import IObservabilityService
+from app.application.ports.observability_port import Feature, IObservabilityService, SkipReason
+from app.infrastructure.observability.counter_store import PersistentCounterStore
 from app.infrastructure.observability.metrics import (
     ACTIVE_USERS_TOTAL,
     MESSAGES_NOT_VACANCY_TOTAL,
@@ -8,8 +9,29 @@ from app.infrastructure.observability.metrics import (
     VACANCIES_COLLECTED_TOTAL,
 )
 
+# Имена в БД: под ними счётчики лежат в metric_counter и переживают
+# перезапуск. Меняя их, потеряешь накопленное.
+COUNTER_MESSAGES_SKIPPED = "messages_skipped"
+COUNTER_FEATURE_USED = "feature_used"
+COUNTER_MATCH_REJECTED = "match_rejected"
+
 
 class PrometheusObservabilityService(IObservabilityService):
+    def __init__(self, counter_store: PersistentCounterStore | None = None) -> None:
+        self._counters = counter_store
+
+    def observe_message_skipped(self, reason: SkipReason, count: int = 1) -> None:
+        if self._counters is not None:
+            self._counters.increment(COUNTER_MESSAGES_SKIPPED, reason.value, count)
+
+    def observe_feature_used(self, feature: Feature, count: int = 1) -> None:
+        if self._counters is not None:
+            self._counters.increment(COUNTER_FEATURE_USED, feature.value, count)
+
+    def observe_match_rejected(self, reason: str, count: int = 1) -> None:
+        if self._counters is not None:
+            self._counters.increment(COUNTER_MATCH_REJECTED, reason, count)
+
     def observe_vacancy_collected(self, count: int = 1) -> None:
         VACANCIES_COLLECTED_TOTAL.inc(count)
 
@@ -28,6 +50,15 @@ class PrometheusObservabilityService(IObservabilityService):
 
 
 class NoOpObservabilityService(IObservabilityService):
+    def observe_message_skipped(self, reason: SkipReason, count: int = 1) -> None:
+        return None
+
+    def observe_feature_used(self, feature: Feature, count: int = 1) -> None:
+        return None
+
+    def observe_match_rejected(self, reason: str, count: int = 1) -> None:
+        return None
+
     def observe_vacancy_collected(self, count: int = 1) -> None:
         return None
 

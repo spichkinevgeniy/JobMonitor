@@ -16,6 +16,14 @@ from app.domain.vacancy.exceptions import ValidationError
 from app.domain.vacancy.value_objects import ContentHash, VacancyId
 
 
+@dataclass(frozen=True, slots=True)
+class DispatchedVacancy:
+    """Вакансия вместе с моментом, когда бот отправил её пользователю."""
+
+    vacancy: "Vacancy"
+    dispatched_at: datetime
+
+
 @dataclass(slots=True)
 class Vacancy:
     id: VacancyId
@@ -35,6 +43,29 @@ class Vacancy:
     created_at: datetime
     is_active: bool = True
     company_type: CompanyType = CompanyType.UNDEFINED
+    source_channel: str | None = None
+    source_message_id: int | None = None
+    source_topic_id: int | None = None
+
+    @property
+    def source_url(self) -> str | None:
+        """Ссылка на исходный пост. Строится только из публичного @username:
+        у закрытых каналов такой ссылки не существует.
+
+        В форумах (группах с темами) двухсоставная ссылка не открывает
+        сообщение — нужна t.me/группа/тема/сообщение. Проверено на проде:
+        t.me/front_end_jobs/16740 не открывается, t.me/front_end_jobs/2/16740
+        открывается.
+        """
+        if not self.source_channel or not self.source_channel.startswith("@"):
+            return None
+        if self.source_message_id is None:
+            return None
+
+        chat = self.source_channel[1:]
+        if self.source_topic_id is not None:
+            return f"https://t.me/{chat}/{self.source_topic_id}/{self.source_message_id}"
+        return f"https://t.me/{chat}/{self.source_message_id}"
 
     @classmethod
     def create(
@@ -52,6 +83,9 @@ class Vacancy:
         salary_currency: str | None = None,
         created_at: datetime | None = None,
         company_type: CompanyType = CompanyType.UNDEFINED,
+        source_channel: str | None = None,
+        source_message_id: int | None = None,
+        source_topic_id: int | None = None,
     ) -> "Vacancy":
         if not text or not text.strip():
             raise ValidationError("Vacancy text cannot be empty.")
@@ -81,6 +115,9 @@ class Vacancy:
             content_hash=cls.compute_content_hash(text),
             created_at=created_at or now,
             company_type=company_type,
+            source_channel=source_channel,
+            source_message_id=source_message_id,
+            source_topic_id=source_topic_id,
         )
 
     @staticmethod

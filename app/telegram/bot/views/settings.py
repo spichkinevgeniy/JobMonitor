@@ -13,12 +13,14 @@ SETTINGS_ENTRY_SPECIALTY = "specialty"
 SETTINGS_ENTRY_FORMAT = "format"
 SETTINGS_ENTRY_SALARY = "salary"
 SETTINGS_ENTRY_LEVEL = "level"
+SETTINGS_ENTRY_STATS = "stats"
 
 ENTRY_TO_PAGE = {
     SETTINGS_ENTRY_SPECIALTY: "react",
     SETTINGS_ENTRY_FORMAT: "format",
     SETTINGS_ENTRY_SALARY: "salary",
     SETTINGS_ENTRY_LEVEL: "level",
+    SETTINGS_ENTRY_STATS: "stats",
 }
 
 _GRADE_LABELS = {
@@ -77,6 +79,26 @@ def build_settings_menu_view(user: User) -> SettingsMenuView:
 
 def build_settings_menu_text() -> str:
     return build_settings_intro_text()
+
+
+def build_specialty_url() -> str:
+    return _build_entry_url(SETTINGS_ENTRY_SPECIALTY)
+
+
+def build_stats_url() -> str:
+    return _build_entry_url(SETTINGS_ENTRY_STATS)
+
+
+def build_privacy_url() -> str:
+    raw_base = config.MINI_APP_BASE_URL.strip()
+    if not raw_base:
+        return ""
+
+    parsed = urlsplit(raw_base)
+    target_path = posixpath.join(_resolve_base_dir(parsed.path), "privacy")
+    if not target_path.startswith("/"):
+        target_path = f"/{target_path}"
+    return urlunsplit((parsed.scheme, parsed.netloc, target_path, "", ""))
 
 
 def _format_label(user: User) -> str:

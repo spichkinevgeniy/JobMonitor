@@ -183,7 +183,7 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 24,
+        "w": 12,
         "x": 0,
         "y": 8
       },
@@ -209,8 +209,9 @@
           "refId": "A"
         }
       ],
-      "title": "Language Matches by Users (per interval)",
-      "type": "timeseries"
+      "title": "Совпадения по навыкам за интервал",
+      "type": "timeseries",
+      "description": "Живой счётчик: обнуляется при перезапуске, поэтому increase. Накопленные суммы — на дашборде «Конвейер»."
     },
     {
       "fieldConfig": {
@@ -356,8 +357,49 @@
           "refId": "A"
         }
       ],
-      "title": "New Registrations (per hour)",
+      "title": "Регистрации за час",
       "type": "timeseries"
+    },
+    {
+      "description": "Накопительный показатель из БД: перезапуск процесса его не обнуляет.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "horizontal",
+        "showValue": "auto",
+        "xTickLabelRotation": 0
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (specialization) (job_monitor_dispatched_by_specialization)",
+          "legendFormat": "{{specialization}}",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Разослано по специализациям",
+      "type": "barchart"
     }
   ],
   "refresh": "10s",
@@ -377,6 +419,6 @@
   "timezone": "",
   "title": "SmartJobMonitor / Functional",
   "uid": "smartjobmonitor-functional",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }

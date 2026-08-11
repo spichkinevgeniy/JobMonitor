@@ -93,7 +93,6 @@ async def test_reset_returns_existing_user_to_incomplete_onboarding() -> None:
     user = User.create(
         tg_id=123,
         username="ivan",
-        cv_text="resume",
         cv_specializations_raw=["Frontend"],
         cv_skills_raw=["React"],
         cv_work_formats_raw=["REMOTE"],
@@ -113,7 +112,6 @@ async def test_reset_returns_existing_user_to_incomplete_onboarding() -> None:
     assert reset_user.username == "ivan"
     assert reset_user.onboarding_completed_at is None
     assert reset_user.onboarding_draft is None
-    assert reset_user.cv_text is None
     assert not reset_user.cv_specializations.items
     assert not reset_user.cv_skills.items
     assert not reset_user.effective_work_formats.items

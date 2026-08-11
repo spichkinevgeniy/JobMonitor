@@ -1,6 +1,7 @@
 import hashlib
 import hmac
 import json
+from datetime import UTC, datetime
 from urllib.parse import urlencode
 
 from fastapi.testclient import TestClient
@@ -56,7 +57,7 @@ def _empty_state(completed: bool = False) -> OnboardingStateResponse:
 
 def _init_data() -> str:
     payload = {
-        "auth_date": "1700000000",
+        "auth_date": str(int(datetime.now(UTC).timestamp())),
         "user": json.dumps({"id": 123, "username": "tester"}, separators=(",", ":")),
     }
     data_check_string = "\n".join(f"{key}={value}" for key, value in sorted(payload.items()))

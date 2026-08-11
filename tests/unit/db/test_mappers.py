@@ -17,7 +17,6 @@ def test_user_mapper_round_trip_preserves_skills() -> None:
     user = User.create(
         tg_id=123,
         username="alice",
-        cv_text="resume text",
         cv_specializations_raw=["Backend"],
         cv_skills_raw=["Python", "React"],
         filter_salary_mode=FilterMode.SOFT,
@@ -35,7 +34,6 @@ def test_user_mapper_normalizes_undefined_work_format_to_any() -> None:
     model = UserModel(
         tg_id=123,
         username="alice",
-        cv_text=None,
         cv_specializations=["Backend"],
         cv_skills=["Python"],
         cv_salary_amount=None,
@@ -57,7 +55,7 @@ def test_user_mapper_round_trip_preserves_multi_formats_and_onboarding_draft() -
         current_step=OnboardingStep.LEVEL,
         max_visited_step=OnboardingStep.LEVEL,
         specialty=SpecialtyDraft(
-            specialty=SpecializationType.DESIGN,
+            specialty=SpecializationType.UI_UX_DESIGN,
             skills=frozenset({SkillType.JAVASCRIPT, SkillType.DOCKER}),
         ),
         work_formats=WorkFormats.from_values([WorkFormat.REMOTE, WorkFormat.HYBRID]),

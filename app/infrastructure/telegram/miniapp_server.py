@@ -17,7 +17,10 @@ def build_miniapp_server(*, host: str | None = None, port: int | None = None) ->
         app="app.telegram.miniapp.app:app",
         host=config.MINI_APP_SERVER_HOST if host is None else host,
         port=config.MINI_APP_SERVER_PORT if port is None else port,
-        ws="websockets-sansio",
+        # Вебсокетов в мини-аппе нет, и nginx апгрейд не проксирует. Пакет
+        # websockets приезжал транзитивно и ушёл вместе с лишними
+        # зависимостями pydantic-ai — включать его обратно незачем.
+        ws="none",
         proxy_headers=True,
         forwarded_allow_ips="*",
     )

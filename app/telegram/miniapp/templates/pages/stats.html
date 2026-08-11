@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div
+  class="stats-root"
+  data-stats-root
+  data-stats-url="{{ stats_url }}"
+  data-export-url="{{ export_url }}"
+  data-profile-url="{{ profile_url }}"
+>
+  <p class="form-status" data-stats-status aria-live="polite">Загружаем аналитику...</p>
+
+  <section class="stats-empty is-hidden" data-stats-empty>
+    <div class="filter-card">
+      <h2 class="section-title">Сначала заполните профиль</h2>
+      <p class="input-caption">
+        Укажите специализацию и скиллы — по ним бот подбирает вакансии, и из них же
+        считается вся статистика на этой странице.
+      </p>
+      <a class="save-button save-button--link" href="{{ profile_url }}">Заполнить профиль</a>
+    </div>
+  </section>
+
+  <section class="stats-empty is-hidden" data-stats-no-data>
+    <div class="filter-card">
+      <h2 class="section-title">Пока нечего показать</h2>
+      <p class="input-caption">
+        Профиль заполнен, но подходящих вакансий ещё не было. Бот проверяет каналы
+        постоянно — статистика появится сама, как только что-то найдётся.
+      </p>
+      <p class="input-caption">
+        Если ждать не хочется, ослабьте фильтры: добавьте специализации и скиллы или
+        снимите ограничения по зарплате и формату.
+      </p>
+      <a class="save-button save-button--link" href="{{ profile_url }}">Настроить фильтры</a>
+    </div>
+  </section>
+
+  <div class="stats-cards is-hidden" data-stats-cards>
+    <section class="filter-card stats-card">
+      <div class="stats-card__toprow">
+        <p class="stats-card__eyebrow">Вакансии под ваш профиль</p>
+        <div class="trend-toggle" role="group" aria-label="Гранулярность графика" data-stats-toggle></div>
+      </div>
+      <p class="stats-headline">
+        <span class="stats-headline__value" data-stats-headline-value>0</span>
+        <span class="stats-headline__unit" data-stats-headline-label></span>
+      </p>
+      <div class="stats-chart" data-stats-chart></div>
+      <div class="stats-chart__axis">
+        <span data-stats-chart-from></span>
+        <span>сейчас</span>
+      </div>
+    </section>
+
+    <section class="filter-card stats-card" data-stats-funnel-card>
+      <p class="stats-card__eyebrow">Что отсекает ваш профиль</p>
+      <p class="stats-card__title">за последние 7 дней</p>
+      <div class="funnel-bar" data-stats-funnel-bar></div>
+      <div class="funnel-list" data-stats-funnel-list></div>
+      <p class="funnel-total">
+        <span>Всего по вашей специализации</span>
+        <b data-stats-funnel-total>0</b>
+      </p>
+    </section>
+
+    <section class="filter-card stats-card is-hidden" data-stats-advice-card>
+      <p class="stats-card__eyebrow">Что добавить в профиль</p>
+      <p class="stats-card__title" data-stats-advice-title></p>
+      <div class="advice-list" data-stats-advice-list></div>
+      <a class="card-link" href="{{ profile_url }}?from=stats">Настроить профиль</a>
+    </section>
+
+    <section class="filter-card stats-card" data-stats-company-card>
+      <p class="stats-card__eyebrow">Кто чаще всего нанимает</p>
+      <p class="stats-card__title">Какие вакансии падают вам в ленту · 30 дней</p>
+      <div class="stats-bars" data-stats-company></div>
+      <p class="input-caption" data-stats-company-total></p>
+      <p class="input-caption">
+        Тип определяется автоматически по тексту вакансии — иногда данных не хватает.
+      </p>
+    </section>
+
+  </div>
+
+  <!-- Вне блока карточек: выгрузка нужна и тем, кто очистил профиль,
+       но раньше получал вакансии. -->
+  <section class="filter-card stats-card is-hidden" data-stats-export-card>
+    <p class="export-inline">
+      <span data-stats-export-intro></span>
+      <button type="button" class="export-inline__link" data-export-format="json">JSON</button>
+      <span class="export-inline__sep">·</span>
+      <button type="button" class="export-inline__link" data-export-format="markdown">Markdown</button>
+      <span class="export-inline__sep">·</span>
+      <button type="button" class="export-inline__link" data-export-format="txt">TXT</button>
+    </p>
+    <p class="form-status" data-stats-export-status aria-live="polite"></p>
+  </section>
+</div>
+{% endblock %}

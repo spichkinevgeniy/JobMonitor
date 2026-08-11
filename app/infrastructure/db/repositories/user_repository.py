@@ -1,4 +1,7 @@
-from sqlalchemy import func, select
+from datetime import datetime
+from typing import Any, cast
+
+from sqlalchemy import CursorResult, delete, func, select
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -6,7 +9,9 @@ from app.domain.user.entities import User
 from app.domain.user.repository import IUserRepository
 from app.domain.user.value_objects import UserId
 from app.infrastructure.db.mappers.user import apply_user, user_from_model, user_to_model
+from app.infrastructure.db.models import ResumeUploadLog as ResumeUploadLogModel
 from app.infrastructure.db.models import User as UserModel
+from app.infrastructure.db.models import VacancyDispatchLog as VacancyDispatchLogModel
 
 
 class UserRepository(IUserRepository):
@@ -88,3 +93,34 @@ class UserRepository(IUserRepository):
             select(UserModel.tg_id).where(UserModel.is_active.is_(True))
         )
         return [row[0] for row in result.all()]
+
+    async def get_resume_upload_stats(
+        self, tg_id: int, since: datetime
+    ) -> tuple[int, datetime | None]:
+        """Число загрузок в окне и время последней — она может быть старше окна."""
+        result = await self._session.execute(
+            select(
+                func.count().filter(ResumeUploadLogModel.uploaded_at >= since),
+                func.max(ResumeUploadLogModel.uploaded_at),
+            ).where(ResumeUploadLogModel.user_tg_id == tg_id)
+        )
+        count, last_uploaded_at = result.one()
+        return count or 0, last_uploaded_at
+
+    async def log_resume_upload(self, tg_id: int) -> None:
+        self._session.add(ResumeUploadLogModel(user_tg_id=tg_id))
+        await self._session.flush()
+
+    async def delete_by_tg_id(self, tg_id: UserId) -> bool:
+        """Профиль и оба лога. Внешних ключей нет, каскад не сработает."""
+        for model in (VacancyDispatchLogModel, ResumeUploadLogModel):
+            await self._session.execute(delete(model).where(model.user_tg_id == tg_id.value))
+        # execute() объявлен как Result, но на DML возвращает CursorResult —
+        # только у него есть rowcount. Приведение вместо ignore, чтобы не
+        # глушить настоящие ошибки в этой строке.
+        result = cast(
+            "CursorResult[Any]",
+            await self._session.execute(delete(UserModel).where(UserModel.tg_id == tg_id.value)),
+        )
+        await self._session.flush()
+        return bool(result.rowcount)

@@ -18,7 +18,6 @@ from app.domain.user.value_objects import FilterMode, LevelFilterMode, UserId
 class User:
     tg_id: UserId
     username: str | None
-    cv_text: str | None
 
     cv_specializations: Specializations
     cv_skills: Skills
@@ -46,7 +45,6 @@ class User:
         cls,
         tg_id: int,
         username: str | None = None,
-        cv_text: str | None = None,
         cv_specializations_raw: list[str] | None = None,
         cv_skills_raw: list[str] | None = None,
         cv_salary_amount: int | None = None,
@@ -95,7 +93,6 @@ class User:
         return cls(
             tg_id=UserId(tg_id),
             username=username,
-            cv_text=cv_text,
             cv_specializations=specs,
             cv_skills=skills,
             cv_salary=salary,

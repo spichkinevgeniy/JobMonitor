@@ -5,34 +5,94 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.application.dto.miniapp import (
     ExperienceLevelChoice,
+    ExportRequest,
     FormatReadResponse,
     FormatSaveRequest,
     GradeChoice,
     LevelModeChoice,
     LevelReadResponse,
     LevelSaveRequest,
+    ProfileStatsResponse,
     SalaryModeChoice,
     SalaryReadResponse,
     SalarySaveRequest,
     SaveResponse,
+    SkillSuggestionResponse,
     SpecialtyReadResponse,
     SpecialtySaveRequest,
+    StatsCompanyTypeResponse,
+    StatsExportResponse,
+    StatsFunnelResponse,
+    StatsFunnelRowResponse,
+    StatsTrendPointResponse,
+    StatsTrendSeriesResponse,
     WorkFormatChoice,
 )
+from app.application.ports.observability_port import Feature
+from app.application.services.export_service import ExportFormat, ExportService
+from app.application.services.stats_service import (
+    FilterFunnel,
+    ProfileStats,
+    StatsService,
+    TrendGranularity,
+    TrendPoint,
+)
 from app.application.services.user_service import UserService
+from app.core.config import config
+from app.domain.matching.entities import MatchRejectionReason
 from app.domain.shared.value_objects import ExperienceLevel, Grade, WorkFormat
 from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode, LevelFilterMode
-from app.telegram.miniapp.deps import get_current_user, get_user_service, parse_user_context
+from app.infrastructure.notifications import TelegramDocumentSender
+from app.infrastructure.observability import observe_feature
+from app.telegram.bot.views import SUPPORT_BOT_HANDLE
+from app.telegram.miniapp.deps import (
+    get_current_user,
+    get_document_sender,
+    get_export_service,
+    get_stats_service,
+    get_user_service,
+    parse_user_context,
+)
 from app.telegram.miniapp.page_context import (
     build_format_page_context,
     build_level_page_context,
     build_salary_page_context,
     build_specialty_page_context,
+    build_stats_page_context,
+    company_type_label,
+)
+from app.telegram.miniapp.throttle import (
+    cancel_export,
+    register_export,
+    seconds_until_export_allowed,
 )
 from app.telegram.miniapp.ui import templates
 
+_EXPORT_FEATURES = {
+    ExportFormat.JSON: Feature.EXPORT_JSON,
+    ExportFormat.MARKDOWN: Feature.EXPORT_MARKDOWN,
+    ExportFormat.TXT: Feature.EXPORT_TXT,
+}
+
+PRIVACY_UPDATED_AT = "10 августа 2026"
+
 router = APIRouter()
+
+
+@router.get("/privacy", response_class=HTMLResponse, name="privacy")
+async def privacy_page(request: Request) -> HTMLResponse:
+    """Публичная страница: открывается и вне Telegram, авторизации не требует."""
+    return templates.TemplateResponse(
+        request,
+        "pages/privacy.html",
+        {
+            "updated_at": PRIVACY_UPDATED_AT,
+            "operator_name": config.PRIVACY_OPERATOR_NAME,
+            "support_handle": SUPPORT_BOT_HANDLE,
+            "contact_email": config.PRIVACY_CONTACT_EMAIL,
+        },
+    )
 
 
 @router.get("/miniapp", include_in_schema=False)
@@ -76,6 +136,77 @@ async def level_page(request: Request) -> HTMLResponse:
     )
 
 
+@router.get("/miniapp/stats", response_class=HTMLResponse, name="miniapp-stats")
+async def stats_page(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse(
+        request,
+        "pages/stats.html",
+        build_stats_page_context(request),
+    )
+
+
+@router.get(
+    "/miniapp/api/stats",
+    name="miniapp-read-stats",
+    response_model=ProfileStatsResponse,
+)
+async def read_stats(
+    user: Annotated[User, Depends(get_current_user)],
+    service: Annotated[StatsService, Depends(get_stats_service)],
+    export_service: Annotated[ExportService, Depends(get_export_service)],
+) -> ProfileStatsResponse:
+    observe_feature(Feature.STATS_OPEN)
+    stats = await service.build_profile_stats(user)
+    export_count = await export_service.count_available(user.tg_id.value)
+    if stats.skill_suggestions:
+        observe_feature(Feature.ADVICE_SHOWN)
+    return _to_stats_response(user, stats, export_count)
+
+
+@router.post(
+    "/miniapp/api/export",
+    name="miniapp-export",
+    response_model=SaveResponse,
+)
+async def export_vacancies(
+    payload: ExportRequest,
+    service: Annotated[ExportService, Depends(get_export_service)],
+    sender: Annotated[TelegramDocumentSender, Depends(get_document_sender)],
+) -> SaveResponse:
+    user_context = parse_user_context(payload.init_data)
+
+    try:
+        export_format = ExportFormat(payload.export_format)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Неизвестный формат выгрузки.") from None
+
+    # Проверка и отметка без await между ними, иначе пачка запросов пройдёт целиком.
+    retry_after = seconds_until_export_allowed(user_context.tg_id)
+    if retry_after:
+        raise HTTPException(
+            status_code=429,
+            detail=f"Слишком часто. Повторите через {retry_after} с.",
+        )
+    register_export(user_context.tg_id)
+    observe_feature(_EXPORT_FEATURES[export_format])
+
+    export_file = await service.build(user_context.tg_id, export_format)
+    if export_file is None:
+        cancel_export(user_context.tg_id)
+        raise HTTPException(
+            status_code=404,
+            detail="Пока нечего выгружать: бот ещё не присылал вам вакансии.",
+        )
+
+    await sender.send_document(
+        user_tg_id=user_context.tg_id,
+        filename=export_file.filename,
+        content=export_file.content,
+        caption=f"Выгрузка вакансий: {export_file.count} шт.",
+    )
+    return SaveResponse(message="Файл отправлен в чат с ботом.")
+
+
 @router.get(
     "/miniapp/api/specialty",
     name="miniapp-read-specialty",
@@ -113,6 +244,7 @@ async def save_specialty(
     if not updated:
         raise HTTPException(status_code=404, detail="Пользователь не найден.")
 
+    observe_feature(Feature.PROFILE_SAVE)
     return SaveResponse(message="Специализации и скиллы сохранены.")
 
 
@@ -245,6 +377,132 @@ async def save_level(
         raise HTTPException(status_code=404, detail="Пользователь не найден.")
 
     return SaveResponse(message="Грейд и опыт сохранены.")
+
+
+_TREND_TOGGLE_LABELS = {
+    TrendGranularity.WEEK: "Недели",
+    TrendGranularity.DAY: "Дни",
+}
+_REJECTION_LABELS = {
+    MatchRejectionReason.SALARY: "Отсёк фильтр зарплаты",
+    MatchRejectionReason.GRADE: "Отсёк грейд",
+    MatchRejectionReason.EXPERIENCE: "Отсёк опыт",
+    MatchRejectionReason.FORMAT: "Отсёк формат работы",
+}
+# Бакеты скользящие (от «сейчас» назад), а не календарные, поэтому пишем
+# «за последние 7 дней», а не «за эту неделю».
+_TREND_HEADLINE_LABELS = {
+    TrendGranularity.WEEK: "за последние 7 дней",
+    TrendGranularity.DAY: "за последние сутки",
+}
+
+
+_TREND_LAST_LABELS = {
+    TrendGranularity.WEEK: "эта неделя",
+    TrendGranularity.DAY: "сегодня",
+}
+
+
+def _trend_point_label(point: TrendPoint, granularity: TrendGranularity, *, is_last: bool) -> str:
+    """Подпись корзины — дата её начала, но у последней это сбивает с толку.
+
+    Последняя корзина идёт от «сейчас минус окно» до «сейчас», то есть 10.08
+    она подписана 03.08 — и выглядит как данные недельной давности, хотя
+    включает сегодняшний день.
+    """
+    if is_last:
+        return _TREND_LAST_LABELS[granularity]
+    return point.bucket_start.strftime("%d.%m")
+
+
+def _to_stats_response(
+    user: User,
+    stats: ProfileStats,
+    export_count: int,
+) -> ProfileStatsResponse:
+    return ProfileStatsResponse(
+        has_profile=bool(user.cv_specializations.items and user.cv_skills.items),
+        has_data=_has_any_data(stats),
+        skill_suggestions=[
+            SkillSuggestionResponse(skill=item.skill, unlocks=item.unlocks)
+            for item in stats.skill_suggestions
+        ],
+        export=StatsExportResponse(
+            count=export_count,
+        ),
+        trends=[
+            StatsTrendSeriesResponse(
+                granularity=series.granularity.value,
+                toggle_label=_TREND_TOGGLE_LABELS[series.granularity],
+                headline_label=_TREND_HEADLINE_LABELS[series.granularity],
+                points=[
+                    StatsTrendPointResponse(
+                        label=_trend_point_label(
+                            point,
+                            series.granularity,
+                            is_last=index == len(series.points) - 1,
+                        ),
+                        count=point.count,
+                    )
+                    for index, point in enumerate(series.points)
+                ],
+            )
+            for series in stats.trends
+        ],
+        company_breakdown=[
+            StatsCompanyTypeResponse(
+                label=company_type_label(item.company_type.value),
+                count=item.count,
+                percent=round(item.count * 100 / stats.company_total),
+            )
+            for item in stats.company_breakdown
+        ],
+        company_total=stats.company_total,
+        funnel=_to_funnel_response(stats.funnel),
+    )
+
+
+def _has_any_data(stats: ProfileStats) -> bool:
+    """У нового пользователя окна пустые — показывать нули как аналитику нечестно."""
+    if stats.funnel.total or stats.company_total:
+        return True
+    return any(point.count for series in stats.trends for point in series.points)
+
+
+def _to_funnel_response(funnel: FilterFunnel) -> StatsFunnelResponse:
+    # Считаем от всего, что было по специализации, а не от прошедшего
+    # префильтр: раньше потеря на навыках не попадала в воронку вообще, и
+    # человек с одним навыком видел «отсеяно ноль» вместо реальных потерь.
+    total = funnel.specialization_total
+    if total == 0:
+        return StatsFunnelResponse(total=0, matched=0, rows=[])
+
+    rows = [
+        StatsFunnelRowResponse(
+            kind="matched",
+            label="Дошло до вас",
+            count=funnel.matched,
+            percent=round(funnel.matched * 100 / total),
+        )
+    ]
+    if funnel.skills_mismatch:
+        rows.append(
+            StatsFunnelRowResponse(
+                kind="skills",
+                label="Не совпали навыки",
+                count=funnel.skills_mismatch,
+                percent=round(funnel.skills_mismatch * 100 / total),
+            )
+        )
+    rows.extend(
+        StatsFunnelRowResponse(
+            label=_REJECTION_LABELS[item.reason],
+            count=item.count,
+            percent=round(item.count * 100 / total),
+        )
+        for item in funnel.rejections
+    )
+    return StatsFunnelResponse(total=total, matched=funnel.matched, rows=rows)
 
 
 def _work_format_choice(user: User) -> str:

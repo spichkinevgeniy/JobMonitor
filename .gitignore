@@ -56,3 +56,5 @@ frontend/visual-artifacts/react-current/
 frontend/visual-artifacts/diff/
 frontend/visual-artifacts/visual-report.json
 frontend/visual-artifacts/dashboard-preview.png
+# Локальная карта каналов для разработки
+channels_map.local.json

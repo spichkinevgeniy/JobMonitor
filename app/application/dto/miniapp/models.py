@@ -101,6 +101,64 @@ class SaveResponse(BaseModel):
     message: str
 
 
+class StatsTrendPointResponse(BaseModel):
+    label: str
+    count: int
+
+
+class StatsTrendSeriesResponse(BaseModel):
+    granularity: str
+    toggle_label: str
+    headline_label: str
+    points: list[StatsTrendPointResponse]
+
+
+class StatsCompanyTypeResponse(BaseModel):
+    label: str
+    count: int
+    percent: int
+
+
+class StatsFunnelRowResponse(BaseModel):
+    # Вид, а не позиция: цвет строки не должен зависеть от порядка,
+    # который задаётся в другом файле.
+    kind: str = "filter"
+    label: str
+    count: int
+    percent: int
+
+
+class SkillSuggestionResponse(BaseModel):
+    skill: str
+    unlocks: int
+
+
+class StatsFunnelResponse(BaseModel):
+    total: int
+    matched: int = 0
+    rows: list[StatsFunnelRowResponse]
+
+
+class StatsExportResponse(BaseModel):
+    count: int
+
+
+class ExportRequest(BaseModel):
+    init_data: str
+    export_format: str
+
+
+class ProfileStatsResponse(BaseModel):
+    has_profile: bool
+    has_data: bool
+    skill_suggestions: list[SkillSuggestionResponse]
+    export: StatsExportResponse
+    trends: list[StatsTrendSeriesResponse]
+    company_breakdown: list[StatsCompanyTypeResponse]
+    company_total: int
+    funnel: StatsFunnelResponse
+
+
 @dataclass(frozen=True, slots=True)
 class MiniAppPayload:
     specializations: frozenset[SpecializationType]

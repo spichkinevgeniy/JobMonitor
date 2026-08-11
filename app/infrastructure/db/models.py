@@ -36,6 +36,10 @@ class Vacancy(Base):
     work_format: Mapped[str] = mapped_column(String, default="UNDEFINED")
     company_type: Mapped[str] = mapped_column(String, default="UNDEFINED")
 
+    source_channel: Mapped[str | None] = mapped_column(String, nullable=True)
+    source_message_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    source_topic_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
@@ -45,7 +49,6 @@ class User(Base):
 
     tg_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     username: Mapped[str | None] = mapped_column(String, nullable=True)
-    cv_text: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     cv_specializations: Mapped[list[str]] = mapped_column(JSONB, default=list)
     cv_skills: Mapped[list[str]] = mapped_column(JSONB, default=list)
@@ -78,10 +81,42 @@ class VacancyDispatchLog(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     user_tg_id: Mapped[int] = mapped_column(BigInteger, index=True)
-    vacancy_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True))
+    vacancy_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), index=True)
     dispatched_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+    matched_skills: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    matched_specializations: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    feedback: Mapped[str | None] = mapped_column(String, nullable=True)
+    feedback_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class ResumeUploadLog(Base):
+    """Лог загрузок резюме: по нему считаются кулдаун и дневная квота."""
+
+    __tablename__ = "resume_upload_log"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_tg_id: Mapped[int] = mapped_column(BigInteger, index=True)
+    uploaded_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
+class MetricCounter(Base):
+    """Счётчики событий, у которых нет своей таблицы.
+
+    Хранится агрегат, а не событие: строк столько же, сколько пар
+    «метрика + метка», и таблица не растёт от нагрузки.
+    """
+
+    __tablename__ = "metric_counter"
+
+    name: Mapped[str] = mapped_column(String, primary_key=True)
+    label: Mapped[str] = mapped_column(String, primary_key=True, default="")
+    value: Mapped[int] = mapped_column(BigInteger, default=0)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 async def init_db() -> None:

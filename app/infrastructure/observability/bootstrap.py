@@ -6,7 +6,9 @@ from prometheus_client import start_http_server
 from app.application.ports.observability_port import IObservabilityService
 from app.core.config import config
 from app.core.logger import get_app_logger
+from app.infrastructure.db import async_session_factory
 from app.infrastructure.db.session import engine
+from app.infrastructure.observability.counter_store import PersistentCounterStore
 from app.infrastructure.observability.service import (
     NoOpObservabilityService,
     PrometheusObservabilityService,
@@ -76,7 +78,13 @@ def init_metrics_server() -> None:
     )
 
 
-def build_observability_service() -> IObservabilityService:
+def build_counter_store() -> PersistentCounterStore:
+    return PersistentCounterStore(async_session_factory)
+
+
+def build_observability_service(
+    counter_store: PersistentCounterStore | None = None,
+) -> IObservabilityService:
     if config.METRICS_ENABLED:
-        return PrometheusObservabilityService()
+        return PrometheusObservabilityService(counter_store)
     return NoOpObservabilityService()

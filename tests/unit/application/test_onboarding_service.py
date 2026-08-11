@@ -83,7 +83,7 @@ async def _save_complete_draft(service: OnboardingService) -> None:
                 "step": "SPECIALTY",
                 "navigate_to": "WORK_FORMAT",
                 "data": {
-                    "specialty": "Design",
+                    "specialty": "UI/UX & Product Design",
                     "skills": ["JavaScript", "Docker"],
                 },
             }
@@ -248,7 +248,7 @@ async def test_incomplete_complete_is_rejected_without_applying_filters() -> Non
             {
                 "step": "SPECIALTY",
                 "navigate_to": "WORK_FORMAT",
-                "data": {"specialty": "Design", "skills": []},
+                "data": {"specialty": "UI/UX & Product Design", "skills": []},
             }
         ),
     )
@@ -270,7 +270,7 @@ async def test_complete_applies_all_filters_and_junior_plus() -> None:
     user = repository.user
     assert state.completed is True
     assert user.onboarding_draft is None
-    assert {item.value for item in user.cv_specializations.items} == {"Design"}
+    assert {item.value for item in user.cv_specializations.items} == {"UI/UX & Product Design"}
     assert {item.value for item in user.cv_skills.items} == {"JavaScript", "Docker"}
     assert user.effective_work_formats.items == {WorkFormat.REMOTE, WorkFormat.HYBRID}
     assert user.cv_work_format is None

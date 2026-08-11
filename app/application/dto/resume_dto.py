@@ -10,22 +10,35 @@ from app.domain.shared.value_objects import (
 )
 
 
+class SpecializationWithEvidence(BaseModel):
+    specialization: SpecializationType
+    evidence: str = Field(
+        description="Дословная цитата из резюме, подтверждающая эту специализацию.",
+    )
+
+
+class SkillWithEvidence(BaseModel):
+    skill: SkillType
+    evidence: str = Field(
+        description="Дословная цитата из резюме, подтверждающая этот skill.",
+    )
+
+
 class OutResumeParse(BaseModel):
     is_resume: bool = Field(
         ...,
         description="Признак того, является ли документ резюме или профилем кандидата.",
     )
-    full_relevant_text_from_resume: str | None = Field(
-        default=None,
-        description="Полный релевантный текст резюме. Если это не резюме, верни None.",
-    )
-    specializations: list[SpecializationType] = Field(
+    specializations: list[SpecializationWithEvidence] = Field(
         default_factory=list,
-        description="Список специализаций. Если кандидат fullstack, можно указать Backend и Frontend.",
+        description=(
+            "Список специализаций с цитатой-подтверждением каждой. "
+            "Если кандидат fullstack, можно указать Backend и Frontend."
+        ),
     )
-    skills: list[SkillType] = Field(
+    skills: list[SkillWithEvidence] = Field(
         default_factory=list,
-        description="Список ключевых скиллов из фиксированного перечня SkillType.",
+        description="Список ключевых скиллов из фиксированного перечня SkillType, с цитатой-подтверждением каждого.",
     )
     salary_amount: int | None = Field(
         default=None,

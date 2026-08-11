@@ -53,7 +53,7 @@ const specialties = [
     icon: <CloudQueueIcon />,
   },
   {
-    id: "Design",
+    id: "UI/UX & Product Design",
     title: "Дизайн",
     description: "Интерфейсы и пользовательский опыт",
     icon: <BrushOutlinedIcon />,

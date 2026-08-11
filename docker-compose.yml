@@ -3,6 +3,7 @@ services:
     image: postgres:16-alpine
     container_name: job_monitor_db_prod
     restart: unless-stopped
+    mem_limit: 320m
     environment:
       POSTGRES_USER: ${POSTGRES_USER?Variable is not set}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?Variable is not set}
@@ -23,6 +24,8 @@ services:
       dockerfile: Dockerfile
     container_name: job_monitor_app_prod
     restart: unless-stopped
+    mem_limit: 896m
+    cpus: 1.5
     environment:
       APP_ENV: production
       API_ID: ${API_ID?Variable is not set}
@@ -49,6 +52,9 @@ services:
       LOGFIRE_TOKEN: ${LOGFIRE_TOKEN:-}
       LOGFIRE_SERVICE_NAME: ${LOGFIRE_SERVICE_NAME:-smartjobmonitor}
       LOGFIRE_ENV: ${LOGFIRE_ENV:-production}
+      TELEMETRY_SALT: ${TELEMETRY_SALT?Variable is not set}
+      PRIVACY_OPERATOR_NAME: ${PRIVACY_OPERATOR_NAME:-Евгений Спичкин}
+      PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-simaca.business@gmail.com}
       MINI_APP_SERVER_HOST: 0.0.0.0
       MINI_APP_SERVER_PORT: ${MINI_APP_SERVER_PORT:-8080}
       METRICS_ENABLED: ${METRICS_ENABLED:-true}

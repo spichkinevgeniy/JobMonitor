@@ -10,6 +10,7 @@ from app.application.dto.miniapp import (
     WorkFormatChoice,
 )
 from app.domain.shared.value_objects import (
+    CompanyType,
     ExperienceLevel,
     Grade,
     SkillType,
@@ -40,6 +41,7 @@ _SKILL_SECTION_ORDER = (
     SpecializationType.QA,
     SpecializationType.INFRASTRUCTURE_DEVOPS,
     SpecializationType.ANALYTICS,
+    SpecializationType.UI_UX_DESIGN,
 )
 _SKILL_OPTION_VIEWS: tuple[SkillOptionView, ...] = (
     SkillOptionView(SkillType.PYTHON.value, SkillType.PYTHON.value, SpecializationType.BACKEND),
@@ -153,6 +155,31 @@ _SKILL_OPTION_VIEWS: tuple[SkillOptionView, ...] = (
         SpecializationType.ANALYTICS,
     ),
     SkillOptionView(SkillType.SQL.value, SkillType.SQL.value, SpecializationType.ANALYTICS),
+    SkillOptionView(
+        SkillType.FIGMA.value,
+        SkillType.FIGMA.value,
+        SpecializationType.UI_UX_DESIGN,
+    ),
+    SkillOptionView(
+        SkillType.PROTOTYPING.value,
+        SkillType.PROTOTYPING.value,
+        SpecializationType.UI_UX_DESIGN,
+    ),
+    SkillOptionView(
+        SkillType.UX_RESEARCH.value,
+        SkillType.UX_RESEARCH.value,
+        SpecializationType.UI_UX_DESIGN,
+    ),
+    SkillOptionView(
+        SkillType.DESIGN_SYSTEMS.value,
+        SkillType.DESIGN_SYSTEMS.value,
+        SpecializationType.UI_UX_DESIGN,
+    ),
+    SkillOptionView(
+        SkillType.INTERACTION_DESIGN.value,
+        SkillType.INTERACTION_DESIGN.value,
+        SpecializationType.UI_UX_DESIGN,
+    ),
 )
 
 _WORK_FORMAT_LABELS = {
@@ -179,6 +206,13 @@ _LEVEL_MODE_LABELS = {
     LevelModeChoice.UP_TO.value: "Не выше",
     LevelModeChoice.EXACT.value: "Только этот",
     LevelModeChoice.AT_LEAST.value: "Не ниже",
+}
+_COMPANY_TYPE_LABELS = {
+    CompanyType.PRODUCT.value: "Продуктовые команды",
+    CompanyType.OUTSTAFF.value: "Аутстафф и агентства",
+    CompanyType.STARTUP.value: "Стартапы",
+    CompanyType.PROJECT_WORK.value: "Разовая и проектная работа",
+    CompanyType.UNDEFINED.value: "Не удалось определить",
 }
 
 
@@ -260,8 +294,20 @@ def _path_for(request: Request, name: str, **path_params: object) -> str:
     return str(request.app.url_path_for(name, **path_params))
 
 
+def _back_url(request: Request) -> str | None:
+    """Возврат показываем, только если человек пришёл из аналитики.
+
+    Из меню бота настройки открываются сами по себе, и ссылка «назад в
+    аналитику» там сбивала бы с толку.
+    """
+    if request.query_params.get("from") != "stats":
+        return None
+    return _path_for(request, "miniapp-stats")
+
+
 def build_specialty_page_context(request: Request) -> dict[str, object]:
     return {
+        "back_url": _back_url(request),
         "page_title": "Настройка специальностей",
         "page_description": "Добавьте или удалите нужные:",
         "active_page": "specialty",
@@ -298,6 +344,21 @@ def build_salary_page_context(request: Request) -> dict[str, object]:
         "action_label": "Сохранить",
         "save_url": _path_for(request, "miniapp-save-salary"),
         "success_text": "Зарплата сохранена.",
+    }
+
+
+def company_type_label(value: str) -> str:
+    return _COMPANY_TYPE_LABELS.get(value, value)
+
+
+def build_stats_page_context(request: Request) -> dict[str, object]:
+    return {
+        "page_title": "Аналитика",
+        "page_description": "Что происходит с вакансиями под ваш профиль.",
+        "active_page": "stats",
+        "stats_url": _path_for(request, "miniapp-read-stats"),
+        "export_url": _path_for(request, "miniapp-export"),
+        "profile_url": _path_for(request, "miniapp-specialty"),
     }
 
 

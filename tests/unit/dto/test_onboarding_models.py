@@ -16,7 +16,7 @@ def test_patch_uses_step_discriminator() -> None:
         {
             "step": "SPECIALTY",
             "navigate_to": "WORK_FORMAT",
-            "data": {"specialty": "Design", "skills": ["JavaScript", "Docker"]},
+            "data": {"specialty": "UI/UX & Product Design", "skills": ["JavaScript", "Docker"]},
         }
     )
 

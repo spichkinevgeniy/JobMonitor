@@ -42,7 +42,7 @@ def _completed_user() -> User:
 
 def _init_data() -> str:
     payload = {
-        "auth_date": "1700000000",
+        "auth_date": str(int(datetime.now(UTC).timestamp())),
         "user": json.dumps({"id": 123, "username": "tester"}, separators=(",", ":")),
     }
     data_check_string = "\n".join(f"{key}={value}" for key, value in sorted(payload.items()))

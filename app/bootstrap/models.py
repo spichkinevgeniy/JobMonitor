@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from aiogram import Bot, Dispatcher
 
 from app.application.services.user_service import UserService
+from app.infrastructure.observability.counter_store import PersistentCounterStore
 from app.infrastructure.telegram.miniapp_server import MiniAppServer
 
 if TYPE_CHECKING:
@@ -22,6 +23,7 @@ class RuntimeComponents:
     provider: TelethonClientProvider
     miniapp_server: MiniAppServer
     user_service: UserService
+    counter_store: PersistentCounterStore
 
 
 @dataclass(slots=True)
