@@ -49,7 +49,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="start the Telegram bot together with the Telethon scraper",
     )
+    parser.add_argument(
+        "--public-url",
+        default="",
+        help="use an already running tunnel (ngrok and similar) instead of cloudflared",
+    )
     args = parser.parse_args(argv)
+    if args.public_url and args.browser:
+        parser.error("--public-url and --browser cannot be used together")
     if args.browser and args.with_scraper:
         parser.error("--browser and --with-scraper cannot be used together")
     return args
@@ -343,8 +350,9 @@ def _validate_prerequisites(args: argparse.Namespace) -> tuple[str, str, str | N
 
     docker = _find_required_tool("docker")
     npm = _find_required_tool("npm")
-    cloudflared = None if args.browser else find_cloudflared()
-    if not args.browser and cloudflared is None:
+    skip_tunnel = args.browser or bool(args.public_url)
+    cloudflared = None if skip_tunnel else find_cloudflared()
+    if not skip_tunnel and cloudflared is None:
         raise DevEnvironmentError(
             "cloudflared is required for Telegram mode; install it or set "
             "JOBMONITOR_CLOUDFLARED to the executable path"
@@ -426,18 +434,10 @@ def run(args: argparse.Namespace) -> None:
         print(f"[dev] Dashboard local URL: {DASHBOARD_URL}/miniapp/dashboard/")
 
         if not args.browser:
-            assert cloudflared is not None
-            tunnel, url_queue = _start_tunnel(
-                [
-                    cloudflared,
-                    "tunnel",
-                    "--url",
-                    FRONTEND_URL,
-                    "--no-autoupdate",
-                ]
-            )
-            processes.append(tunnel)
-            public_origin = _wait_for_tunnel(tunnel, url_queue)
+            if args.public_url:
+                public_origin = args.public_url.rstrip("/")
+            else:
+                public_origin = _open_cloudflared_tunnel(cloudflared, processes)
             public_miniapp_url = f"{public_origin}/miniapp/react/"
             print(f"[dev] Telegram Mini App URL: {public_miniapp_url}")
 
@@ -456,6 +456,15 @@ def run(args: argparse.Namespace) -> None:
         for managed in reversed(processes):
             _stop_process(managed)
         print("[dev] Local processes stopped; PostgreSQL data volume was preserved")
+
+
+def _open_cloudflared_tunnel(cloudflared: str | None, processes: list[ManagedProcess]) -> str:
+    assert cloudflared is not None
+    tunnel, url_queue = _start_tunnel(
+        [cloudflared, "tunnel", "--url", FRONTEND_URL, "--no-autoupdate"]
+    )
+    processes.append(tunnel)
+    return _wait_for_tunnel(tunnel, url_queue)
 
 
 def main() -> int:

@@ -23,7 +23,7 @@ export default defineConfig({
     host: "127.0.0.1",
     port: 5173,
     strictPort: true,
-    allowedHosts: [".trycloudflare.com"],
+    allowedHosts: [".trycloudflare.com", ".ngrok-free.dev", ".ngrok-free.app", ".ngrok.io"],
     proxy: {
       "/miniapp/dashboard": {
         target: "http://127.0.0.1:5174",
@@ -35,6 +35,8 @@ export default defineConfig({
       "/miniapp/format": "http://127.0.0.1:8081",
       "/miniapp/salary": "http://127.0.0.1:8081",
       "/miniapp/level": "http://127.0.0.1:8081",
+      "/miniapp/stats": "http://127.0.0.1:8081",
+      "/privacy": "http://127.0.0.1:8081",
     },
   },
 });

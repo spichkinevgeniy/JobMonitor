@@ -16,7 +16,7 @@ export default defineConfig({
     host: '127.0.0.1',
     port: 5174,
     strictPort: true,
-    allowedHosts: ['.trycloudflare.com'],
+    allowedHosts: ['.trycloudflare.com', '.ngrok-free.dev', '.ngrok-free.app', '.ngrok.io'],
     proxy: {
       '/miniapp/api': 'http://127.0.0.1:8081',
     },
