@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { Chip } from '@jobmonitor/ui'
 import { useState, type MouseEventHandler } from 'react'
 import { fn } from 'storybook/test'
-
-import { Chip } from './Chip'
 
 const meta = {
   title: 'Shared/Chip',

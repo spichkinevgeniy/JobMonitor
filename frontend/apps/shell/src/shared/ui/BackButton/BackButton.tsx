@@ -5,7 +5,7 @@ import MuiButton, {
 import { styled } from "@mui/material/styles";
 import { forwardRef } from "react";
 
-import { semanticColors } from "@/app/theme/foundations";
+import { semanticColors } from "@jobmonitor/ui";
 import type { BackButtonProps } from "./BackButton.types";
 
 const NavigationButton = styled(MuiButton)({
@@ -48,7 +48,7 @@ const NavigationButton = styled(MuiButton)({
 });
 
 export const BackButton = forwardRef<HTMLButtonElement, BackButtonProps>(
-  (props, ref) => {
+  ({ label = "Назад", ...props }, ref) => {
     return (
       <NavigationButton ref={ref} variant="text" {...props}>
         <ChevronLeftIcon
@@ -59,7 +59,7 @@ export const BackButton = forwardRef<HTMLButtonElement, BackButtonProps>(
             flexShrink: 0,
           }}
         />
-        Назад
+        {label}
       </NavigationButton>
     );
   },

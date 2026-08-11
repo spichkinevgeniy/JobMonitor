@@ -2,13 +2,17 @@ import SearchIcon from '@mui/icons-material/Search'
 import { Box, Typography } from '@mui/material'
 import type { ReactNode } from 'react'
 
-import { semanticColors } from '@/app/theme/foundations'
+import { semanticColors } from '@jobmonitor/ui'
 import { DesignPreviewCard, DesignPreviewPage } from '@/design/shared/DesignPreview'
 import { TextField } from '@/shared/ui/TextField'
 
 interface PreviewStateProps {
   label: string
   children: ReactNode
+}
+
+const auditInputProps = {
+  'data-audit-typography': true,
 }
 
 const PreviewState = ({ label, children }: PreviewStateProps) => (
@@ -50,13 +54,21 @@ const TextFieldPreview = () => (
   >
     <DesignPreviewCard title="Default">
       <PreviewState label="Default">
-        <TextField placeholder="Введите значение" />
+        <TextField
+          data-audit-target
+          data-audit-root
+          inputProps={auditInputProps}
+          placeholder="Введите значение"
+        />
       </PreviewState>
     </DesignPreviewCard>
 
     <DesignPreviewCard title="Search">
       <PreviewState label="Search">
         <TextField
+          data-audit-target
+          data-audit-root
+          inputProps={auditInputProps}
           placeholder="Найдите навык"
           startAdornment={<SearchIcon />}
         />
@@ -66,6 +78,9 @@ const TextFieldPreview = () => (
     <DesignPreviewCard title="Salary">
       <PreviewState label="Salary">
         <TextField
+          data-audit-target
+          data-audit-root
+          inputProps={auditInputProps}
           label="Сумма в месяц, ₽"
           defaultValue="150 000"
           endAdornment="₽"
@@ -77,6 +92,9 @@ const TextFieldPreview = () => (
     <DesignPreviewCard title="Error">
       <PreviewState label="Error">
         <TextField
+          data-audit-target
+          data-audit-root
+          inputProps={auditInputProps}
           label="Сумма в месяц, ₽"
           defaultValue="0"
           error
@@ -87,7 +105,13 @@ const TextFieldPreview = () => (
 
     <DesignPreviewCard title="Disabled">
       <PreviewState label="Disabled">
-        <TextField placeholder="Введите значение" disabled />
+        <TextField
+          data-audit-target
+          data-audit-root
+          inputProps={auditInputProps}
+          placeholder="Введите значение"
+          disabled
+        />
       </PreviewState>
     </DesignPreviewCard>
   </DesignPreviewPage>

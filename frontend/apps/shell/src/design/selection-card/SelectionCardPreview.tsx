@@ -1,7 +1,7 @@
 import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined'
 import CodeIcon from '@mui/icons-material/Code'
 import StorageIcon from '@mui/icons-material/Storage'
-import { Stack, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import type { ReactNode } from 'react'
 
 import { DesignPreviewCard, DesignPreviewPage } from '@/design/shared/DesignPreview'
@@ -17,7 +17,9 @@ const PreviewState = ({ label, children }: PreviewStateProps) => (
     <Typography sx={{ color: 'text.secondary', fontSize: 12, fontWeight: 500 }}>
       {label}
     </Typography>
-    {children}
+    <Box data-audit-target sx={{ width: '100%' }}>
+      {children}
+    </Box>
   </Stack>
 )
 

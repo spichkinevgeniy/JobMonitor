@@ -6,7 +6,7 @@ import '@fontsource/inter/700.css'
 import type { Preview } from '@storybook/react-vite'
 import React from 'react'
 
-import { theme } from '@/app/theme/theme'
+import { theme } from '@jobmonitor/ui'
 
 const preview: Preview = {
   decorators: [

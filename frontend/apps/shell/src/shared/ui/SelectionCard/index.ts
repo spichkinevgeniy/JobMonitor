@@ -1,2 +1,5 @@
 export { SelectionCard } from './SelectionCard'
-export type { SelectionCardProps } from './SelectionCard.types'
+export type {
+  SelectionCardLayout,
+  SelectionCardProps,
+} from './SelectionCard.types'

@@ -1,6 +1,8 @@
 import type { ButtonBaseProps as MuiButtonBaseProps } from '@mui/material/ButtonBase'
 import type { ReactNode } from 'react'
 
+export type SelectionCardLayout = 'horizontal' | 'vertical'
+
 export interface SelectionCardProps extends Omit<
   MuiButtonBaseProps,
   'children' | 'title'
@@ -9,4 +11,5 @@ export interface SelectionCardProps extends Omit<
   title: string
   description?: string
   selected: boolean
+  layout?: SelectionCardLayout
 }

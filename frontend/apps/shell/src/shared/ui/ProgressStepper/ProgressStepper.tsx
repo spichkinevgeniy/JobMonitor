@@ -1,7 +1,7 @@
 import CheckIcon from "@mui/icons-material/Check";
 import { styled } from "@mui/material/styles";
 
-import { semanticColors } from "@/app/theme/foundations";
+import { semanticColors } from "@jobmonitor/ui";
 import type { ProgressStepperProps } from "./ProgressStepper.types";
 
 type StepStatus = "completed" | "active" | "upcoming";

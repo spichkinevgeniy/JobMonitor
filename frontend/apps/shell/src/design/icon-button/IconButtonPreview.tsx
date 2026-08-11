@@ -3,7 +3,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { Box, Typography } from '@mui/material'
 import type { ReactNode } from 'react'
 
-import { semanticColors } from '@/app/theme/foundations'
+import { semanticColors } from '@jobmonitor/ui'
 import { DesignPreviewCard, DesignPreviewPage } from '@/design/shared/DesignPreview'
 import { IconButton } from '@/shared/ui/IconButton'
 
@@ -40,7 +40,12 @@ const PreviewState = ({ label, children }: PreviewStateProps) => (
         justifyContent: 'center',
       }}
     >
-      {children}
+      <Box
+        data-audit-target
+        sx={{ display: 'inline-flex', width: 'fit-content', height: 'fit-content' }}
+      >
+        {children}
+      </Box>
     </Box>
   </Box>
 )

@@ -12,24 +12,38 @@ const ButtonPreview = () => {
       columns={2}
     >
       <DesignPreviewCard title="Default">
-        <Button fullWidth>Продолжить</Button>
+        <Box data-audit-target sx={{ width: '100%' }}>
+          <Button fullWidth>
+            <span data-audit-content>Продолжить</span>
+          </Button>
+        </Box>
       </DesignPreviewCard>
 
       <DesignPreviewCard title="Disabled">
-        <Button fullWidth disabled>
-          Продолжить
-        </Button>
+        <Box data-audit-target sx={{ width: '100%' }}>
+          <Button fullWidth disabled>
+            <span data-audit-content>Продолжить</span>
+          </Button>
+        </Box>
       </DesignPreviewCard>
 
       <DesignPreviewCard title="Loading">
-        <Button fullWidth loading>
-          Продолжить
-        </Button>
+        <Box
+          data-audit-target
+          data-audit-content-mode="none"
+          sx={{ width: '100%' }}
+        >
+          <Button fullWidth loading>
+            Продолжить
+          </Button>
+        </Box>
       </DesignPreviewCard>
 
       <DesignPreviewCard title="Hug Width">
-        <Box sx={{ width: 'fit-content' }}>
-          <Button>Продолжить</Button>
+        <Box data-audit-target sx={{ display: 'inline-flex', width: 'fit-content' }}>
+          <Button>
+            <span data-audit-content>Продолжить</span>
+          </Button>
         </Box>
       </DesignPreviewCard>
     </DesignPreviewPage>

@@ -6,7 +6,7 @@ import '@fontsource/inter/700.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
-import { theme } from '@/app/theme/theme'
+import { theme } from '@jobmonitor/ui'
 import TextFieldPreview from './TextFieldPreview'
 
 createRoot(document.getElementById('root')!).render(

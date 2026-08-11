@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import type { ReactNode } from 'react'
 
-import { semanticColors } from '@/app/theme/foundations'
+import { semanticColors } from '@jobmonitor/ui'
 import { DesignPreviewCard, DesignPreviewPage } from '@/design/shared/DesignPreview'
 import { ProgressStepper } from '@/shared/ui/ProgressStepper'
 
@@ -28,7 +28,15 @@ const PreviewState = ({ label, children }: PreviewStateProps) => (
     <Typography sx={{ color: 'text.secondary', fontSize: 13, fontWeight: 600 }}>
       {label}
     </Typography>
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>{children}</Box>
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box
+        data-audit-target
+        data-audit-content-mode="none"
+        sx={{ width: '100%' }}
+      >
+        {children}
+      </Box>
+    </Box>
   </Box>
 )
 

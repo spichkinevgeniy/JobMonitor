@@ -1,1 +1,0 @@
-export { formatSalaryAmount } from './formatSalaryAmount'

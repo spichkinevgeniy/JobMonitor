@@ -5,15 +5,19 @@ import '@fontsource/inter/600.css'
 import '@fontsource/inter/700.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { Provider } from 'react-redux'
 
 import App from '@/app/App'
-import { theme } from '@/app/theme/theme'
+import { store } from '@/app/store'
+import { theme } from '@jobmonitor/ui'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <App />
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <App />
+      </ThemeProvider>
+    </Provider>
   </StrictMode>,
 )

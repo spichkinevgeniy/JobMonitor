@@ -1,28 +1,34 @@
 import CheckIcon from "@mui/icons-material/Check";
-import MuiButtonBase, {
-  buttonBaseClasses,
-} from "@mui/material/ButtonBase";
+import MuiButtonBase, { buttonBaseClasses } from "@mui/material/ButtonBase";
 import { styled } from "@mui/material/styles";
 import { forwardRef } from "react";
 
-import { semanticColors } from "@/app/theme/foundations";
-import type { SelectionCardProps } from "./SelectionCard.types";
+import { semanticColors } from "@jobmonitor/ui";
+import type {
+  SelectionCardLayout,
+  SelectionCardProps,
+} from "./SelectionCard.types";
 
 interface SelectionCardRootProps {
   selected: boolean;
+  layout: SelectionCardLayout;
 }
 
 const SelectionCardRoot = styled(MuiButtonBase, {
-  shouldForwardProp: (prop) => prop !== "selected",
-})<SelectionCardRootProps>(({ selected }) => ({
+  shouldForwardProp: (prop) => prop !== "selected" && prop !== "layout",
+})<SelectionCardRootProps>(({ layout, selected, theme }) => ({
   boxSizing: "border-box",
   position: "relative",
 
   width: "100%",
+  minWidth: 0,
+  maxWidth: "100%",
   minHeight: 72,
+  overflow: "hidden",
 
   display: "flex",
-  alignItems: "center",
+  flexDirection: layout === "vertical" ? "column" : "row",
+  alignItems: layout === "vertical" ? "stretch" : "center",
   justifyContent: "flex-start",
   gap: 12,
 
@@ -41,6 +47,7 @@ const SelectionCardRoot = styled(MuiButtonBase, {
     : semanticColors["color/bg/surface"],
 
   color: semanticColors["color/text/primary"],
+  fontFamily: theme.typography.fontFamily,
 
   textAlign: "left",
   boxShadow: "none",
@@ -67,6 +74,7 @@ const SelectionCardRoot = styled(MuiButtonBase, {
     height: 32,
 
     flex: "0 0 32px",
+    alignSelf: "flex-start",
 
     display: "inline-flex",
     alignItems: "center",
@@ -91,22 +99,34 @@ const SelectionCardRoot = styled(MuiButtonBase, {
 
   "& .SelectionCard-content": {
     minWidth: 0,
-    flex: 1,
+    width: layout === "vertical" ? "100%" : "auto",
+    maxWidth: "100%",
+    flex: layout === "vertical" ? "0 1 auto" : 1,
+
+    // На узких horizontal-карточках даём тексту ещё 2px.
+    // Это предотвращает лишний перенос первой строки,
+    // не меняя padding/gap самого компонента.
+    marginRight: layout === "vertical" ? 0 : -2,
   },
 
   "& .SelectionCard-title": {
     display: "block",
-    paddingRight: 28,
+    paddingRight: layout === "vertical" ? 0 : 28,
+    maxWidth: "100%",
 
     color: "inherit",
 
     fontSize: 14,
     fontWeight: 600,
     lineHeight: "20px",
+    overflowWrap: "break-word",
+    wordBreak: "normal",
+    whiteSpace: "normal",
   },
 
   "& .SelectionCard-description": {
     display: "block",
+    maxWidth: "100%",
 
     marginTop: 2,
 
@@ -115,6 +135,9 @@ const SelectionCardRoot = styled(MuiButtonBase, {
     fontSize: 13,
     fontWeight: 400,
     lineHeight: "18px",
+    overflowWrap: "break-word",
+    wordBreak: "normal",
+    whiteSpace: "normal",
   },
 
   // Selection indicator
@@ -177,9 +200,13 @@ const SelectionCardRoot = styled(MuiButtonBase, {
 }));
 
 export const SelectionCard = forwardRef<HTMLButtonElement, SelectionCardProps>(
-  ({ description, icon, selected, title, ...props }, ref) => (
+  (
+    { description, icon, layout = "horizontal", selected, title, ...props },
+    ref,
+  ) => (
     <SelectionCardRoot
       ref={ref}
+      layout={layout}
       selected={selected}
       aria-pressed={selected}
       {...props}

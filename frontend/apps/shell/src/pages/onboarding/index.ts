@@ -1,6 +1,5 @@
 export { OnboardingPage } from './OnboardingPage'
 export type {
-  CompletedOnboardingValue,
-  OnboardingDraft,
+  CompletedSearchProfileValue,
   OnboardingPageProps,
 } from './OnboardingPage.types'

@@ -1,38 +1,40 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-const sourceRoot = new URL('./src', import.meta.url).pathname
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { designPreviews } from "./design/designPreviews";
+const sourceRoot = new URL("./src", import.meta.url).pathname;
 
 export default defineConfig({
-  base: '/miniapp/react/',
+  base: "/miniapp/react/",
   plugins: [react()],
   resolve: {
     alias: {
-      '@': sourceRoot,
+      "@": sourceRoot,
     },
   },
   build: {
     rollupOptions: {
       input: {
-        shell: 'index.html',
-        buttonPreview: 'design/button/index.html',
-        backButtonPreview: 'design/back-button/index.html',
-        iconButtonPreview: 'design/icon-button/index.html',
-        selectionCardPreview: 'design/selection-card/index.html',
-        chipPreview: 'design/chip/index.html',
-        textFieldPreview: 'design/text-field/index.html',
-        progressStepperPreview: 'design/progress-stepper/index.html',
-        specialtyStepPreview: 'design/specialty-step/index.html',
-        workFormatStepPreview: 'design/work-format-step/index.html',
-        salaryStepPreview: 'design/salary-step/index.html',
-        levelStepPreview: 'design/level-step/index.html',
+        shell: "index.html",
+        ...designPreviews,
       },
     },
   },
   server: {
+    host: "127.0.0.1",
+    port: 5173,
+    strictPort: true,
+    allowedHosts: [".trycloudflare.com"],
     proxy: {
-      '/miniapp/api': 'http://127.0.0.1:8000',
-      '/miniapp/static': 'http://127.0.0.1:8000',
+      "/miniapp/dashboard": {
+        target: "http://127.0.0.1:5174",
+        ws: true,
+      },
+      "/miniapp/api": "http://127.0.0.1:8081",
+      "/miniapp/static": "http://127.0.0.1:8081",
+      "/miniapp/specialty": "http://127.0.0.1:8081",
+      "/miniapp/format": "http://127.0.0.1:8081",
+      "/miniapp/salary": "http://127.0.0.1:8081",
+      "/miniapp/level": "http://127.0.0.1:8081",
     },
   },
-})
+});

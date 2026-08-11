@@ -4,13 +4,11 @@ import FormHelperText, {
 } from "@mui/material/FormHelperText";
 import FormLabel, { formLabelClasses } from "@mui/material/FormLabel";
 import InputAdornment from "@mui/material/InputAdornment";
-import InputBase, {
-  inputBaseClasses,
-} from "@mui/material/InputBase";
+import InputBase, { inputBaseClasses } from "@mui/material/InputBase";
 import { styled } from "@mui/material/styles";
 import { forwardRef, useId } from "react";
 
-import { semanticColors } from "@/app/theme/foundations";
+import { semanticColors } from "@jobmonitor/ui";
 import type { TextFieldProps } from "./TextField.types";
 
 const FieldControl = styled(FormControl)({
@@ -26,8 +24,8 @@ const FieldLabel = styled(FormLabel)({
   fontWeight: 500,
   lineHeight: "20px",
 
-  [`&.${formLabelClasses.focused}, &.${formLabelClasses.error}`]: {
-    color: semanticColors["color/text/primary"],
+  [`&.${formLabelClasses.error}`]: {
+    color: semanticColors["color/state/error"],
   },
 
   [`&.${formLabelClasses.disabled}`]: {
@@ -60,15 +58,15 @@ const FieldInput = styled(InputBase)({
     borderColor: semanticColors["color/border/strong"],
   },
 
-  [`&.${inputBaseClasses.focused}`]: {
+  "&.Mui-focused": {
     borderColor: semanticColors["color/border/brand"],
   },
 
-  [`&.${inputBaseClasses.error}`]: {
+  "&.Mui-error": {
     borderColor: semanticColors["color/state/error"],
   },
 
-  [`&.${inputBaseClasses.disabled}`]: {
+  "&.Mui-disabled": {
     borderColor: semanticColors["color/border/disabled"],
     backgroundColor: semanticColors["color/bg/subtle"],
     color: semanticColors["color/text/disabled"],
@@ -85,6 +83,17 @@ const FieldInput = styled(InputBase)({
     color: "inherit",
     font: "inherit",
 
+    /*
+     * Явно задаём цвет каретки.
+     * Это особенно важно для Telegram WebView на iOS.
+     */
+    caretColor: semanticColors["color/border/brand"],
+
+    /*
+     * Не даём WebKit самостоятельно подменять цвет текста.
+     */
+    WebkitTextFillColor: "currentColor",
+
     "&::placeholder": {
       color: semanticColors["color/text/tertiary"],
       opacity: 1,
@@ -92,6 +101,7 @@ const FieldInput = styled(InputBase)({
   },
 
   [`&.${inputBaseClasses.disabled} .${inputBaseClasses.input}`]: {
+    color: semanticColors["color/text/disabled"],
     WebkitTextFillColor: semanticColors["color/text/disabled"],
 
     "&::placeholder": {

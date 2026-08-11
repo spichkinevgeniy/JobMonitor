@@ -4,7 +4,7 @@ import MuiIconButton, {
 import { styled } from "@mui/material/styles";
 import { forwardRef } from "react";
 
-import { semanticColors } from "@/app/theme/foundations";
+import { semanticColors } from "@jobmonitor/ui";
 import type { IconButtonProps } from "./IconButton.types";
 
 const JobMonitorIconButton = styled(MuiIconButton)({

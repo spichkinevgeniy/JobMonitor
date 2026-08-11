@@ -2,13 +2,25 @@
   "name": "jobmonitor-frontend",
   "private": true,
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "dev:shell": "npm run dev --workspace=@jobmonitor/shell",
     "build:shell": "npm run build --workspace=@jobmonitor/shell",
+    "dev:dashboard": "npm run dev --workspace=@jobmonitor/dashboard",
+    "build:dashboard": "npm run build --workspace=@jobmonitor/dashboard",
+    "typecheck:dashboard": "npm run typecheck --workspace=@jobmonitor/dashboard",
+    "lint:dashboard": "npm run lint --workspace=@jobmonitor/dashboard",
+    "test:dashboard": "npm run test --workspace=@jobmonitor/dashboard",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "visual:capture": "playwright test visual-tests/smoke.spec.ts",
+    "visual:compare": "node visual-tests/compare-visual.mjs",
+    "visual:check": "node visual-tests/check-visual.mjs",
+    "visual:test": "npm run visual:capture && npm run visual:compare --",
+    "visual:verify": "node visual-tests/verify-comparator-failure.mjs",
+    "visual:baseline": "node visual-tests/import-figma-baseline.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -18,7 +30,13 @@
     "@mui/material": "^9.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@storybook/react-vite": "^10.5.7",
+    "@types/node": "^26.2.0",
+    "@types/pngjs": "^6.0.5",
+    "adm-zip": "^0.6.0",
+    "pixelmatch": "^7.2.0",
+    "pngjs": "^7.0.0",
     "storybook": "^10.5.7"
   }
 }

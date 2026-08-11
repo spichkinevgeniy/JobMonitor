@@ -5,7 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { styled } from "@mui/material/styles";
 import { forwardRef } from "react";
 
-import { semanticColors } from "@/app/theme/foundations";
+import { semanticColors } from "@jobmonitor/ui";
 import type { ButtonProps } from "./Button.types";
 
 const PrimaryButton = styled(MuiButton)(({ theme }) => ({
