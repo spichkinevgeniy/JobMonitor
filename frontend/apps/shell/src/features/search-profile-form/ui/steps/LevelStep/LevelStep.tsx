@@ -1,77 +1,80 @@
-import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined'
-import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined'
-import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined'
-import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined'
-import { Box, Typography } from '@mui/material'
-import ButtonBase, { buttonBaseClasses } from '@mui/material/ButtonBase'
-import { styled } from '@mui/material/styles'
-import { Chip, semanticColors } from '@jobmonitor/ui'
-import { useState, type ReactNode } from 'react'
+import BuildOutlinedIcon from "@mui/icons-material/BuildOutlined";
+import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
+import HomeWorkOutlinedIcon from "@mui/icons-material/HomeWorkOutlined";
+import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
+import { Box, Typography } from "@mui/material";
+import ButtonBase, { buttonBaseClasses } from "@mui/material/ButtonBase";
+import { styled } from "@mui/material/styles";
+import { Chip, semanticColors } from "@jobmonitor/ui";
+import { useState, type ReactNode } from "react";
 
-import { formatSalaryAmount } from '@/features/search-profile-form/lib'
-import { BackButton } from '@/shared/ui/BackButton'
-import { Button } from '@/shared/ui/Button'
-import { ProgressStepper } from '@/shared/ui/ProgressStepper'
-import { levels } from './LevelStep.config'
+import { formatSalaryAmount } from "@/features/search-profile-form/lib";
+import { BackButton } from "@/shared/ui/BackButton";
+import { Button } from "@/shared/ui/Button";
+import { ProgressStepper } from "@/shared/ui/ProgressStepper";
+import { levels } from "./LevelStep.config";
 import type {
   LevelId,
   LevelStepProps,
   LevelStepSummary,
-} from './LevelStep.types'
+} from "./LevelStep.types";
 
 const workFormatLabels = {
-  any: 'Любой формат',
-  remote: 'Удалённо',
-  hybrid: 'Гибрид',
-  office: 'Офис',
-} as const
+  any: "Любой формат",
+  remote: "Удалённо",
+  hybrid: "Гибрид",
+  office: "Офис",
+} as const;
 
 const specialtyLabels = {
-  Frontend: 'Frontend',
-  Backend: 'Backend',
-  QA: 'QA',
-  Analytics: 'Аналитика',
-  'Infrastructure & DevOps': 'DevOps',
-  Design: 'Дизайн',
-} as const satisfies Record<LevelStepSummary['specializations'][number], string>
+  Frontend: "Frontend",
+  Backend: "Backend",
+  QA: "QA",
+  Analytics: "Аналитика",
+  "Infrastructure & DevOps": "DevOps",
+  "UI/UX & Product Design": "Дизайн",
+} as const satisfies Record<
+  LevelStepSummary["specializations"][number],
+  string
+>;
 
 const SkillsToggle = styled(ButtonBase)({
-  width: 'fit-content',
+  width: "fit-content",
   minHeight: 36,
   marginTop: 4,
   paddingInline: 0,
   borderRadius: 8,
-  color: semanticColors['color/text/brand'],
+  color: semanticColors["color/text/brand"],
   fontSize: 13,
   fontWeight: 500,
-  lineHeight: '18px',
+  lineHeight: "18px",
   [`&.${buttonBaseClasses.focusVisible}`]: {
-    outline: `2px solid ${semanticColors['color/border/brand']}`,
+    outline: `2px solid ${semanticColors["color/border/brand"]}`,
     outlineOffset: 2,
   },
-})
+});
 
 interface SummaryRow {
-  id: 'specialty' | 'skills' | 'workFormats' | 'salary'
-  label: string
-  value: string
-  icon: ReactNode
+  id: "specialty" | "skills" | "workFormats" | "salary";
+  label: string;
+  value: string;
+  icon: ReactNode;
 }
 
 const formatWorkFormats = (
-  workFormats: LevelStepSummary['workFormats'],
+  workFormats: LevelStepSummary["workFormats"],
 ): string =>
   workFormats.length > 0
-    ? workFormats.map((workFormat) => workFormatLabels[workFormat]).join(' · ')
-    : 'Не выбраны'
+    ? workFormats.map((workFormat) => workFormatLabels[workFormat]).join(" · ")
+    : "Не выбраны";
 
-const formatSalary = (salary: LevelStepSummary['salary']): string =>
-  salary.mode === 'from' && salary.amount !== null
+const formatSalary = (salary: LevelStepSummary["salary"]): string =>
+  salary.mode === "from" && salary.amount !== null
     ? `От ${formatSalaryAmount(salary.amount)} ₽`
-    : 'Не важна'
+    : "Не важна";
 
 const getInitialLevel = (level: LevelId | null | undefined): LevelId | null =>
-  levels.some((option) => option.id === level) ? (level ?? null) : null
+  levels.some((option) => option.id === level) ? (level ?? null) : null;
 
 export const LevelStep = ({
   initialValue,
@@ -85,76 +88,77 @@ export const LevelStep = ({
 }: LevelStepProps) => {
   const [selectedLevel, setSelectedLevel] = useState<LevelId | null>(() =>
     getInitialLevel(initialValue?.level),
-  )
-  const [skillsExpanded, setSkillsExpanded] = useState(false)
+  );
+  const [skillsExpanded, setSkillsExpanded] = useState(false);
 
   const visibleSkills = skillsExpanded
     ? summary.skills
-    : summary.skills.slice(0, 3)
-  const hiddenSkillsCount = summary.skills.length - visibleSkills.length
+    : summary.skills.slice(0, 3);
+  const hiddenSkillsCount = summary.skills.length - visibleSkills.length;
 
   const handleBack = () => {
-    onBack?.({ level: selectedLevel })
-  }
+    onBack?.({ level: selectedLevel });
+  };
 
   const handleStepNavigation = (step: number) => {
-    onNavigateToStep?.(step, { level: selectedLevel })
-  }
+    onNavigateToStep?.(step, { level: selectedLevel });
+  };
 
   const handleComplete = () => {
     if (!selectedLevel) {
-      return
+      return;
     }
 
-    onComplete?.({ level: selectedLevel })
-  }
+    onComplete?.({ level: selectedLevel });
+  };
 
   const summaryRows: SummaryRow[] = [
     {
-      id: 'specialty',
-      label: 'Специальность',
+      id: "specialty",
+      label: "Специальность",
       value: summary.specializations
         .map((specialty) => specialtyLabels[specialty])
-        .join(' · '),
+        .join(" · "),
       icon: <CategoryOutlinedIcon />,
     },
     {
-      id: 'skills',
-      label: 'Навыки',
-      value: visibleSkills.length > 0 ? visibleSkills.join(' · ') : 'Не выбраны',
+      id: "skills",
+      label: "Навыки",
+      value:
+        visibleSkills.length > 0 ? visibleSkills.join(" · ") : "Не выбраны",
       icon: <BuildOutlinedIcon />,
     },
     {
-      id: 'workFormats',
-      label: 'Формат работы',
+      id: "workFormats",
+      label: "Формат работы",
       value: formatWorkFormats(summary.workFormats),
       icon: <HomeWorkOutlinedIcon />,
     },
     {
-      id: 'salary',
-      label: 'Зарплата',
+      id: "salary",
+      label: "Зарплата",
       value: formatSalary(summary.salary),
       icon: <PaymentsOutlinedIcon />,
     },
-  ]
+  ];
 
   return (
     <Box
       component="section"
       aria-labelledby="level-step-title"
       sx={{
-        boxSizing: 'border-box',
-        width: '100%',
+        boxSizing: "border-box",
+        width: "100%",
         maxWidth: 420,
-        height: '100dvh',
-        maxHeight: '100dvh',
-        mx: 'auto',
+        height: "100dvh",
+        maxHeight: "100dvh",
+        mx: "auto",
         px: 2,
-        pt: 'calc(8px + env(safe-area-inset-top))',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        bgcolor: 'background.default',
+        pt: "calc(8px + env(safe-area-inset-top))",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        bgcolor: "background.default",
       }}
     >
       <Box component="header" sx={{ flexShrink: 0 }}>
@@ -175,10 +179,10 @@ export const LevelStep = ({
             id="level-step-title"
             component="h1"
             sx={{
-              color: 'text.primary',
+              color: "text.primary",
               fontSize: 24,
               fontWeight: 700,
-              lineHeight: '32px',
+              lineHeight: "32px",
             }}
           >
             Какой у вас уровень?
@@ -186,9 +190,9 @@ export const LevelStep = ({
           <Typography
             sx={{
               mt: 0.75,
-              color: 'text.secondary',
+              color: "text.secondary",
               fontSize: 15,
-              lineHeight: '22px',
+              lineHeight: "22px",
             }}
           >
             Выберите уровень, который лучше всего описывает ваш опыт
@@ -200,9 +204,9 @@ export const LevelStep = ({
         sx={{
           flex: 1,
           minHeight: 0,
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          WebkitOverflowScrolling: 'touch',
+          overflowY: "auto",
+          overflowX: "hidden",
+          WebkitOverflowScrolling: "touch",
           pb: 1.5,
         }}
       >
@@ -211,8 +215,8 @@ export const LevelStep = ({
           aria-label="Уровень"
           sx={{
             mt: 3,
-            display: 'flex',
-            flexWrap: 'wrap',
+            display: "flex",
+            flexWrap: "wrap",
             gap: 1,
           }}
         >
@@ -233,10 +237,10 @@ export const LevelStep = ({
             sx={{
               mt: 3,
               border: 1,
-              borderColor: 'divider',
+              borderColor: "divider",
               borderRadius: 4,
-              bgcolor: 'background.paper',
-              overflow: 'hidden',
+              bgcolor: "background.paper",
+              overflow: "hidden",
             }}
           >
             <Typography
@@ -246,10 +250,10 @@ export const LevelStep = ({
                 px: 2,
                 pt: 2,
                 pb: 1,
-                color: 'text.primary',
+                color: "text.primary",
                 fontSize: 16,
                 fontWeight: 600,
-                lineHeight: '24px',
+                lineHeight: "24px",
               }}
             >
               Ваш выбор
@@ -260,13 +264,13 @@ export const LevelStep = ({
                 <Box
                   key={row.id}
                   sx={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
+                    display: "flex",
+                    alignItems: "flex-start",
                     gap: 1.5,
                     px: 2,
                     py: 1.75,
                     borderTop: index === 0 ? 0 : 1,
-                    borderColor: 'divider',
+                    borderColor: "divider",
                   }}
                 >
                   <Box
@@ -274,14 +278,14 @@ export const LevelStep = ({
                     sx={{
                       width: 32,
                       height: 32,
-                      flex: '0 0 32px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      flex: "0 0 32px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                       borderRadius: 2,
-                      bgcolor: semanticColors['color/bg/primary-subtle'],
-                      color: semanticColors['color/icon/brand'],
-                      '& .MuiSvgIcon-root': {
+                      bgcolor: semanticColors["color/bg/primary-subtle"],
+                      color: semanticColors["color/icon/brand"],
+                      "& .MuiSvgIcon-root": {
                         fontSize: 20,
                       },
                     }}
@@ -292,9 +296,9 @@ export const LevelStep = ({
                   <Box sx={{ minWidth: 0, flex: 1 }}>
                     <Typography
                       sx={{
-                        color: 'text.secondary',
+                        color: "text.secondary",
                         fontSize: 13,
-                        lineHeight: '18px',
+                        lineHeight: "18px",
                       }}
                     >
                       {row.label}
@@ -302,18 +306,18 @@ export const LevelStep = ({
                     <Typography
                       sx={{
                         mt: 0.25,
-                        color: 'text.primary',
+                        color: "text.primary",
                         fontSize: 15,
                         fontWeight: 600,
-                        lineHeight: '20px',
-                        overflowWrap: 'anywhere',
-                        whiteSpace: 'normal',
+                        lineHeight: "20px",
+                        overflowWrap: "anywhere",
+                        whiteSpace: "normal",
                       }}
                     >
                       {row.value}
                     </Typography>
 
-                    {row.id === 'skills' && summary.skills.length > 3 && (
+                    {row.id === "skills" && summary.skills.length > 3 && (
                       <SkillsToggle
                         aria-expanded={skillsExpanded}
                         onClick={() =>
@@ -321,7 +325,7 @@ export const LevelStep = ({
                         }
                       >
                         {skillsExpanded
-                          ? 'Свернуть'
+                          ? "Свернуть"
                           : `+ ещё ${hiddenSkillsCount}`}
                       </SkillsToggle>
                     )}
@@ -338,14 +342,19 @@ export const LevelStep = ({
         sx={{
           flexShrink: 0,
           pt: 1.5,
-          pb: 'calc(16px + env(safe-area-inset-bottom))',
-          bgcolor: 'background.default',
+          pb: "calc(16px + env(safe-area-inset-bottom))",
+          bgcolor: "background.default",
         }}
       >
         {saveError && (
           <Typography
             role="alert"
-            sx={{ mb: 1, color: 'error.main', fontSize: 13, lineHeight: '18px' }}
+            sx={{
+              mb: 1,
+              color: "error.main",
+              fontSize: 13,
+              lineHeight: "18px",
+            }}
           >
             {saveError}
           </Typography>
@@ -360,5 +369,5 @@ export const LevelStep = ({
         </Button>
       </Box>
     </Box>
-  )
-}
+  );
+};
