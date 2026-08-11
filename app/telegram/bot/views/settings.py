@@ -15,13 +15,35 @@ SETTINGS_ENTRY_SALARY = "salary"
 SETTINGS_ENTRY_LEVEL = "level"
 SETTINGS_ENTRY_STATS = "stats"
 
-ENTRY_TO_PAGE = {
-    SETTINGS_ENTRY_SPECIALTY: "react",
-    SETTINGS_ENTRY_FORMAT: "format",
-    SETTINGS_ENTRY_SALARY: "salary",
-    SETTINGS_ENTRY_LEVEL: "level",
-    SETTINGS_ENTRY_STATS: "stats",
-}
+# Слэш на конце обязателен: это база SPA, без него сервер отдаёт
+# страницу-подсказку вместо приложения.
+REACT_SPECIALTY_PAGE = "react/"
+LEGACY_SPECIALTY_PAGE = "specialty"
+
+# Без mode=settings React считает, что человек проходит онбординг, и
+# заполненному профилю показывает «Настройка завершена» вместо формы.
+REACT_SETTINGS_QUERY = "mode=settings"
+
+
+def _specialty_page() -> str:
+    return REACT_SPECIALTY_PAGE if config.MINIAPP_REACT_ENABLED else LEGACY_SPECIALTY_PAGE
+
+
+def _entry_to_page() -> dict[str, str]:
+    return {
+        SETTINGS_ENTRY_SPECIALTY: _specialty_page(),
+        SETTINGS_ENTRY_FORMAT: "format",
+        SETTINGS_ENTRY_SALARY: "salary",
+        SETTINGS_ENTRY_LEVEL: "level",
+        SETTINGS_ENTRY_STATS: "stats",
+    }
+
+
+def _entry_to_query() -> dict[str, str]:
+    if not config.MINIAPP_REACT_ENABLED:
+        return {}
+    return {SETTINGS_ENTRY_SPECIALTY: REACT_SETTINGS_QUERY}
+
 
 _GRADE_LABELS = {
     Grade.INTERN: "Intern",
@@ -156,7 +178,7 @@ def _build_entry_url(entry: str) -> str:
         return ""
 
     parsed = urlsplit(raw_base)
-    page = ENTRY_TO_PAGE.get(entry)
+    page = _entry_to_page().get(entry)
     if page is None:
         return ""
 
@@ -165,7 +187,8 @@ def _build_entry_url(entry: str) -> str:
     if not target_path.startswith("/"):
         target_path = f"/{target_path}"
 
-    return urlunsplit((parsed.scheme, parsed.netloc, target_path, "", parsed.fragment))
+    query = _entry_to_query().get(entry, "")
+    return urlunsplit((parsed.scheme, parsed.netloc, target_path, query, parsed.fragment))
 
 
 def _resolve_base_dir(raw_path: str) -> str:

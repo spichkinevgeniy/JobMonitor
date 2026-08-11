@@ -24,6 +24,9 @@ class BaseAppSettings(BaseSettings):
     BOT_TOKEN: str
 
     MINI_APP_BASE_URL: str = ""
+    # Пока React-фронтенд не собирается в образ, кнопки бота должны вести
+    # на легаси-страницы: /miniapp/react/ в продакшене отдаёт 404.
+    MINIAPP_REACT_ENABLED: bool = False
     MINI_APP_SERVER_HOST: str
     MINI_APP_SERVER_PORT: int
 
