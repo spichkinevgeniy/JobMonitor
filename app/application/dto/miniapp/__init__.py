@@ -42,6 +42,8 @@ from app.application.dto.miniapp.search_profile import (
 )
 
 __all__ = [
+    "ResumeImportJobCreated",
+    "ResumeImportJobState",
     "ChoiceOptionDto",
     "ExperienceLevelChoice",
     "ExportRequest",
@@ -79,3 +81,7 @@ __all__ = [
     "SearchProfileResponse",
     "SearchProfileSalaryResponse",
 ]
+from app.application.dto.miniapp.resume_import import (
+    ResumeImportJobCreated,
+    ResumeImportJobState,
+)

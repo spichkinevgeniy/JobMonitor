@@ -3,6 +3,7 @@ from typing import Protocol
 
 from app.application.ports.developer_user_data import IDeveloperUserDataRepository
 from app.domain.user.repository import IUserRepository
+from app.domain.user.resume_import_repository import IResumeImportJobRepository
 from app.domain.vacancy.repository import IVacancyRepository
 
 
@@ -31,6 +32,9 @@ class VacancyUnitOfWork(UnitOfWork, Protocol):
 class UserUnitOfWork(UnitOfWork, Protocol):
     @property
     def users(self) -> IUserRepository: ...
+
+    @property
+    def resume_import_jobs(self) -> IResumeImportJobRepository: ...
 
 
 class DeveloperUserUnitOfWork(UnitOfWork, Protocol):

@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.telegram.miniapp.onboarding_routes import router as onboarding_router
+from app.telegram.miniapp.resume_import_routes import router as resume_import_router
 from app.telegram.miniapp.routes import router
 from app.telegram.miniapp.search_profile_routes import router as search_profile_router
 from app.telegram.miniapp.ui import STATIC_DIR
@@ -33,6 +34,7 @@ def build_miniapp_app() -> FastAPI:
         )
     miniapp.include_router(router)
     miniapp.include_router(onboarding_router)
+    miniapp.include_router(resume_import_router)
     miniapp.include_router(search_profile_router)
     return miniapp
 

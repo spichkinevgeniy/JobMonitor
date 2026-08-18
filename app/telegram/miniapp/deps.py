@@ -4,6 +4,7 @@ from fastapi import Depends, HTTPException, Request
 
 from app.application.services.export_service import ExportService
 from app.application.services.onboarding_service import OnboardingService
+from app.application.services.resume_import_service import ResumeImportService
 from app.application.services.search_profile_service import SearchProfileService
 from app.application.services.stats_service import StatsService
 from app.application.services.user_service import UserService
@@ -20,6 +21,10 @@ def get_user_service() -> UserService:
 
 def get_onboarding_service() -> OnboardingService:
     return OnboardingService(UserUnitOfWork(async_session_factory))
+
+
+def get_resume_import_service() -> ResumeImportService:
+    return ResumeImportService(UserUnitOfWork(async_session_factory))
 
 
 def get_search_profile_service() -> SearchProfileService:

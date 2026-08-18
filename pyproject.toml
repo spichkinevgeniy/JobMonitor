@@ -57,6 +57,7 @@ dependencies = [
     "sqlalchemy>=2.0.47",
     "telethon>=1.42.0",
     "uvicorn>=0.41.0",
+    "python-multipart>=0.0.32",
 ]
 
 [dependency-groups]

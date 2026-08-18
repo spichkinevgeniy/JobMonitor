@@ -4,6 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.application.ports.unit_of_work import UserUnitOfWork as UserUnitOfWorkPort
 from app.domain.user.repository import IUserRepository
+from app.domain.user.resume_import_repository import IResumeImportJobRepository
+from app.infrastructure.db.repositories.resume_import_job_repository import (
+    ResumeImportJobRepository,
+)
 from app.infrastructure.db.repositories.user_repository import UserRepository
 from app.infrastructure.db.uow.base import SQLAlchemyUnitOfWork
 
@@ -12,16 +16,23 @@ class UserUnitOfWork(SQLAlchemyUnitOfWork, UserUnitOfWorkPort):
     def __init__(self, session_factory: async_sessionmaker[AsyncSession]) -> None:
         super().__init__(session_factory)
         self._users: UserRepository | None = None
+        self._resume_import_jobs: ResumeImportJobRepository | None = None
 
     @property
     def users(self) -> IUserRepository:
         assert self._users is not None
         return self._users
 
+    @property
+    def resume_import_jobs(self) -> IResumeImportJobRepository:
+        assert self._resume_import_jobs is not None
+        return self._resume_import_jobs
+
     async def __aenter__(self) -> "UserUnitOfWork":
         await super().__aenter__()
         assert self.session is not None
         self._users = UserRepository(self.session)
+        self._resume_import_jobs = ResumeImportJobRepository(self.session)
         return self
 
     async def __aexit__(
@@ -34,3 +45,4 @@ class UserUnitOfWork(SQLAlchemyUnitOfWork, UserUnitOfWorkPort):
             await super().__aexit__(exc_type, exc_val, exc_tb)
         finally:
             self._users = None
+            self._resume_import_jobs = None
