@@ -2,8 +2,8 @@ from types import TracebackType
 from typing import Protocol
 
 from app.application.ports.developer_user_data import IDeveloperUserDataRepository
+from app.application.ports.resume_import import IResumeImportJobRepository
 from app.domain.user.repository import IUserRepository
-from app.domain.user.resume_import_repository import IResumeImportJobRepository
 from app.domain.vacancy.repository import IVacancyRepository
 
 
@@ -30,6 +30,14 @@ class VacancyUnitOfWork(UnitOfWork, Protocol):
 
 
 class UserUnitOfWork(UnitOfWork, Protocol):
+    @property
+    def users(self) -> IUserRepository: ...
+
+
+class ResumeImportUnitOfWork(UnitOfWork, Protocol):
+    """Профиль плюс журнал задач разбора: общий UserUnitOfWork не должен
+    тащить репозиторий, который нужен одной фиче."""
+
     @property
     def users(self) -> IUserRepository: ...
 

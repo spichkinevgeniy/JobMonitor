@@ -2,6 +2,7 @@ from dataclasses import dataclass, replace
 from enum import StrEnum
 
 from app.domain.shared.value_objects import (
+    Grade,
     SkillType,
     SpecializationType,
     WorkFormats,
@@ -34,6 +35,16 @@ class OnboardingLevel(StrEnum):
     MIDDLE = "MIDDLE"
     SENIOR = "SENIOR"
     JUNIOR_PLUS = "JUNIOR_PLUS"
+
+
+def level_from_grade(grade: Grade | None) -> OnboardingLevel | None:
+    """У онбординга нет уровня Lead, поэтому такой грейд остаётся невыбранным."""
+    if grade is None or grade is Grade.UNDEFINED:
+        return None
+    try:
+        return OnboardingLevel(grade.value)
+    except ValueError:
+        return None
 
 
 @dataclass(frozen=True, slots=True)

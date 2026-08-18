@@ -29,6 +29,7 @@ from app.domain.user.onboarding import (
     OnboardingStep,
     SalaryDraft,
     SpecialtyDraft,
+    level_from_grade,
 )
 from app.domain.user.value_objects import FilterMode, LevelFilterMode, UserId
 
@@ -204,10 +205,7 @@ class OnboardingService:
             return None
         if user.cv_grade is Grade.JUNIOR and user.filter_grade_mode is LevelFilterMode.AT_LEAST:
             return OnboardingLevel.JUNIOR_PLUS
-        try:
-            return OnboardingLevel(user.cv_grade.value)
-        except ValueError:
-            return None
+        return level_from_grade(user.cv_grade)
 
     @staticmethod
     def _state_response(user: User) -> OnboardingStateResponse:

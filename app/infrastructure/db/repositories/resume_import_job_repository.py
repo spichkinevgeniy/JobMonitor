@@ -1,11 +1,13 @@
-from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain.user.resume_import import ResumeImportJob, ResumeImportStatus
-from app.domain.user.resume_import_repository import IResumeImportJobRepository
+from app.application.ports.resume_import import (
+    IResumeImportJobRepository,
+    ResumeImportJob,
+    ResumeImportStatus,
+)
 from app.infrastructure.db.models import ResumeImportJob as ResumeImportJobModel
 
 
@@ -42,8 +44,6 @@ class ResumeImportJobRepository(IResumeImportJobRepository):
             user_tg_id=model.user_tg_id,
             status=ResumeImportStatus(model.status),
             error=model.error,
-            created_at=model.created_at,
-            updated_at=model.updated_at,
         )
 
     async def set_status(
@@ -55,6 +55,6 @@ class ResumeImportJobRepository(IResumeImportJobRepository):
         await self._session.execute(
             update(ResumeImportJobModel)
             .where(ResumeImportJobModel.id == job_id)
-            .values(status=status.value, error=error, updated_at=datetime.now(UTC))
+            .values(status=status.value, error=error)
         )
         await self._session.flush()

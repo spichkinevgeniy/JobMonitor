@@ -1,11 +1,11 @@
 from app.application.dto import OutResumeParse
-from app.domain.shared.value_objects import Grade, WorkFormat, WorkFormats
+from app.domain.shared.value_objects import WorkFormat, WorkFormats
 from app.domain.user.onboarding import (
     OnboardingDraft,
-    OnboardingLevel,
     OnboardingSalaryMode,
     SalaryDraft,
     SpecialtyDraft,
+    level_from_grade,
 )
 
 
@@ -34,18 +34,8 @@ def build_prefill_draft(dto: OutResumeParse, current: OnboardingDraft) -> Onboar
             SalaryDraft(mode=OnboardingSalaryMode.FROM, amount_rub=dto.salary_amount)
         )
 
-    level = _level_from_grade(dto.grade)
+    level = level_from_grade(dto.grade)
     if level is not None:
         draft = draft.with_level(level)
 
     return draft
-
-
-def _level_from_grade(grade: Grade | None) -> OnboardingLevel | None:
-    """У онбординга нет уровня Lead, поэтому такой грейд оставляем пользователю."""
-    if grade is None or grade is Grade.UNDEFINED:
-        return None
-    try:
-        return OnboardingLevel(grade.value)
-    except ValueError:
-        return None

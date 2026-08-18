@@ -7,7 +7,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from app.application.ports.observability_port import Feature
-from app.application.services.resume_import_service import MAX_RESUME_BYTES
+from app.application.services.resume_policy import MAX_RESUME_BYTES
 from app.application.services.resume_quota_service import (
     DAILY_QUOTA,
     QuotaRejection,

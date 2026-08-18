@@ -6,18 +6,23 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from app.application.dto.miniapp import ResumeImportJobCreated, ResumeImportJobState
 from app.application.ports.observability_port import Feature
 from app.application.services.resume_import_service import (
-    MAX_RESUME_BYTES,
     ResumeImportService,
     ResumeQuotaExceededError,
     UnsupportedResumeFormatError,
 )
+from app.application.services.resume_policy import MAX_RESUME_BYTES
 from app.domain.user.entities import User
 from app.infrastructure.observability import observe_feature
-from app.telegram.miniapp.deps import get_current_user, get_resume_import_service
+from app.telegram.bot.views import build_resume_file_too_large_text
+from app.telegram.miniapp.auth import MiniAppUserContext
+from app.telegram.miniapp.deps import (
+    get_current_user,
+    get_resume_import_service,
+    get_user_context,
+)
+from app.telegram.miniapp.onboarding_routes import ONBOARDING_PREFIX
 
-router = APIRouter(prefix="/miniapp/api/onboarding", tags=["onboarding"])
-
-READ_CHUNK_BYTES = 1024 * 1024
+router = APIRouter(prefix=ONBOARDING_PREFIX, tags=["onboarding"])
 
 
 @router.post(
@@ -30,7 +35,7 @@ async def start_resume_prefill(
     service: Annotated[ResumeImportService, Depends(get_resume_import_service)],
     file: Annotated[UploadFile, File()],
 ) -> ResumeImportJobCreated:
-    content = await _read_limited(file)
+    content = await _read_within_limit(file)
 
     try:
         job_id = await service.start(user.tg_id.value, file.filename or "", content)
@@ -52,29 +57,25 @@ async def start_resume_prefill(
 @router.get("/resume-prefill/{job_id}", response_model=ResumeImportJobState)
 async def get_resume_prefill_state(
     job_id: UUID,
-    user: Annotated[User, Depends(get_current_user)],
+    context: Annotated[MiniAppUserContext, Depends(get_user_context)],
     service: Annotated[ResumeImportService, Depends(get_resume_import_service)],
 ) -> ResumeImportJobState:
-    job = await service.get(user.tg_id.value, job_id)
+    job = await service.get(context.tg_id, job_id)
     if job is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Задача не найдена.")
     return ResumeImportJobState(job_id=job.id, status=job.status, error=job.error)
 
 
-async def _read_limited(file: UploadFile) -> bytes:
-    """Читаем по кускам и обрываем на лимите.
+async def _read_within_limit(file: UploadFile) -> bytes:
+    """Отсекает файл по размеру, уже известному после разбора формы.
 
-    Проверка после полного чтения означала бы, что файл уже осел
-    во временном каталоге целиком.
+    Раньше здесь был чтение по кускам «чтобы файл не осел на диске» — это
+    было неправдой: Starlette разбирает и спулит тело до входа в хендлер.
+    От по-настоящему больших тел защищает client_max_body_size в nginx.
     """
-    chunks: list[bytes] = []
-    size = 0
-    while chunk := await file.read(READ_CHUNK_BYTES):
-        size += len(chunk)
-        if size > MAX_RESUME_BYTES:
-            raise HTTPException(
-                status_code=status.HTTP_413_CONTENT_TOO_LARGE,
-                detail="Файл больше 10 МБ. Нужен более компактный PDF.",
-            )
-        chunks.append(chunk)
-    return b"".join(chunks)
+    if (file.size or 0) > MAX_RESUME_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_413_CONTENT_TOO_LARGE,
+            detail=build_resume_file_too_large_text(),
+        )
+    return await file.read()

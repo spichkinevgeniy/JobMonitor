@@ -5,6 +5,7 @@ from .session import async_session_factory, engine
 from .uow import (
     DeveloperUserUnitOfWork,
     MatchingUnitOfWork,
+    ResumeImportUnitOfWork,
     SQLAlchemyUnitOfWork,
     UserUnitOfWork,
     VacancyUnitOfWork,
@@ -15,6 +16,7 @@ __all__ = [
     "DeveloperUserUnitOfWork",
     "SQLAlchemyUnitOfWork",
     "MatchingUnitOfWork",
+    "ResumeImportUnitOfWork",
     "Vacancy",
     "User",
     "VacancyRepository",

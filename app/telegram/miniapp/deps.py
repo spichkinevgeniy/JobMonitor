@@ -10,7 +10,12 @@ from app.application.services.stats_service import StatsService
 from app.application.services.user_service import UserService
 from app.core.config import config
 from app.domain.user.entities import User
-from app.infrastructure.db import UserUnitOfWork, VacancyUnitOfWork, async_session_factory
+from app.infrastructure.db import (
+    ResumeImportUnitOfWork,
+    UserUnitOfWork,
+    VacancyUnitOfWork,
+    async_session_factory,
+)
 from app.infrastructure.notifications import TelegramDocumentSender
 from app.telegram.miniapp.auth import MiniAppUserContext, validate_init_data
 
@@ -24,7 +29,7 @@ def get_onboarding_service() -> OnboardingService:
 
 
 def get_resume_import_service() -> ResumeImportService:
-    return ResumeImportService(UserUnitOfWork(async_session_factory))
+    return ResumeImportService(ResumeImportUnitOfWork(async_session_factory))
 
 
 def get_search_profile_service() -> SearchProfileService:
@@ -48,6 +53,15 @@ def parse_user_context(init_data: str) -> MiniAppUserContext:
         return validate_init_data(init_data, config.BOT_TOKEN)
     except ValueError as exc:
         raise HTTPException(status_code=401, detail=str(exc)) from exc
+
+
+def get_user_context(request: Request) -> MiniAppUserContext:
+    """Только подписанный идентификатор, без выборки пользователя.
+
+    Статус разбора фронт опрашивает каждые пару секунд, и полноценная
+    загрузка профиля на каждый опрос — лишний запрос в базу.
+    """
+    return parse_user_context(request.headers.get("X-Telegram-Init-Data", ""))
 
 
 async def get_current_user(

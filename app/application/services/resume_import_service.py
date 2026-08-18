@@ -3,7 +3,12 @@ from io import BytesIO
 from uuid import UUID, uuid4
 
 from app.application.dto import OutResumeParse
-from app.application.ports.unit_of_work import UserUnitOfWork
+from app.application.ports.resume_import import (
+    ResumeImportJob,
+    ResumeImportStatus,
+)
+from app.application.ports.unit_of_work import ResumeImportUnitOfWork
+from app.application.services import resume_policy
 from app.application.services.resume_prefill import build_prefill_draft
 from app.application.services.resume_quota_service import (
     DAILY_QUOTA,
@@ -13,7 +18,6 @@ from app.application.services.resume_quota_service import (
 from app.core.logger import get_app_logger
 from app.core.privacy import user_ref
 from app.domain.user.onboarding import OnboardingDraft
-from app.domain.user.resume_import import ResumeImportJob, ResumeImportStatus
 from app.domain.user.value_objects import UserId
 from app.infrastructure.llm_runtime import TemporaryLLMUnavailableError
 from app.infrastructure.parsers import (
@@ -26,15 +30,6 @@ from app.infrastructure.parsers.base import BaseResumeParser
 from app.infrastructure.parsers.concurrency import acquire_parse_slot
 
 logger = get_app_logger(__name__)
-
-MAX_RESUME_BYTES = 10 * 1024 * 1024
-
-BUSY_MESSAGE = "Сейчас разбираем другие резюме. Попробуйте через пару минут."
-NOT_A_RESUME_MESSAGE = "Файл не похож на резюме."
-TOO_MANY_PAGES_MESSAGE = "В резюме больше 10 страниц. Нужен более компактный PDF."
-PARSER_ERROR_MESSAGE = "Не удалось разобрать файл."
-LLM_UNAVAILABLE_MESSAGE = "Модель временно перегружена. Попробуйте ещё раз чуть позже."
-UNKNOWN_ERROR_MESSAGE = "Во время разбора резюме произошла ошибка."
 
 
 class ResumeImportError(Exception):
@@ -50,9 +45,9 @@ class ResumeQuotaExceededError(ResumeImportError):
         self.rejection = rejection
         self.retry_after_seconds = retry_after_seconds
         super().__init__(
-            f"Слишком часто, следующее резюме через {retry_after_seconds} с."
+            resume_policy.cooldown_text(retry_after_seconds)
             if rejection is QuotaRejection.COOLDOWN
-            else f"На сегодня лимит исчерпан: {DAILY_QUOTA} резюме в сутки."
+            else resume_policy.daily_quota_text(DAILY_QUOTA)
         )
 
 
@@ -62,14 +57,14 @@ _background_tasks: set[asyncio.Task[None]] = set()
 
 
 class ResumeImportService:
-    def __init__(self, uow: UserUnitOfWork) -> None:
+    def __init__(self, uow: ResumeImportUnitOfWork) -> None:
         self._uow = uow
 
     async def start(self, tg_id: int, file_name: str, content: bytes) -> UUID:
         try:
             parser = ParserFactory.get_parser_by_extension(file_name)
         except ValueError as exc:
-            raise UnsupportedResumeFormatError("Для этого шага подходит только PDF.") from exc
+            raise UnsupportedResumeFormatError(resume_policy.UNSUPPORTED_FORMAT) from exc
 
         quota = ResumeQuotaService(self._uow)
         decision = await quota.check(tg_id)
@@ -100,11 +95,12 @@ class ResumeImportService:
         self, job_id: UUID, tg_id: int, parser: BaseResumeParser, content: bytes
     ) -> None:
         try:
-            await self._set_status(job_id, ResumeImportStatus.PROCESSING)
             async with acquire_parse_slot() as granted:
                 if not granted:
-                    await self._fail(job_id, BUSY_MESSAGE)
+                    await self._set_status(job_id, ResumeImportStatus.FAILED, resume_policy.BUSY)
                     return
+                # До этого места задача честно стоит в очереди, а не «в работе».
+                await self._set_status(job_id, ResumeImportStatus.PROCESSING)
                 buffer = BytesIO(content)
                 try:
                     dto = await parser.extract_text(buffer)
@@ -114,32 +110,28 @@ class ResumeImportService:
             await self._apply(tg_id, dto)
             await self._set_status(job_id, ResumeImportStatus.COMPLETED)
         except NotAResumeError:
-            await self._fail(job_id, NOT_A_RESUME_MESSAGE)
+            await self._set_status(job_id, ResumeImportStatus.FAILED, resume_policy.NOT_A_RESUME)
         except TooManyPagesError:
-            await self._fail(job_id, TOO_MANY_PAGES_MESSAGE)
+            await self._set_status(job_id, ResumeImportStatus.FAILED, resume_policy.TOO_MANY_PAGES)
         except ParserError:
-            await self._fail(job_id, PARSER_ERROR_MESSAGE)
+            await self._set_status(job_id, ResumeImportStatus.FAILED, resume_policy.PARSER_ERROR)
         except TemporaryLLMUnavailableError:
-            await self._fail(job_id, LLM_UNAVAILABLE_MESSAGE)
+            await self._set_status(job_id, ResumeImportStatus.FAILED, resume_policy.LLM_UNAVAILABLE)
         except Exception:
             logger.exception("Resume import failed unexpectedly (user=%s)", user_ref(tg_id))
-            await self._fail(job_id, UNKNOWN_ERROR_MESSAGE)
+            await self._set_status(job_id, ResumeImportStatus.FAILED, resume_policy.UNKNOWN_ERROR)
 
     async def _apply(self, tg_id: int, dto: OutResumeParse) -> None:
         async with self._uow:
             user = await self._uow.users.get_by_tg_id(UserId(tg_id))
             if user is None:
-                raise ResumeImportError("Пользователь не найден.")
+                raise LookupError(f"user {user_ref(tg_id)} disappeared during import")
             current = user.onboarding_draft or OnboardingDraft()
             user.onboarding_draft = build_prefill_draft(dto, current)
             await self._uow.users.update(user)
 
-    async def _set_status(self, job_id: UUID, status: ResumeImportStatus) -> None:
+    async def _set_status(
+        self, job_id: UUID, status: ResumeImportStatus, error: str | None = None
+    ) -> None:
         async with self._uow:
-            await self._uow.resume_import_jobs.set_status(job_id, status)
-
-    async def _fail(self, job_id: UUID, message: str) -> None:
-        async with self._uow:
-            await self._uow.resume_import_jobs.set_status(
-                job_id, ResumeImportStatus.FAILED, message
-            )
+            await self._uow.resume_import_jobs.set_status(job_id, status, error)

@@ -1,3 +1,5 @@
+from app.application.services import resume_policy
+
 SUPPORT_BOT_HANDLE = "@JobMonitor_Support_Bot"
 
 
@@ -106,7 +108,7 @@ def build_main_menu_fallback_text() -> str:
 
 
 def build_resume_file_too_large_text() -> str:
-    return "Файл больше 10 МБ. Нужен более компактный PDF."
+    return resume_policy.FILE_TOO_LARGE
 
 
 def build_resume_context_error_text() -> str:
@@ -114,42 +116,39 @@ def build_resume_context_error_text() -> str:
 
 
 def build_resume_unsupported_format_text() -> str:
-    return "Для этого шага подходит только PDF."
+    return resume_policy.UNSUPPORTED_FORMAT
 
 
 def build_resume_not_a_resume_text() -> str:
-    return "Файл не похож на резюме."
+    return resume_policy.NOT_A_RESUME
 
 
 def build_resume_too_many_pages_text() -> str:
-    return "В резюме больше 10 страниц. Нужен более компактный PDF."
+    return resume_policy.TOO_MANY_PAGES
 
 
 def build_resume_cooldown_text(seconds: int) -> str:
-    return f"Слишком часто. Следующее резюме можно прислать через {seconds} с."
+    return resume_policy.cooldown_text(seconds)
 
 
 def build_resume_daily_quota_text(quota: int) -> str:
-    return (
-        f"На сегодня лимит исчерпан: {quota} резюме в сутки. "
-        "Попробуйте завтра — профиль при этом сохранён."
-    )
+    return resume_policy.daily_quota_text(quota)
 
 
 def build_resume_busy_text() -> str:
-    return "Сейчас разбираем другие резюме. Попробуйте через пару минут."
+    return resume_policy.BUSY
 
 
 def build_resume_parser_error_text() -> str:
-    return "Не удалось разобрать файл."
+    return resume_policy.PARSER_ERROR
 
 
 def build_resume_unknown_error_text() -> str:
-    return "Во время разбора резюме произошла ошибка."
+    return resume_policy.UNKNOWN_ERROR
 
 
 def build_resume_llm_unavailable_text() -> str:
-    return "Сейчас модель временно перегружена. Попробуйте еще раз чуть позже."
+    return resume_policy.LLM_UNAVAILABLE
 
 
 def build_stats_prompt_text() -> str:

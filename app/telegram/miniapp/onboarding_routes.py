@@ -15,7 +15,9 @@ from app.application.services.onboarding_service import (
 from app.domain.user.entities import User
 from app.telegram.miniapp.deps import get_current_user, get_onboarding_service
 
-router = APIRouter(prefix="/miniapp/api/onboarding", tags=["onboarding"])
+ONBOARDING_PREFIX = "/miniapp/api/onboarding"
+
+router = APIRouter(prefix=ONBOARDING_PREFIX, tags=["onboarding"])
 
 
 @router.get("", response_model=OnboardingStateResponse)
