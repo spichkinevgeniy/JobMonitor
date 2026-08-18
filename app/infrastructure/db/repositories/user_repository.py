@@ -9,6 +9,7 @@ from app.domain.user.entities import User
 from app.domain.user.repository import IUserRepository
 from app.domain.user.value_objects import UserId
 from app.infrastructure.db.mappers.user import apply_user, user_from_model, user_to_model
+from app.infrastructure.db.models import ResumeImportJob as ResumeImportJobModel
 from app.infrastructure.db.models import ResumeUploadLog as ResumeUploadLogModel
 from app.infrastructure.db.models import User as UserModel
 from app.infrastructure.db.models import VacancyDispatchLog as VacancyDispatchLogModel
@@ -112,8 +113,12 @@ class UserRepository(IUserRepository):
         await self._session.flush()
 
     async def delete_by_tg_id(self, tg_id: UserId) -> bool:
-        """Профиль и оба лога. Внешних ключей нет, каскад не сработает."""
-        for model in (VacancyDispatchLogModel, ResumeUploadLogModel):
+        """Профиль и всё, что помечено его tg_id.
+
+        Внешних ключей нет, каскад не сработает: каждую таблицу чистим
+        явно. Забыть здесь новую таблицу — значит оставить идентификатор
+        после удаления профиля."""
+        for model in (VacancyDispatchLogModel, ResumeUploadLogModel, ResumeImportJobModel):
             await self._session.execute(delete(model).where(model.user_tg_id == tg_id.value))
         # execute() объявлен как Result, но на DML возвращает CursorResult —
         # только у него есть rowcount. Приведение вместо ignore, чтобы не

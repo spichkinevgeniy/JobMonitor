@@ -141,3 +141,25 @@ class TestDeletion:
         await account.confirm_delete(FakeCallback(FakeMessage(), tg_id=None))
 
         assert service.calls == []
+
+
+def test_deletion_covers_every_table_holding_tg_id() -> None:
+    """Новая таблица с tg_id должна попадать в удаление вместе с остальными.
+
+    Внешних ключей нет, каскад не сработает: список в репозитории — это
+    единственное, что связывает таблицы с удалением профиля.
+    """
+    import inspect
+
+    from app.infrastructure.db import models
+    from app.infrastructure.db.repositories.user_repository import UserRepository
+
+    with_tg_id = {
+        name
+        for name, obj in vars(models).items()
+        if inspect.isclass(obj) and hasattr(obj, "user_tg_id")
+    }
+    source = inspect.getsource(UserRepository.delete_by_tg_id)
+    missing = {name for name in with_tg_id if name not in source}
+
+    assert not missing, f"не удаляются: {sorted(missing)}"
