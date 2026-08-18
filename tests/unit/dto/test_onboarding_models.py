@@ -37,13 +37,13 @@ def test_specialty_patch_accepts_legacy_singleton_payload() -> None:
         {
             "step": "SPECIALTY",
             "navigate_to": "WORK_FORMAT",
-            "data": {"specialty": "Design", "skills": []},
+            "data": {"specialty": "UI/UX & Product Design", "skills": []},
         }
     )
 
     assert isinstance(request, SpecialtyDraftRequest)
     assert request.data is not None
-    assert request.data.specializations == [SpecializationType.DESIGN]
+    assert request.data.specializations == [SpecializationType.UI_UX_DESIGN]
 
 
 @pytest.mark.parametrize(

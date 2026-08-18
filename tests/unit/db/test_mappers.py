@@ -55,7 +55,9 @@ def test_user_mapper_round_trip_preserves_multi_formats_and_onboarding_draft() -
         current_step=OnboardingStep.LEVEL,
         max_visited_step=OnboardingStep.LEVEL,
         specialty=SpecialtyDraft(
-            specializations=frozenset({SpecializationType.UI_UX_DESIGN, SpecializationType.FRONTEND}),
+            specializations=frozenset(
+                {SpecializationType.UI_UX_DESIGN, SpecializationType.FRONTEND}
+            ),
             skills=frozenset({SkillType.JAVASCRIPT, SkillType.DOCKER}),
         ),
         work_formats=WorkFormats.from_values([WorkFormat.REMOTE, WorkFormat.HYBRID]),

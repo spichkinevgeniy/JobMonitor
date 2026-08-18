@@ -9,7 +9,6 @@ from app.application.services.onboarding_service import (
     InvalidOnboardingDraftError,
     OnboardingService,
 )
-from app.domain import user
 from app.domain.shared import Grade, WorkFormat
 from app.domain.user.entities import User
 from app.domain.user.onboarding import OnboardingLevel, OnboardingStep
@@ -281,8 +280,8 @@ async def test_complete_applies_all_filters_and_junior_plus() -> None:
     assert state.completed is True
     assert user.onboarding_draft is None
     assert {item.value for item in user.cv_specializations.items} == {
-    "UI/UX & Product Design",
-    "Frontend",
+        "UI/UX & Product Design",
+        "Frontend",
     }
     assert {item.value for item in user.cv_skills.items} == {"JavaScript", "Docker"}
     assert user.effective_work_formats.items == {WorkFormat.REMOTE, WorkFormat.HYBRID}
