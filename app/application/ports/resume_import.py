@@ -27,6 +27,8 @@ class IResumeImportJobRepository(Protocol):
 
     async def get(self, job_id: UUID, user_tg_id: int) -> ResumeImportJob | None: ...
 
+    async def fail_unfinished(self, error: str) -> int: ...
+
     async def set_status(
         self,
         job_id: UUID,

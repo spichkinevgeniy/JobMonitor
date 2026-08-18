@@ -3,7 +3,13 @@
 from app.application.dto import OutResumeParse
 from app.application.dto.resume_dto import SkillWithEvidence, SpecializationWithEvidence
 from app.application.services.resume_prefill import build_prefill_draft
-from app.domain.shared.value_objects import Grade, SkillType, SpecializationType, WorkFormat
+from app.domain.shared.value_objects import (
+    CurrencyType,
+    Grade,
+    SkillType,
+    SpecializationType,
+    WorkFormat,
+)
 from app.domain.user.onboarding import OnboardingDraft, OnboardingLevel, OnboardingSalaryMode
 
 
@@ -48,7 +54,9 @@ def test_empty_specializations_leave_step_untouched() -> None:
 
 
 def test_salary_fills_only_when_found() -> None:
-    with_salary = build_prefill_draft(_dto(salary_amount=250000), OnboardingDraft())
+    with_salary = build_prefill_draft(
+        _dto(salary_amount=250000, salary_currency=CurrencyType.RUB), OnboardingDraft()
+    )
     without = build_prefill_draft(_dto(salary_amount=None), OnboardingDraft())
 
     assert with_salary.salary is not None
@@ -74,3 +82,12 @@ def test_lead_has_no_onboarding_level() -> None:
     draft = build_prefill_draft(_dto(grade=Grade.LEAD), OnboardingDraft())
 
     assert draft.level is None
+
+
+def test_foreign_currency_is_not_prefilled_as_rubles() -> None:
+    """SalaryDraft.amount_rub — рубли, поэтому доллары туда класть нельзя."""
+    draft = build_prefill_draft(
+        _dto(salary_amount=5000, salary_currency=CurrencyType.USD), OnboardingDraft()
+    )
+
+    assert draft.salary is None

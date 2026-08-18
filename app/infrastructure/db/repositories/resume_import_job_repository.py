@@ -58,3 +58,21 @@ class ResumeImportJobRepository(IResumeImportJobRepository):
             .values(status=status.value, error=error)
         )
         await self._session.flush()
+
+    async def fail_unfinished(self, error: str) -> int:
+        """Задачи, оставшиеся в работе с прошлого запуска.
+
+        Выполнять их некому: фоновые задачи живут в процессе и умирают
+        вместе с ним, а строка в базе переживает перезапуск.
+        """
+        result = await self._session.execute(
+            update(ResumeImportJobModel)
+            .where(
+                ResumeImportJobModel.status.in_(
+                    (ResumeImportStatus.QUEUED.value, ResumeImportStatus.PROCESSING.value)
+                )
+            )
+            .values(status=ResumeImportStatus.FAILED.value, error=error)
+        )
+        await self._session.flush()
+        return result.rowcount or 0

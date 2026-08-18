@@ -5,7 +5,7 @@ import { type ChangeEvent, useRef, useState } from 'react'
 
 import type { ResumeImportProps } from './ResumeImport.types'
 
-export const MAX_RESUME_FILE_SIZE_BYTES = 15 * 1024 * 1024
+export const MAX_RESUME_FILE_SIZE_BYTES = 10 * 1024 * 1024
 
 const isPdf = (file: File) =>
   file.type === 'application/pdf' ||
@@ -49,7 +49,7 @@ export const ResumeImport = ({
 
     if (file.size > MAX_RESUME_FILE_SIZE_BYTES) {
       setSelectedFile(null)
-      setError('Размер файла не должен превышать 15 МБ.')
+      setError('Размер файла не должен превышать 10 МБ.')
       return
     }
 

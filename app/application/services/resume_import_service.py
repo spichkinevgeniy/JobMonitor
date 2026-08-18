@@ -71,6 +71,9 @@ class ResumeImportService:
         if not decision.allowed:
             assert decision.rejection is not None
             raise ResumeQuotaExceededError(decision.rejection, decision.retry_after_seconds)
+        # Списываем до постановки в очередь, а не внутри слота как в боте:
+        # у HTTP нет пошаговости, и иначе десятки запросов пройдут проверку
+        # раньше, чем первый успеет отметиться.
         await quota.register(tg_id)
 
         job = ResumeImportJob(
@@ -86,6 +89,10 @@ class ResumeImportService:
         _background_tasks.add(task)
         task.add_done_callback(_background_tasks.discard)
         return job.id
+
+    async def fail_orphaned(self) -> int:
+        async with self._uow:
+            return await self._uow.resume_import_jobs.fail_unfinished(resume_policy.INTERRUPTED)
 
     async def get(self, tg_id: int, job_id: UUID) -> ResumeImportJob | None:
         async with self._uow:
@@ -123,7 +130,9 @@ class ResumeImportService:
 
     async def _apply(self, tg_id: int, dto: OutResumeParse) -> None:
         async with self._uow:
-            user = await self._uow.users.get_by_tg_id(UserId(tg_id))
+            # Разбор длится десятки секунд: без блокировки правка черновика,
+            # прилетевшая за это время, была бы молча затёрта.
+            user = await self._uow.users.get_by_tg_id_for_update(UserId(tg_id))
             if user is None:
                 raise LookupError(f"user {user_ref(tg_id)} disappeared during import")
             current = user.onboarding_draft or OnboardingDraft()

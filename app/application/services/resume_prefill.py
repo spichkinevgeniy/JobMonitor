@@ -1,5 +1,5 @@
 from app.application.dto import OutResumeParse
-from app.domain.shared.value_objects import WorkFormat, WorkFormats
+from app.domain.shared.value_objects import CurrencyType, WorkFormat, WorkFormats
 from app.domain.user.onboarding import (
     OnboardingDraft,
     OnboardingSalaryMode,
@@ -29,7 +29,12 @@ def build_prefill_draft(dto: OutResumeParse, current: OnboardingDraft) -> Onboar
     if dto.work_format is not None and dto.work_format is not WorkFormat.UNDEFINED:
         draft = draft.with_work_formats(WorkFormats.from_values([dto.work_format]))
 
-    if dto.salary_amount is not None and dto.salary_amount > 0:
+    # amount_rub — именно рубли, поэтому сумма в другой валюте не подходит.
+    if (
+        dto.salary_amount is not None
+        and dto.salary_amount > 0
+        and dto.salary_currency is CurrencyType.RUB
+    ):
         draft = draft.with_salary(
             SalaryDraft(mode=OnboardingSalaryMode.FROM, amount_rub=dto.salary_amount)
         )

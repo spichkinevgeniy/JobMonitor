@@ -136,3 +136,35 @@ class TestStatus:
         )
 
         assert response.status_code == 404
+
+
+class TestRestartSweep:
+    """Строка в базе переживает перезапуск, фоновая задача — нет."""
+
+    @pytest.mark.asyncio
+    async def test_unfinished_jobs_are_failed_on_start(self) -> None:
+        from app.application.services.resume_import_service import ResumeImportService
+
+        class _Jobs:
+            def __init__(self) -> None:
+                self.error: str | None = None
+
+            async def fail_unfinished(self, error: str) -> int:
+                self.error = error
+                return 3
+
+        class _Uow:
+            def __init__(self, jobs: _Jobs) -> None:
+                self.resume_import_jobs = jobs
+
+            async def __aenter__(self) -> "_Uow":
+                return self
+
+            async def __aexit__(self, *args: object) -> None:
+                return None
+
+        jobs = _Jobs()
+        failed = await ResumeImportService(_Uow(jobs)).fail_orphaned()
+
+        assert failed == 3
+        assert jobs.error is not None
