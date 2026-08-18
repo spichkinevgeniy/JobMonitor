@@ -72,7 +72,7 @@ def build_resume_prompt_text() -> str:
     return (
         "Загрузка резюме\n\n"
         "Для этого шага нужен PDF-файл.\n"
-        "Ограничения: до 15 МБ и до 10 страниц.\n\n"
+        "Ограничения: до 10 МБ и до 10 страниц.\n\n"
         "Отправьте резюме файлом, и бот обновит профиль поиска по его содержимому."
     )
 
@@ -106,7 +106,7 @@ def build_main_menu_fallback_text() -> str:
 
 
 def build_resume_file_too_large_text() -> str:
-    return "Файл больше 15 МБ. Нужен более компактный PDF."
+    return "Файл больше 10 МБ. Нужен более компактный PDF."
 
 
 def build_resume_context_error_text() -> str:

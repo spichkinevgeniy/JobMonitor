@@ -7,6 +7,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from app.application.ports.observability_port import Feature
+from app.application.services.resume_import_service import MAX_RESUME_BYTES
 from app.application.services.resume_quota_service import (
     DAILY_QUOTA,
     QuotaRejection,
@@ -125,7 +126,7 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
             file_ext=file_ext(file_name),
             file_size=file_size,
         )
-        if file_size > 15 * 1024 * 1024:
+        if file_size > MAX_RESUME_BYTES:
             bot_logfire.info(
                 "Resume rejected: file too large",
                 user=user_ref(tg_id),
