@@ -7,4 +7,5 @@ export interface SearchProfileFormProps {
   completionDescription?: string
   onBack?: () => void
   onComplete?: (value: CompletedSearchProfileValue) => void
+  onResumeSelected?: (file: File) => void
 }

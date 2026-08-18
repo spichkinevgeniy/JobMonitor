@@ -91,7 +91,9 @@ export const SpecialtyStep = ({
   initialValue,
   maxVisitedStep,
   saving = false,
+  disabled = false,
   saveError = null,
+  resumeImport,
   onBack,
   onContinue,
   onNavigateToStep,
@@ -178,7 +180,7 @@ export const SpecialtyStep = ({
       }}
     >
       <Box component="header" sx={{ flexShrink: 0 }}>
-        <BackButton onClick={onBack} />
+        <BackButton disabled={disabled} onClick={onBack} />
 
         <Box sx={{ mt: 1, px: 1 }}>
           <ProgressStepper
@@ -186,7 +188,9 @@ export const SpecialtyStep = ({
             totalSteps={4}
             maxVisitedStep={maxVisitedStep}
             aria-label="Прогресс настройки поиска"
-            onStepClick={onNavigateToStep ? handleStepNavigation : undefined}
+            onStepClick={
+              onNavigateToStep && !disabled ? handleStepNavigation : undefined
+            }
           />
         </Box>
 
@@ -229,11 +233,13 @@ export const SpecialtyStep = ({
           pb: 1.5,
         }}
       >
+        {resumeImport}
+
         <Box
           role="group"
           aria-label="Специальности"
           sx={{
-            mt: 3,
+            mt: resumeImport ? 2.5 : 3,
             display: "grid",
             gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
             gap: 1.5,
@@ -251,6 +257,7 @@ export const SpecialtyStep = ({
               title={specialty.title}
               description={specialty.description}
               selected={selectedSpecialties.includes(specialty.id)}
+              disabled={disabled}
               onClick={() => toggleSpecialty(specialty.id)}
             />
           ))}
@@ -284,6 +291,7 @@ export const SpecialtyStep = ({
               startAdornment={<SearchIcon />}
               placeholder="Найдите навык"
               aria-label="Поиск навыков"
+              disabled={disabled}
               onFocus={handleSkillSearchFocus}
             />
           </Box>
@@ -303,6 +311,7 @@ export const SpecialtyStep = ({
                 key={skill}
                 label={skill}
                 selected={selectedSkills.includes(skill)}
+                disabled={disabled}
                 onClick={() => toggleSkill(skill)}
               />
             ))}
@@ -342,7 +351,7 @@ export const SpecialtyStep = ({
         )}
         <Button
           fullWidth
-          disabled={selectedSpecialties.length === 0 || saving}
+          disabled={selectedSpecialties.length === 0 || saving || disabled}
           loading={saving}
           onClick={handleContinue}
         >

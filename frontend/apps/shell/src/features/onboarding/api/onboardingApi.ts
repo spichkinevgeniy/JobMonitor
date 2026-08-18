@@ -4,6 +4,8 @@ import { createTelegramBaseQuery } from '@jobmonitor/telegram'
 import type {
   OnboardingDraftRequest,
   OnboardingStateResponse,
+  ResumeImportJobCreated,
+  ResumeImportJobStatus,
 } from './types'
 
 const telegramBaseQuery = createTelegramBaseQuery({
@@ -55,11 +57,28 @@ export const onboardingApi = createApi({
         }
       },
     }),
+    startResumeImport: builder.mutation<ResumeImportJobCreated, File>({
+      query: (file) => {
+        const body = new FormData()
+        body.append('file', file, file.name)
+
+        return {
+          url: '/onboarding/resume-prefill',
+          method: 'POST',
+          body,
+        }
+      },
+    }),
+    getResumeImportStatus: builder.query<ResumeImportJobStatus, string>({
+      query: (jobId) => `/onboarding/resume-prefill/${jobId}`,
+    }),
   }),
 })
 
 export const {
   useCompleteOnboardingMutation,
   useGetOnboardingQuery,
+  useLazyGetResumeImportStatusQuery,
   useSaveOnboardingDraftMutation,
+  useStartResumeImportMutation,
 } = onboardingApi

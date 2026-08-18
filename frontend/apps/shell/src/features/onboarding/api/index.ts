@@ -2,7 +2,9 @@ export {
   onboardingApi,
   useCompleteOnboardingMutation,
   useGetOnboardingQuery,
+  useLazyGetResumeImportStatusQuery,
   useSaveOnboardingDraftMutation,
+  useStartResumeImportMutation,
 } from './onboardingApi'
 export {
   backwardNavigationRequest,
@@ -22,4 +24,6 @@ export type {
   BackwardNavigationRequest,
   OnboardingDraftRequest,
   OnboardingStateResponse,
+  ResumeImportJobCreated,
+  ResumeImportJobStatus,
 } from './types'

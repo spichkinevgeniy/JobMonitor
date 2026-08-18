@@ -12,7 +12,15 @@ vi.mock('@jobmonitor/telegram', () => ({
 }))
 
 vi.mock('@/pages/onboarding', () => ({
-  OnboardingPage: () => <div>Onboarding page</div>,
+  OnboardingPage: ({
+    initialValue,
+  }: {
+    initialValue?: { specializations: string[]; skills: string[] }
+  }) => (
+    <div>
+      {initialValue ? 'Standalone onboarding preview' : 'Onboarding page'}
+    </div>
+  ),
 }))
 
 vi.mock('@/pages/settings', () => ({
@@ -41,6 +49,15 @@ it('renders normal onboarding without settings mode', () => {
 
   expect(screen.getByText('Onboarding page')).toBeInTheDocument()
   expect(initializeTelegramWebAppMock).toHaveBeenCalledOnce()
+})
+
+it('renders a standalone browser preview without Telegram initialization', () => {
+  window.history.replaceState({}, '', '/miniapp/react/?mode=preview')
+
+  render(<App />)
+
+  expect(screen.getByText('Standalone onboarding preview')).toBeInTheDocument()
+  expect(initializeTelegramWebAppMock).not.toHaveBeenCalled()
 })
 
 it('returns to Dashboard after settings completion', async () => {

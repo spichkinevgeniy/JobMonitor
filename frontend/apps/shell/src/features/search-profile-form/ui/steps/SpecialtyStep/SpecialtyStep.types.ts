@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 export type SpecialtyId =
   | 'Frontend'
   | 'Backend'
@@ -29,7 +31,9 @@ export interface SpecialtyStepProps {
   initialValue?: SpecialtyStepInitialValue
   maxVisitedStep?: number
   saving?: boolean
+  disabled?: boolean
   saveError?: string | null
+  resumeImport?: ReactNode
   onBack?: () => void
   onContinue?: (value: SpecialtyStepValue) => void
   onNavigateToStep?: (step: number, value: SpecialtyStepValue) => void

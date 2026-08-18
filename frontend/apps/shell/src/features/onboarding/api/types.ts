@@ -84,6 +84,28 @@ export interface OnboardingStateResponse {
   draft: ApiOnboardingDraft
 }
 
+export interface ResumeImportJobCreated {
+  job_id: string
+  status: 'queued'
+}
+
+export type ResumeImportJobStatus =
+  | {
+      job_id: string
+      status: 'queued' | 'processing'
+      error: null
+    }
+  | {
+      job_id: string
+      status: 'completed'
+      error: null
+    }
+  | {
+      job_id: string
+      status: 'failed'
+      error: string | null
+    }
+
 interface DraftRequest<TStep extends ApiOnboardingStep, TData> {
   step: TStep
   navigate_to: ApiOnboardingStep

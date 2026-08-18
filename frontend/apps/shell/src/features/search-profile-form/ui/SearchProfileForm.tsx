@@ -11,12 +11,15 @@ import {
   specialtyDraftRequest,
   useCompleteOnboardingMutation,
   useGetOnboardingQuery,
+  useLazyGetResumeImportStatusQuery,
   useSaveOnboardingDraftMutation,
+  useStartResumeImportMutation,
   workFormatDraftRequest,
   type OnboardingDraftRequest,
   type OnboardingStateResponse,
 } from '@/features/onboarding/api'
 import type { SearchProfileFormValues } from '@/features/search-profile-form/model'
+import { ResumeImport } from '@/features/resume-import'
 import { LevelStep } from '@/features/search-profile-form/ui/steps/LevelStep'
 import type {
   LevelStepInitialValue,
@@ -39,6 +42,11 @@ import { Button } from '@/shared/ui/Button'
 import type { SearchProfileFormProps } from './SearchProfileForm.types'
 
 type SearchProfileFormStep = 1 | 2 | 3 | 4
+
+const RESUME_STATUS_POLL_INTERVAL_MS = 1750
+
+const waitForResumePoll = () =>
+  new Promise((resolve) => setTimeout(resolve, RESUME_STATUS_POLL_INTERVAL_MS))
 
 const createInitialDraft = (
   initialValues: SpecialtyStepInitialValue | undefined,
@@ -123,6 +131,7 @@ export const SearchProfileForm = ({
   completionDescription = 'Ваш профиль поиска уже настроен.',
   onBack,
   onComplete,
+  onResumeSelected,
 }: SearchProfileFormProps) => {
   const standalone = initialValues !== undefined
   const [currentStep, setCurrentStep] = useState<SearchProfileFormStep>(1)
@@ -133,11 +142,18 @@ export const SearchProfileForm = ({
   const [hydrated, setHydrated] = useState(standalone)
   const [showSuccess, setShowSuccess] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [resumeLoading, setResumeLoading] = useState(false)
+  const [resumeError, setResumeError] = useState<string | null>(null)
+  const [authoritativeDraftRevision, setAuthoritativeDraftRevision] = useState(0)
   const requestPendingRef = useRef(false)
+  const resumeRequestRef = useRef<symbol | null>(null)
+  const mountedRef = useRef(true)
 
   const onboardingQuery = useGetOnboardingQuery(undefined, { skip: standalone })
   const [saveDraft, saveState] = useSaveOnboardingDraftMutation()
   const [completeOnboarding, completeState] = useCompleteOnboardingMutation()
+  const [startResumeImport] = useStartResumeImportMutation()
+  const [getResumeImportStatus] = useLazyGetResumeImportStatusQuery()
   const saving = saveState.isLoading || completeState.isLoading
 
   const applyAuthoritativeState = useCallback(
@@ -167,6 +183,15 @@ export const SearchProfileForm = ({
     showInitiallyCompleted,
     standalone,
   ])
+
+  useEffect(() => {
+    mountedRef.current = true
+
+    return () => {
+      mountedRef.current = false
+      resumeRequestRef.current = null
+    }
+  }, [])
 
   const applyStandaloneNavigation = (
     nextDraft: SearchProfileFormValues,
@@ -204,7 +229,7 @@ export const SearchProfileForm = ({
   }
 
   const handleFirstStepBack = () => {
-    if (saving) {
+    if (saving || resumeLoading) {
       return
     }
     if (onBack) {
@@ -390,6 +415,67 @@ export const SearchProfileForm = ({
     }
   }
 
+  const handleResumeAnalyze = async (file: File) => {
+    if (resumeLoading) {
+      return
+    }
+
+    const requestToken = Symbol('resume-import')
+    resumeRequestRef.current = requestToken
+    setResumeLoading(true)
+    setResumeError(null)
+    try {
+      const created = await startResumeImport(file).unwrap()
+
+      while (resumeRequestRef.current === requestToken) {
+        const status = await getResumeImportStatus(created.job_id, false).unwrap()
+
+        if (status.status === 'completed') {
+          resumeRequestRef.current = null
+          const refreshed = await onboardingQuery.refetch().unwrap()
+          if (mountedRef.current) {
+            applyAuthoritativeState(refreshed)
+            setAuthoritativeDraftRevision((revision) => revision + 1)
+          }
+          return
+        }
+
+        if (status.status === 'failed') {
+          resumeRequestRef.current = null
+          if (mountedRef.current) {
+            setResumeError(
+              status.error ?? 'Не удалось проанализировать резюме. Попробуйте ещё раз.',
+            )
+          }
+          return
+        }
+
+        await waitForResumePoll()
+      }
+    } catch (error) {
+      resumeRequestRef.current = null
+      if (mountedRef.current) {
+        setResumeError(
+          getErrorMessage(
+            error,
+            'Не удалось проанализировать резюме. Попробуйте ещё раз.',
+          ),
+        )
+      }
+    } finally {
+      if (mountedRef.current) {
+        setResumeLoading(false)
+      }
+    }
+  }
+
+  const resumeAnalysisPending = resumeLoading
+
+  const handleResumeSelected = (file: File) => {
+    setResumeError(null)
+    onResumeSelected?.(file)
+  }
+
   if (!standalone && !hydrated) {
     if (onboardingQuery.isError) {
       return (
@@ -479,12 +565,19 @@ export const SearchProfileForm = ({
 
   return (
     <SpecialtyStep
-      initialValue={{
-        specializations: draft.specializations,
-        skills: draft.skills,
-      }}
+      key={authoritativeDraftRevision}
+      resumeImport={
+        <ResumeImport
+          onFileSelected={handleResumeSelected}
+          onResumeAnalyze={(file) => void handleResumeAnalyze(file)}
+          isResumeLoading={resumeAnalysisPending}
+          analysisError={resumeError}
+        />
+      }
+      initialValue={draft}
       maxVisitedStep={maxVisitedStep}
       saving={saving}
+      disabled={resumeAnalysisPending}
       saveError={saveError}
       onBack={handleFirstStepBack}
       onContinue={(value) => void handleSpecialtyContinue(value)}

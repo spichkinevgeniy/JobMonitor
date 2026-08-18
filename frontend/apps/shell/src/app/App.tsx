@@ -6,16 +6,34 @@ import { initializeTelegramWebApp } from '@jobmonitor/telegram'
 
 import { openDashboard } from './navigation'
 
-const isSettingsMode = () =>
-  typeof window !== 'undefined' &&
-  new URLSearchParams(window.location.search).get('mode') === 'settings'
+const getMode = () =>
+  typeof window === 'undefined'
+    ? null
+    : new URLSearchParams(window.location.search).get('mode')
 
 const App = () => {
-  useEffect(() => {
-    initializeTelegramWebApp()
-  }, [])
+  const mode = getMode()
+  const isPreviewMode = mode === 'preview'
 
-  return isSettingsMode() ? (
+  useEffect(() => {
+    if (isPreviewMode) {
+      return
+    }
+    initializeTelegramWebApp()
+  }, [isPreviewMode])
+
+  if (isPreviewMode) {
+    return (
+      <OnboardingPage
+        initialValue={{
+          specializations: [],
+          skills: [],
+        }}
+      />
+    )
+  }
+
+  return mode === 'settings' ? (
     <SettingsPage onComplete={openDashboard} />
   ) : (
     <OnboardingPage onComplete={openDashboard} />
