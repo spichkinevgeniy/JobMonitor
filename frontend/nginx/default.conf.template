@@ -42,7 +42,10 @@ server {
 
     location ^~ /miniapp/api/ {
         # Загрузка резюме: без этого действует дефолт nginx в 1 МБ.
-        client_max_body_size 10m;
+        # Запас над лимитом приложения — тело multipart больше файла
+        # на границы и заголовки, иначе у самого края nginx отдаст
+        # свою HTML-страницу вместо понятного сообщения.
+        client_max_body_size 12m;
 
         proxy_pass http://app:${MINI_APP_SERVER_PORT};
         proxy_http_version 1.1;

@@ -92,11 +92,16 @@ def upgrade() -> None:
         END
         """
     )
+    # Пройденным помечаем только тех, у кого профиль действительно собран.
+    # Иначе человек с пустым профилем увидит «Настройка завершена»
+    # и не сможет пройти онбординг никогда.
     op.execute(
         """
         UPDATE users
         SET onboarding_completed_at = now()
         WHERE onboarding_completed_at IS NULL
+          AND jsonb_array_length(cv_specializations) > 0
+          AND jsonb_array_length(cv_skills) > 0
         """
     )
 
