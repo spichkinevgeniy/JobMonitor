@@ -25,6 +25,13 @@ def get_openrouter_model() -> Model:
     return OpenRouterModel(config.OPENROUTER_MODEL, provider=provider)
 
 
+# OpenRouter резервирует кредиты под максимум модели, а не под фактический
+# ответ: без этого лимита каждый вызов требовал запаса на 65535 токенов и
+# отбивался с 402, хотя тратил около сотни. Замер на реальных данных —
+# 228 токенов в худшем случае, так что запас здесь почти двадцатикратный.
+MAX_OUTPUT_TOKENS = 4096
+
+
 @lru_cache(maxsize=1)
 def get_vacancy_parse_agent() -> Agent[None, OutVacancyParse]:
     allowed_specializations = ", ".join(item.value for item in SpecializationType)
@@ -122,7 +129,7 @@ def get_vacancy_parse_agent() -> Agent[None, OutVacancyParse]:
         model=get_openrouter_model(),
         system_prompt=system_prompt,
         output_type=OutVacancyParse,
-        model_settings={"temperature": 0.0},
+        model_settings={"temperature": 0.0, "max_tokens": MAX_OUTPUT_TOKENS},
         name="vacancy_parser_agent",
         metadata={"agent_type": "vacancy_parser"},
     )
@@ -211,7 +218,7 @@ def get_resume_parse_agent() -> Agent[None, OutResumeParse]:
         model=get_openrouter_model(),
         system_prompt=system_prompt,
         output_type=OutResumeParse,
-        model_settings={"temperature": 0.0},
+        model_settings={"temperature": 0.0, "max_tokens": MAX_OUTPUT_TOKENS},
         name="resume_parser_agent",
         metadata={"agent_type": "resume_parser"},
     )
@@ -231,7 +238,7 @@ def get_resume_salary_agent() -> Agent[None, OutResumeSalaryParse]:
         model=get_openrouter_model(),
         system_prompt=system_prompt,
         output_type=OutResumeSalaryParse,
-        model_settings={"temperature": 0.0},
+        model_settings={"temperature": 0.0, "max_tokens": MAX_OUTPUT_TOKENS},
         name="resume_salary_agent",
         metadata={"agent_type": "resume_salary"},
     )
