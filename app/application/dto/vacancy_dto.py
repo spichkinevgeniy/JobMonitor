@@ -1,11 +1,11 @@
 from pydantic import BaseModel, Field
 
+from app.application.dto.resume_dto import SkillWithEvidence
 from app.domain.shared.value_objects import (
     CompanyType,
     CurrencyType,
     ExperienceLevel,
     Grade,
-    SkillType,
     SpecializationType,
     WorkFormat,
 )
@@ -30,9 +30,14 @@ class OutVacancyParse(BaseModel):
         default_factory=list,
         description="Список специализаций, подходящих для вакансии.",
     )
-    skills: list[SkillType] = Field(
+    skills: list[SkillWithEvidence] = Field(
         default_factory=list,
-        description="Список ключевых скиллов из фиксированного перечня SkillType.",
+        description=(
+            "Ключевые скиллы из фиксированного перечня SkillType, каждый с дословной "
+            "цитатой из текста вакансии. Цитата обязана встречаться в тексте буквально: "
+            "не пересказывай и не обобщай. Если подтвердить навык цитатой нельзя — "
+            "не указывай его."
+        ),
     )
     salary_amount: int | None = Field(
         default=None,

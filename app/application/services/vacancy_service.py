@@ -59,7 +59,7 @@ class VacancyService:
                 chat_id=raw_vacancy_info.chat_id,
                 message_id=raw_vacancy_info.message_id,
                 specializations=[item.value for item in result.specializations],
-                skills=[item.value for item in result.skills],
+                skills=[item.skill.value for item in result.skills],
             )
             return result
 
@@ -85,7 +85,7 @@ class VacancyService:
                 vacancy_id=uuid4(),
                 text=text,
                 specializations_raw=[s.value for s in parse_result.specializations],
-                skills_raw=[skill.value for skill in parse_result.skills],
+                skills_raw=[item.skill.value for item in parse_result.skills],
                 mirror_chat_id=raw_vacancy_info.mirror_chat_id,
                 mirror_message_id=raw_vacancy_info.mirror_message_id,
                 grade=parse_result.grade,
