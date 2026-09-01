@@ -14,13 +14,13 @@ jobs:
 
     steps:
       - name: Загрузка кода
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Установка uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
 
       - name: Установка Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version-file: .python-version
 
@@ -31,6 +31,6 @@ jobs:
         run: make quality
 
       - name: Создание GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
