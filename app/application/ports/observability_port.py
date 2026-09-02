@@ -13,6 +13,15 @@ class SkipReason(StrEnum):
     PARSE_FAILED = "parse_failed"
 
 
+class TokenKind(StrEnum):
+    """Как провайдер посчитал токены: обычный вход дороже чтения из кэша."""
+
+    INPUT = "input"
+    OUTPUT = "output"
+    CACHE_READ = "cache_read"
+    CACHE_WRITE = "cache_write"
+
+
 class Feature(StrEnum):
     """Что нажал пользователь. Метка одна на все фичи, чтобы не плодить метрики."""
 
@@ -44,3 +53,7 @@ class IObservabilityService(Protocol):
     def observe_feature_used(self, feature: Feature, count: int = 1) -> None: ...
 
     def observe_match_rejected(self, reason: str, count: int = 1) -> None: ...
+
+    def observe_llm_tokens(self, kind: TokenKind, tokens: int) -> None: ...
+
+    def observe_llm_cost(self, model: str, micro_usd: int) -> None: ...
