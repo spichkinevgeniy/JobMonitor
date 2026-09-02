@@ -11,6 +11,8 @@ from app.infrastructure.observability.metrics import (
     DISPATCHED_BY_SKILL,
     DISPATCHED_BY_SPECIALIZATION,
     FEATURE_USED,
+    LLM_COST_MICRO_USD,
+    LLM_TOKENS,
     MATCH_REJECTED,
     MESSAGES_SKIPPED,
     USERS_TOTAL,
@@ -21,6 +23,8 @@ from app.infrastructure.observability.metrics import (
 )
 from app.infrastructure.observability.service import (
     COUNTER_FEATURE_USED,
+    COUNTER_LLM_COST_MICRO,
+    COUNTER_LLM_TOKENS,
     COUNTER_MATCH_REJECTED,
     COUNTER_MESSAGES_SKIPPED,
 )
@@ -33,6 +37,8 @@ _COUNTER_GAUGES = {
     COUNTER_MESSAGES_SKIPPED: (MESSAGES_SKIPPED, "reason"),
     COUNTER_FEATURE_USED: (FEATURE_USED, "feature"),
     COUNTER_MATCH_REJECTED: (MATCH_REJECTED, "reason"),
+    COUNTER_LLM_TOKENS: (LLM_TOKENS, "kind"),
+    COUNTER_LLM_COST_MICRO: (LLM_COST_MICRO_USD, "model"),
 }
 
 

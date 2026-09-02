@@ -119,3 +119,16 @@ def _current_process_rss_bytes() -> float:
 
 
 PROCESS_RSS_BYTES.set_function(_current_process_rss_bytes)
+
+
+LLM_TOKENS = Gauge(
+    "job_monitor_llm_tokens",
+    "Токены, потраченные моделью, накопительно по видам",
+    ["kind"],
+)
+
+LLM_COST_MICRO_USD = Gauge(
+    "job_monitor_llm_cost_micro_usd",
+    "Накопленный расход на модель в микродолларах",
+    ["model"],
+)

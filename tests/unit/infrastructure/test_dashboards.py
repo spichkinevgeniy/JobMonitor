@@ -71,6 +71,8 @@ def test_gauges_are_not_wrapped_in_increase(path: Path) -> None:
         "job_monitor_messages_skipped",
         "job_monitor_match_rejected",
         "job_monitor_dispatched_by",
+        "job_monitor_llm_tokens",
+        "job_monitor_llm_cost_micro_usd",
     )
 
     for expr in _expressions(path):
