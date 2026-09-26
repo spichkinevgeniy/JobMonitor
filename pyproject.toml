@@ -42,6 +42,7 @@ dependencies = [
     "alembic>=1.18.4",
     "asyncpg>=0.31.0",
     "fastapi>=0.121.0",
+    "httpx>=0.28.1",
     "jinja2>=3.1.6",
     "psycopg2-binary>=2.9.11",
     "prometheus-client>=0.23.1",

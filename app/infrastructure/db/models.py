@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import BigInteger, Boolean, DateTime, Integer, String, Text, func
+from sqlalchemy import BigInteger, Boolean, DateTime, Float, Integer, String, Text, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.ext.asyncio import AsyncAttrs
@@ -117,3 +117,30 @@ async def init_db() -> None:
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+
+class JevShadowLog(Base):
+    """Сравнение Jev с Gemini на живом потоке.
+
+    Временная таблица на время эксперимента: после выбора порога удаляется.
+    Текст пишется только там, где ответы разошлись или Jev не уверена.
+    """
+
+    __tablename__ = "jev_shadow_log"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), index=True
+    )
+    text_length: Mapped[int] = mapped_column(Integer)
+    jev_is_vacancy_p: Mapped[float | None] = mapped_column(Float, nullable=True)
+    jev_grade: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    jev_grade_confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
+    jev_latency_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    jev_input_tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    jev_cost_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
+    jev_error: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    llm_is_vacancy: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    llm_grade: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    llm_error: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    text: Mapped[str | None] = mapped_column(Text, nullable=True)

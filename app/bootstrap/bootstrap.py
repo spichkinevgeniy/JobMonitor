@@ -1,12 +1,15 @@
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
+from app.application.ports.llm_port import IVacancyLLMExtractor
 from app.application.ports.observability_port import IObservabilityService
 from app.application.services.user_service import UserService
 from app.bootstrap.models import RuntimeComponents
 from app.core.config import config
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
+from app.infrastructure.extractors.jev_shadow import JevShadowVacancyExtractor
 from app.infrastructure.extractors.vacancy_extractor import GoogleVacancyLLMExtractor
+from app.infrastructure.jev import JevClient
 from app.infrastructure.observability import (
     build_counter_store,
     build_observability_service,
@@ -44,15 +47,25 @@ async def build_scraper(
 ) -> tuple[TelegramScraper, TelethonClientProvider]:
     provider = TelethonClientProvider()
     client = await provider.start()
-    extractor = GoogleVacancyLLMExtractor()
     scraper = TelegramScraper(
         client,
         bot,
         async_session_factory,
-        extractor,
+        build_vacancy_extractor(),
         observability,
     )
     return scraper, provider
+
+
+def build_vacancy_extractor() -> IVacancyLLMExtractor:
+    extractor: IVacancyLLMExtractor = GoogleVacancyLLMExtractor()
+    if not config.JEV_SHADOW_ENABLED:
+        return extractor
+    return JevShadowVacancyExtractor(
+        extractor,
+        JevClient(config.OPENROUTER_API_KEY, config.JEV_MODEL),
+        async_session_factory,
+    )
 
 
 async def build_runtime_components() -> RuntimeComponents:
