@@ -42,9 +42,6 @@ dependencies = [
     "alembic>=1.18.4",
     "asyncpg>=0.31.0",
     "fastapi>=0.121.0",
-    # В 0.1 у usage появилось поле, которого pydantic-ai 1.x не знает: разбор
-    # usage падает молча, и все токены вызова становятся нулями.
-    "genai-prices>=0.0.62,<0.1",
     "httpx>=0.28.1",
     "jinja2>=3.1.6",
     "psycopg2-binary>=2.9.11",
@@ -53,7 +50,7 @@ dependencies = [
     "pillow>=12.2.0",
     "pymupdf>=1.26.4",
     "pydantic>=2.12.5",
-    "pydantic-ai-slim[openrouter]>=1.63.0,<2",
+    "pydantic-ai-slim[openrouter]>=2.51.0,<3",
     "pydantic-settings>=2.13.1",
     "qrcode>=8.2",
     "logfire[fastapi,sqlalchemy,system-metrics]>=4.25.0",
