@@ -2,7 +2,7 @@ from functools import lru_cache
 
 from pydantic_ai import Agent
 from pydantic_ai.models import Model
-from pydantic_ai.models.openrouter import OpenRouterModel
+from pydantic_ai.models.openrouter import OpenRouterModel, OpenRouterModelSettings
 from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 from app.application.dto import OutResumeParse, OutResumeSalaryParse, OutVacancyParse
@@ -132,7 +132,15 @@ def get_vacancy_parse_agent() -> Agent[None, OutVacancyParse]:
         model=get_openrouter_model(),
         system_prompt=system_prompt,
         output_type=OutVacancyParse,
-        model_settings={"temperature": 0.0, "max_tokens": MAX_OUTPUT_TOKENS},
+        model_settings=OpenRouterModelSettings(
+            temperature=0.0,
+            max_tokens=MAX_OUTPUT_TOKENS,
+            # Системный промпт одинаков во всех вызовах — его и кэшируем.
+            # CachePoint в сообщении пользователя для этого не годится:
+            # метка кэширует то, что перед ней, и первой в сообщении стоять
+            # не может — pydantic-ai отбивает такой запрос с UserError.
+            openrouter_cache_instructions=True,
+        ),
         name="vacancy_parser_agent",
         metadata={"agent_type": "vacancy_parser"},
     )
