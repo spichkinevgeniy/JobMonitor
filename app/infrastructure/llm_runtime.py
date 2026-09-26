@@ -80,7 +80,7 @@ def _record_usage(result: object) -> None:
     if not isinstance(result, AgentRunResult):
         return
     try:
-        usage = result.usage()
+        usage = result.usage
         model = getattr(result.response, "model_name", None) or "unknown"
         counts = {
             TokenKind.INPUT: usage.input_tokens,

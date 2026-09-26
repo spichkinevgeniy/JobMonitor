@@ -55,6 +55,10 @@ def cost_micro_usd(
 ) -> int:
     """Стоимость вызова в микродолларах.
 
+    input_tokens — весь вход, как его отдаёт pydantic-ai: токены из кэша и
+    записанные в кэш в нём уже есть. По полной цене идёт только остаток,
+    иначе попадание в кэш оплачивалось бы дважды и выходило дороже промаха.
+
     Целое: счётчики в metric_counter хранят int, а доли цента при сложении
     миллионов токенов теряться не должны.
     """
@@ -62,8 +66,9 @@ def cost_micro_usd(
     if price is None:
         return 0
 
+    uncached_input = max(input_tokens - cache_read_tokens - cache_write_tokens, 0)
     usd = (
-        input_tokens * price.input
+        uncached_input * price.input
         + output_tokens * price.output
         + cache_read_tokens * price.cache_read
         + cache_write_tokens * price.cache_write
