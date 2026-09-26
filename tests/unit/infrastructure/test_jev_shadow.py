@@ -12,9 +12,11 @@ from app.core.config import config
 from app.domain.shared.value_objects import Grade
 from app.infrastructure.extractors import jev_shadow
 from app.infrastructure.extractors.jev_shadow import (
+    AGREEMENT_SAMPLE_RATE,
     JevShadowVacancyExtractor,
+    TextReason,
     build_row,
-    needs_text,
+    text_reason,
 )
 from app.infrastructure.jev import (
     SYSTEM_ONE_URL,
@@ -124,37 +126,92 @@ class TestClient:
             await client.decide(TEXT)
 
 
+def never() -> float:
+    """Жребий, который в выборку не попадает."""
+    return 0.99
+
+
+def always() -> float:
+    """Жребий, который в выборку попадает."""
+    return 0.01
+
+
 class TestWhenTextIsKept:
-    def test_agreement_keeps_no_text(self) -> None:
-        assert needs_text(decision(0.97), gemini(True)) is False
+    def test_agreement_outside_sample_keeps_no_text(self) -> None:
+        assert text_reason(decision(0.97), gemini(True), never) is None
+        assert text_reason(decision(0.02), gemini(False), never) is None
 
     def test_disagreement_keeps_text(self) -> None:
-        assert needs_text(decision(0.1), gemini(True)) is True
-        assert needs_text(decision(0.9), gemini(False)) is True
+        assert text_reason(decision(0.1), gemini(True), never) is TextReason.DISAGREE
+        assert text_reason(decision(0.9), gemini(False), never) is TextReason.DISAGREE
 
     def test_uncertain_band_keeps_text(self) -> None:
         """По середине шкалы потом выбирается порог — её надо читать."""
-        assert needs_text(decision(0.65), gemini(True)) is True
+        assert text_reason(decision(0.65), gemini(True), never) is TextReason.UNCERTAIN
 
     def test_grade_disagreement_keeps_text(self) -> None:
-        assert needs_text(decision(0.97, "MIDDLE"), gemini(True, Grade.SENIOR)) is True
+        reason = text_reason(decision(0.97, "MIDDLE"), gemini(True, Grade.SENIOR), never)
+
+        assert reason is TextReason.GRADE
 
     def test_gemini_failure_with_jev_vacancy_keeps_text(self) -> None:
         """Сломался Gemini, а Jev видит вакансию — кандидат в потерянные."""
-        assert needs_text(decision(0.9), None) is True
-        assert needs_text(decision(0.05), None) is False
+        assert text_reason(decision(0.9), None, never) is TextReason.LLM_FAILED
+        assert text_reason(decision(0.05), None, never) is None
 
     def test_jev_failure_keeps_no_text(self) -> None:
-        assert needs_text(None, gemini(True)) is False
+        assert text_reason(None, gemini(True), always) is None
 
-    def test_row_carries_both_answers(self) -> None:
-        row = build_row(TEXT, decision(0.1), None, gemini(True), None)
+
+class TestAgreementSample:
+    def test_rate_is_five_percent(self) -> None:
+        assert AGREEMENT_SAMPLE_RATE == 0.05
+
+    def test_agreements_can_land_in_sample(self) -> None:
+        """Иначе одинаковые ошибки обеих моделей не увидеть никогда."""
+        assert text_reason(decision(0.97), gemini(True), always) is TextReason.SAMPLE
+        assert text_reason(decision(0.02), gemini(False), always) is TextReason.SAMPLE
+
+    def test_sample_never_hides_a_stronger_reason(self) -> None:
+        """Расхождение должно остаться расхождением, даже если выпал жребий."""
+        assert text_reason(decision(0.1), gemini(True), always) is TextReason.DISAGREE
+        assert text_reason(decision(0.65), gemini(True), always) is TextReason.UNCERTAIN
+
+    def test_sample_rate_holds_over_many_draws(self) -> None:
+        """На настоящем random доля выборки держится около пяти процентов."""
+        import random
+
+        rng = random.Random(20260926)
+        hits = sum(
+            text_reason(decision(0.97), gemini(True), rng.random) is TextReason.SAMPLE
+            for _ in range(20_000)
+        )
+
+        assert 0.04 < hits / 20_000 < 0.06
+
+
+class TestRow:
+    def test_row_carries_both_answers_and_reason(self) -> None:
+        row = build_row(TEXT, decision(0.1), None, gemini(True), None, never)
 
         assert row.jev_is_vacancy_p == 0.1
         assert row.llm_is_vacancy is True
         assert row.llm_grade == "SENIOR"
         assert row.text == TEXT
+        assert row.text_reason == "disagree"
         assert row.text_length == len(TEXT)
+
+    def test_row_without_text_has_no_reason(self) -> None:
+        row = build_row(TEXT, decision(0.97), None, gemini(True), None, never)
+
+        assert row.text is None
+        assert row.text_reason is None
+
+    def test_sampled_row_is_marked(self) -> None:
+        row = build_row(TEXT, decision(0.97), None, gemini(True), None, always)
+
+        assert row.text == TEXT
+        assert row.text_reason == "sample"
 
 
 class FakeInner:

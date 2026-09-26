@@ -8,7 +8,9 @@
 """
 
 import asyncio
-from collections.abc import Coroutine
+import random
+from collections.abc import Callable, Coroutine
+from enum import StrEnum
 from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
@@ -36,24 +38,51 @@ UNCERTAIN_HIGH = 0.8
 
 ERROR_NAME_LENGTH = 64
 
+# Доля совпавших ответов, у которых текст всё равно сохраняется. По ним
+# проверяется, не ошибаются ли обе модели одинаково: у совпадений иначе
+# текста нет, а у отсеянных сообщений его нет и в таблице вакансий.
+AGREEMENT_SAMPLE_RATE = 0.05
 
-def needs_text(decision: JevDecision | None, llm: OutVacancyParse | None) -> bool:
+
+class TextReason(StrEnum):
+    """Почему у строки сохранён текст.
+
+    Причина пишется явно: ошибки в случайной выборке совпадений при подсчёте
+    надо умножать обратно на её долю, а остальные — нет.
+    """
+
+    LLM_FAILED = "llm_failed"
+    DISAGREE = "disagree"
+    UNCERTAIN = "uncertain"
+    GRADE = "grade"
+    SAMPLE = "sample"
+
+
+def text_reason(
+    decision: JevDecision | None,
+    llm: OutVacancyParse | None,
+    draw: Callable[[], float] = random.random,
+) -> TextReason | None:
     """Текст храним только там, где его придётся читать глазами.
 
-    Совпавшие ответы читать незачем, а хранить тексты сверх нужного —
-    лишнее, даже если это публичные посты каналов.
+    Хранить тексты сверх нужного — лишнее, даже если это публичные посты
+    каналов, поэтому из совпадений сохраняется лишь случайная доля.
     """
     if decision is None:
-        return False
+        return None
     jev_says_vacancy = decision.is_vacancy_probability >= DECISION_THRESHOLD
     if llm is None:
         # Gemini сломался, а Jev видит вакансию — кандидат в потерянные.
-        return jev_says_vacancy
+        return TextReason.LLM_FAILED if jev_says_vacancy else None
     if jev_says_vacancy != llm.is_vacancy:
-        return True
+        return TextReason.DISAGREE
     if UNCERTAIN_LOW <= decision.is_vacancy_probability <= UNCERTAIN_HIGH:
-        return True
-    return llm.is_vacancy and jev_says_vacancy and decision.grade != llm.grade.value
+        return TextReason.UNCERTAIN
+    if llm.is_vacancy and decision.grade != llm.grade.value:
+        return TextReason.GRADE
+    if draw() < AGREEMENT_SAMPLE_RATE:
+        return TextReason.SAMPLE
+    return None
 
 
 def build_row(
@@ -62,7 +91,9 @@ def build_row(
     jev_error: str | None,
     llm: OutVacancyParse | None,
     llm_error: str | None,
+    draw: Callable[[], float] = random.random,
 ) -> JevShadowLog:
+    reason = text_reason(decision, llm, draw)
     return JevShadowLog(
         text_length=len(text),
         jev_is_vacancy_p=decision.is_vacancy_probability if decision else None,
@@ -75,7 +106,8 @@ def build_row(
         llm_is_vacancy=llm.is_vacancy if llm else None,
         llm_grade=llm.grade.value if llm else None,
         llm_error=llm_error,
-        text=text if needs_text(decision, llm) else None,
+        text=text if reason is not None else None,
+        text_reason=reason.value if reason is not None else None,
     )
 
 
