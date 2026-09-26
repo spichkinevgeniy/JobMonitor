@@ -40,6 +40,11 @@ class BaseAppSettings(BaseSettings):
     OPENROUTER_MODEL: str = "google/gemini-2.5-flash"
     OPENROUTER_APP_TITLE: str = "jobmonitor"
 
+    # Теневой прогон Jev рядом с Gemini: ответ Jev бот не использует, только
+    # пишет рядом для сравнения. Идёт через тот же ключ OpenRouter.
+    JEV_SHADOW_ENABLED: bool = False
+    JEV_MODEL: str = "typesafe/jev-1.13"
+
     SENTRY_DSN: str | None = None
     SENTRY_ENV: str
     SENTRY_TRACES_SAMPLE_RATE: float = 0.0
