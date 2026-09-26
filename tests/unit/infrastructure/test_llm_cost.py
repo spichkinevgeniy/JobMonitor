@@ -43,23 +43,46 @@ class TestPricing:
 
         assert plain == pytest.approx(cached * 10, rel=0.01)
 
-    def test_cache_write_barely_costs_more_than_input(self) -> None:
-        """Промах по кэшу должен быть почти бесплатным, иначе включать рискованно."""
+    def test_cache_write_costs_no_more_than_input(self) -> None:
+        """Промах по кэшу не должен стоить дороже вызова без кэша, иначе включать рискованно.
+
+        Записанные токены Gemini тут же читает из кэша, так что у записи
+        они приходят и в cache_read, и в cache_write.
+        """
         plain = cost_micro_usd(MODEL, input_tokens=1_000_000)
-        written = cost_micro_usd(MODEL, input_tokens=1_000_000, cache_write_tokens=1_000_000)
+        written = cost_micro_usd(
+            MODEL,
+            input_tokens=1_000_000,
+            cache_read_tokens=1_000_000,
+            cache_write_tokens=1_000_000,
+        )
 
-        assert written / plain < 1.05
+        assert written <= plain
 
-    @pytest.mark.parametrize(("cache_read", "billed"), [(0, 727), (2027, 180)])
-    def test_matches_openrouter_bill(self, cache_read: int, billed: int) -> None:
-        """Живые вызовы 27.09: 2083 токена входа и 41 выхода.
+    @pytest.mark.parametrize(
+        ("input_tokens", "output_tokens", "cache_read", "cache_write", "billed"),
+        [
+            (2083, 41, 0, 0, 727),
+            (2083, 41, 2027, 0, 180),
+            (2080, 33, 2027, 0, 159),
+            (2077, 50, 2027, 2027, 370),
+        ],
+    )
+    def test_matches_openrouter_bill(
+        self, input_tokens: int, output_tokens: int, cache_read: int, cache_write: int, billed: int
+    ) -> None:
+        """Живые вызовы 27.09 и списания OpenRouter за них в микродолларах.
 
-        OpenRouter списал $0.0007274 без кэша и $0.00018011, когда 2027 токенов
-        входа пришли из кэша. Прежняя формула брала за них и полную цену, и
-        цену кэша, и насчитала бы $0.00079 — дороже, чем совсем без кэша.
+        Без кэша, два попадания и запись в протухший кэш. Прежняя формула
+        брала за токены из кэша и полную цену, и цену кэша, а запись считала
+        как вход: попадание выходило в 788 вместо 180, запись — в 1431 вместо 370.
         """
         cost = cost_micro_usd(
-            MODEL, input_tokens=2083, output_tokens=41, cache_read_tokens=cache_read
+            MODEL,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            cache_read_tokens=cache_read,
+            cache_write_tokens=cache_write,
         )
 
         assert cost == billed
@@ -82,9 +105,11 @@ class TestPricing:
 
     @pytest.mark.parametrize("model", sorted(PRICES))
     def test_every_price_is_positive(self, model: str) -> None:
+        """Запись в кэш бывает бесплатной, как у OpenAI, остальное — нет."""
         price = PRICES[model]
 
-        assert min(price.input, price.output, price.cache_read, price.cache_write) > 0
+        assert min(price.input, price.output, price.cache_read) > 0
+        assert price.cache_write >= 0
 
 
 class TestCounters:
