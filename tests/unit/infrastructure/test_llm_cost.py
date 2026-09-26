@@ -1,9 +1,16 @@
 """Учёт расхода на модель и метка кэша."""
 
+import json
+from typing import Any
+
+import httpx
 import pytest
-from pydantic_ai import CachePoint
+from pydantic_ai.models.openrouter import OpenRouterModel
+from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 from app.application.ports.observability_port import TokenKind
+from app.infrastructure.extractors.vacancy_extractor import GoogleVacancyLLMExtractor
+from app.infrastructure.llm import get_resume_parse_agent, get_vacancy_parse_agent
 from app.infrastructure.observability import pricing
 from app.infrastructure.observability.pricing import PRICES, cost_micro_usd
 from app.infrastructure.observability.service import (
@@ -93,26 +100,79 @@ class TestCounters:
         assert store.calls == []
 
 
-class TestCachePoint:
-    def test_marker_goes_before_the_text(self) -> None:
-        """Метка после текста кэширует и сам текст — попаданий тогда не будет."""
-        import inspect
+# Ответ OpenRouter в минимальном виде: модель вызывает инструмент ответа.
+COMPLETION = {
+    "id": "gen-test",
+    "object": "chat.completion",
+    "created": 0,
+    "model": MODEL,
+    "provider": "Google",
+    "choices": [
+        {
+            "index": 0,
+            "finish_reason": "tool_calls",
+            "message": {
+                "role": "assistant",
+                "content": None,
+                "tool_calls": [
+                    {
+                        "id": "call_0",
+                        "type": "function",
+                        "function": {"name": "final_result", "arguments": '{"is_vacancy": false}'},
+                    }
+                ],
+            },
+        }
+    ],
+    "usage": {"prompt_tokens": 3825, "completion_tokens": 12, "total_tokens": 3837},
+}
 
-        from app.infrastructure.extractors import vacancy_extractor
 
-        source = inspect.getsource(vacancy_extractor.GoogleVacancyLLMExtractor.parse_vacancy)
-        marker = source.index("CachePoint()")
-        text = source.index("Проанализируй текст")
+def _recording_model(sent: list[dict[str, Any]]) -> OpenRouterModel:
+    def reply(request: httpx.Request) -> httpx.Response:
+        sent.append(json.loads(request.content))
+        return httpx.Response(200, json=COMPLETION)
 
-        assert marker < text
+    client = httpx.AsyncClient(transport=httpx.MockTransport(reply))
+    return OpenRouterModel(MODEL, provider=OpenRouterProvider(api_key="test", http_client=client))
 
-    def test_resume_parsing_has_no_marker(self) -> None:
+
+class TestPromptCache:
+    """Запрос собирает настоящая модель pydantic-ai, подменён только HTTP.
+
+    В v0.16.0 тест смотрел на порядок строк в исходнике, а pydantic-ai
+    отбивал каждый такой запрос с UserError, и разбор вакансий на проде
+    встал. Ошибки сборки запроса видны только при самой сборке.
+    """
+
+    async def _vacancy_request(self) -> dict[str, Any]:
+        sent: list[dict[str, Any]] = []
+        with get_vacancy_parse_agent().override(model=_recording_model(sent)):
+            await GoogleVacancyLLMExtractor().parse_vacancy("Ищем Python-разработчика в платежи")
+
+        assert len(sent) == 1
+        return sent[0]
+
+    async def test_vacancy_request_goes_out(self) -> None:
+        request = await self._vacancy_request()
+
+        assert request["model"] == MODEL
+
+    async def test_system_prompt_is_cached(self) -> None:
+        system = (await self._vacancy_request())["messages"][0]
+
+        assert system["role"] == "system"
+        assert system["content"][-1]["cache_control"] == {"type": "ephemeral"}
+
+    async def test_vacancy_text_is_not_cached(self) -> None:
+        """Текст вакансии каждый раз новый: под меткой он сорвал бы все попадания."""
+        user = (await self._vacancy_request())["messages"][-1]
+
+        assert user["role"] == "user"
+        assert "cache_control" not in json.dumps(user)
+
+    def test_resume_parsing_is_not_cached(self) -> None:
         """Резюме грузят единицы раз в месяц: кэш протухнет, а запись оплатится."""
-        import inspect
+        settings = get_resume_parse_agent().model_settings or {}
 
-        from app.infrastructure.parsers import pdf_parser
-
-        assert "CachePoint" not in inspect.getsource(pdf_parser)
-
-    def test_marker_is_the_pydantic_ai_one(self) -> None:
-        assert CachePoint().ttl == "5m"
+        assert "openrouter_cache_instructions" not in settings

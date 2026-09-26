@@ -1,7 +1,5 @@
 import re
 
-from pydantic_ai import CachePoint
-
 from app.application.dto import OutVacancyParse
 from app.application.ports.llm_port import IVacancyLLMExtractor
 from app.core.logger import get_app_logger
@@ -101,13 +99,9 @@ class GoogleVacancyLLMExtractor(IVacancyLLMExtractor):
         result = await run_with_llm_retry(
             "vacancy_parse",
             lambda: self._agent.run(
-                # Метка стоит первой: под кэш уходит всё, что до неё, —
-                # системный промпт и схема ответа. Текст вакансии каждый раз
-                # новый, кэшировать его нельзя, иначе попаданий не будет.
-                user_prompt=[
-                    CachePoint(),
-                    f"Проанализируй текст и сначала определи, является ли он вакансией:\n{text}",
-                ],
+                user_prompt=(
+                    f"Проанализируй текст и сначала определи, является ли он вакансией:\n{text}"
+                ),
                 metadata={"pipeline": "vacancy_ingest"},
             ),
         )
