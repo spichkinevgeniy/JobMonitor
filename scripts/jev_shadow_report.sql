@@ -6,7 +6,8 @@
 --
 -- Gemini здесь — точка отсчёта, а не истина: отчёт меряет согласие с ним.
 -- Кто прав там, где модели разошлись, видно только по текстам — они лежат
--- в колонке text как раз для таких случаев (запрос 7).
+-- в колонке text как раз для таких случаев (запросы 8 и 9). Почему текст
+-- сохранён, написано в text_reason.
 
 \echo '== 1. Сводка =='
 select count(*)                                                  as vyzovov,
@@ -77,12 +78,39 @@ select count(*) as shtuk
 from jev_shadow_log
 where llm_error is not null and jev_is_vacancy_p >= 0.5;
 
-\echo '== 8. Тексты расхождений для чтения глазами (последние 20) =='
+\echo '== 8. Тексты для чтения глазами: по причинам =='
+select text_reason as prichina, count(*) as shtuk
+from jev_shadow_log
+where text is not null
+group by 1
+order by 2 desc;
+
 select created_at::timestamp(0)       as kogda,
+       text_reason                    as prichina,
        round(jev_is_vacancy_p::numeric, 2) as jev_p,
        llm_is_vacancy                 as gemini,
        left(regexp_replace(text, '\s+', ' ', 'g'), 220) as tekst
 from jev_shadow_log
-where text is not null
+where text is not null and text_reason <> 'sample'
 order by created_at desc
 limit 20;
+
+\echo '== 9. Случайная выборка совпадений: не ошибаются ли обе модели одинаково =='
+-- Это 5% совпавших ответов. Ошибку, найденную здесь, пересчитывать на
+-- весь поток: одна ошибка в выборке — около двадцати в совпадениях целиком.
+select llm_is_vacancy                 as obe_skazali_vakansiya,
+       count(*)                       as v_vyborke,
+       round(count(*) / 0.05)         as okolo_vsego
+from jev_shadow_log
+where text_reason = 'sample'
+group by 1
+order by 1;
+
+select created_at::timestamp(0)       as kogda,
+       llm_is_vacancy                 as obe_skazali_vakansiya,
+       round(jev_is_vacancy_p::numeric, 2) as jev_p,
+       left(regexp_replace(text, '\s+', ' ', 'g'), 220) as tekst
+from jev_shadow_log
+where text_reason = 'sample'
+order by random()
+limit 25;

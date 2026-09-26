@@ -144,3 +144,4 @@ class JevShadowLog(Base):
     llm_grade: Mapped[str | None] = mapped_column(String(16), nullable=True)
     llm_error: Mapped[str | None] = mapped_column(String(64), nullable=True)
     text: Mapped[str | None] = mapped_column(Text, nullable=True)
+    text_reason: Mapped[str | None] = mapped_column(String(16), nullable=True)
