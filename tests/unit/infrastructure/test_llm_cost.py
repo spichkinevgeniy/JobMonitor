@@ -3,7 +3,7 @@
 import json
 from typing import Any
 
-import httpx
+import httpx2
 import pytest
 from pydantic_ai.models.openrouter import OpenRouterModel
 from pydantic_ai.providers.openrouter import OpenRouterProvider
@@ -190,11 +190,11 @@ COMPLETION = {
 
 
 def _recording_model(sent: list[dict[str, Any]]) -> OpenRouterModel:
-    def reply(request: httpx.Request) -> httpx.Response:
+    def reply(request: httpx2.Request) -> httpx2.Response:
         sent.append(json.loads(request.content))
-        return httpx.Response(200, json=COMPLETION)
+        return httpx2.Response(200, json=COMPLETION)
 
-    client = httpx.AsyncClient(transport=httpx.MockTransport(reply))
+    client = httpx2.AsyncClient(transport=httpx2.MockTransport(reply))
     return OpenRouterModel(MODEL, provider=OpenRouterProvider(api_key="test", http_client=client))
 
 
