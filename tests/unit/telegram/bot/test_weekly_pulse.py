@@ -10,7 +10,7 @@ from aiogram.exceptions import TelegramForbiddenError
 from aiogram.methods import SendMessage
 
 from app.application.ports.observability_port import Feature
-from app.application.services.stats_service import RejectionCount, SkillSuggestion
+from app.application.services.stats_service import RejectionCount
 from app.application.services.weekly_pulse_service import SalaryMedian, WeeklyPulse, last_full_week
 from app.bootstrap.weekly_pulse import in_send_window
 from app.core.config import config
@@ -43,7 +43,6 @@ PULSE = WeeklyPulse(
     sent=18,
     rejected=2,
     salary=SalaryMedian(specialization="Backend", grade=Grade.MIDDLE, amount=185_000, sample=64),
-    skill=SkillSuggestion(skill="Kafka", unlocks=9),
     top_rejection=RejectionCount(reason=MatchRejectionReason.GRADE, count=12),
 )
 
@@ -58,7 +57,6 @@ class TestText:
             "\n"
             "💰 Медиана зарплаты Backend · Middle за 4 недели: 185 000 ₽ "
             "(по 64 вакансиям с зарплатой)\n"
-            "🔥 Навык недели: Kafka — открыл бы ещё 9 вакансий\n"
             "🧹 Больше всего отсеял фильтр по грейду: 12 вакансий"
         )
 
@@ -69,7 +67,6 @@ class TestText:
             matched_previous=0,
             sent=0,
             salary=None,
-            skill=None,
             top_rejection=None,
         )
 
@@ -102,25 +99,17 @@ class TestText:
         assert "Медиана зарплаты QA за 4 недели: 180 000 ₽ (по 21 вакансии с зарплатой)" in text
 
     @pytest.mark.parametrize(
-        ("unlocks", "rejected", "unlocks_text", "rejected_text"),
-        [
-            (3, 1, "3 вакансии", "1 вакансия"),
-            (21, 22, "21 вакансию", "22 вакансии"),
-            (11, 14, "11 вакансий", "14 вакансий"),
-        ],
+        ("rejected", "rejected_text"),
+        [(1, "1 вакансия"), (22, "22 вакансии"), (14, "14 вакансий")],
     )
-    def test_plural_forms(
-        self, unlocks: int, rejected: int, unlocks_text: str, rejected_text: str
-    ) -> None:
+    def test_plural_forms(self, rejected: int, rejected_text: str) -> None:
         text = build_weekly_pulse_text(
             replace(
                 PULSE,
-                skill=SkillSuggestion(skill="Kafka", unlocks=unlocks),
                 top_rejection=RejectionCount(reason=MatchRejectionReason.SALARY, count=rejected),
             )
         )
 
-        assert f"открыл бы ещё {unlocks_text}" in text
         assert f"фильтр по зарплате: {rejected_text}" in text
 
     def test_week_across_months(self) -> None:

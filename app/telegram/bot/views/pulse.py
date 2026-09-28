@@ -82,12 +82,6 @@ def build_weekly_pulse_text(pulse: WeeklyPulse) -> str:
             f"💰 Медиана зарплаты {profile} за 4 недели: {_format_amount(pulse.salary.amount)} ₽ "
             f"(по {sample} {_plural(sample, 'вакансии', 'вакансиям', 'вакансиям')} с зарплатой)"
         )
-    if pulse.skill is not None:
-        unlocks = pulse.skill.unlocks
-        details.append(
-            f"🔥 Навык недели: {pulse.skill.skill} — открыл бы ещё {unlocks} "
-            f"{_plural(unlocks, 'вакансию', 'вакансии', 'вакансий')}"
-        )
     if pulse.top_rejection is not None:
         count = pulse.top_rejection.count
         label = _FILTER_LABELS.get(pulse.top_rejection.reason, pulse.top_rejection.reason.value)
