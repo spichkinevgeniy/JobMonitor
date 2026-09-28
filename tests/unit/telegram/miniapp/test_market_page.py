@@ -166,22 +166,21 @@ def client() -> TestClient:
 
 class TestPage:
     def test_available_without_telegram_auth(self, client: TestClient) -> None:
-        assert client.get("/market").status_code == 200
+        assert client.get("/").status_code == 200
 
     def test_renders_numbers(self, client: TestClient) -> None:
-        page = client.get("/market").text
+        page = client.get("/").text
 
         assert "2 251" in page
         assert "235к" in page
         assert "{{" not in page
 
     def test_links_to_bot(self, client: TestClient) -> None:
-        assert "https://t.me/JobMonitorIT_BOT" in client.get("/market").text
+        assert "https://t.me/JobMonitorIT_BOT" in client.get("/").text
 
     def test_robots_hides_miniapp(self, client: TestClient) -> None:
         robots = client.get("/robots.txt").text
 
-        assert "Allow: /market" in robots
         assert "Disallow: /miniapp" in robots
         assert "/sitemap.xml" in robots
 
@@ -189,5 +188,5 @@ class TestPage:
         response = client.get("/sitemap.xml")
 
         assert response.headers["content-type"].startswith("application/xml")
-        assert "/market</loc>" in response.text
+        assert "/</loc>" in response.text
         assert "/privacy</loc>" in response.text
