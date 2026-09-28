@@ -3,6 +3,7 @@ import asyncio
 from app.bootstrap.metrics_sync import run_metrics_sync_loop
 from app.bootstrap.models import RuntimeComponents, RuntimeTasks
 from app.bootstrap.shutdown import graceful_shutdown, install_shutdown_handlers
+from app.bootstrap.weekly_pulse import run_weekly_pulse_loop
 from app.infrastructure.db import async_session_factory
 from app.infrastructure.telegram.miniapp_server import run_miniapp_server
 
@@ -34,6 +35,10 @@ def start_runtime_tasks(
             run_metrics_sync_loop(async_session_factory, components.counter_store),
             name="metrics-sync",
         ),
+        weekly_pulse_task=asyncio.create_task(
+            run_weekly_pulse_loop(components.bot),
+            name="weekly-pulse",
+        ),
         stop_task=asyncio.create_task(stop_event.wait(), name="shutdown-signal"),
     )
 
@@ -46,6 +51,7 @@ async def wait_runtime(tasks: RuntimeTasks) -> None:
             tasks.bot_task,
             tasks.miniapp_task,
             tasks.metrics_sync_task,
+            tasks.weekly_pulse_task,
             tasks.stop_task,
         )
         if task is not None

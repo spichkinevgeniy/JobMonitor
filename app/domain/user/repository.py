@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Protocol, runtime_checkable
 
 from app.domain.user.entities import User
@@ -27,6 +27,12 @@ class IUserRepository(Protocol):
     ) -> list[User]: ...
 
     async def list_active_tg_ids(self) -> list[int]: ...
+
+    async def list_pulse_recipients(self) -> list[User]: ...
+
+    async def claim_weekly_pulse(self, tg_id: int, week_start: date) -> bool: ...
+
+    async def set_weekly_pulse_status(self, tg_id: int, week_start: date, status: str) -> None: ...
 
     async def get_resume_upload_stats(
         self, tg_id: int, since: datetime

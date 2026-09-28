@@ -98,8 +98,10 @@ class StatsService:
     def __init__(self, uow: VacancyUnitOfWork) -> None:
         self._uow = uow
 
-    async def build_profile_stats(self, user: User) -> ProfileStats:
-        now = datetime.now(UTC)
+    async def build_profile_stats(self, user: User, now: datetime | None = None) -> ProfileStats:
+        """now задаёт недельная сводка: она считает прошедшую календарную
+        неделю, а не последние семь дней от момента вызова."""
+        now = now or datetime.now(UTC)
 
         specializations = {item.value for item in user.cv_specializations.items}
         skills = {item.value for item in user.cv_skills.items}
@@ -116,6 +118,11 @@ class StatsService:
                 specializations=specializations,
                 since=now - timedelta(days=FUNNEL_DAYS),
             )
+
+        # Запросы ограничены только снизу: всё, что пришло после now, в окна
+        # попасть не должно.
+        vacancies = [item for item in vacancies if item.created_at < now]
+        by_specialization = [item for item in by_specialization if item.created_at < now]
 
         # Решение по каждой вакансии считаем один раз: тренды берут принятые,
         # воронка — распределение отказов.

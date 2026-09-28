@@ -47,7 +47,7 @@ def stub_dependencies(monkeypatch: pytest.MonkeyPatch) -> None:
         return TG_IDS
 
     monkeypatch.setattr(broadcast_router, "UserUnitOfWork", lambda factory: FakeUow())
-    monkeypatch.setattr(broadcast_router, "_deactivate_user", _noop)
+    monkeypatch.setattr(broadcast_router, "deactivate_user", _noop)
 
 
 async def _noop(tg_id: int) -> None:

@@ -1,8 +1,9 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, cast
 
-from sqlalchemy import CursorResult, delete, func, select
+from sqlalchemy import CursorResult, delete, func, select, update
 from sqlalchemy.dialects.postgresql import array
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.user.entities import User
@@ -12,6 +13,7 @@ from app.infrastructure.db.mappers.user import apply_user, user_from_model, user
 from app.infrastructure.db.models import ResumeUploadLog as ResumeUploadLogModel
 from app.infrastructure.db.models import User as UserModel
 from app.infrastructure.db.models import VacancyDispatchLog as VacancyDispatchLogModel
+from app.infrastructure.db.models import WeeklyPulseLog as WeeklyPulseLogModel
 
 
 class UserRepository(IUserRepository):
@@ -85,6 +87,38 @@ class UserRepository(IUserRepository):
         )
         return [row[0] for row in result.all()]
 
+    async def list_pulse_recipients(self) -> list[User]:
+        result = await self._session.execute(
+            select(UserModel).where(
+                UserModel.is_active.is_(True), UserModel.pulse_enabled.is_(True)
+            )
+        )
+        return [user_from_model(model) for model in result.scalars().all()]
+
+    async def claim_weekly_pulse(self, tg_id: int, week_start: date) -> bool:
+        """Занимает неделю за пользователем до отправки.
+
+        Строку пишем до отправки, а не после: при рестарте посреди рассылки
+        кто-то останется без сводки, но никто не получит её дважды.
+        """
+        result = await self._session.execute(
+            pg_insert(WeeklyPulseLogModel)
+            .values(user_tg_id=tg_id, week_start=week_start, status="pending")
+            .on_conflict_do_nothing()
+            .returning(WeeklyPulseLogModel.user_tg_id)
+        )
+        return result.scalar_one_or_none() is not None
+
+    async def set_weekly_pulse_status(self, tg_id: int, week_start: date, status: str) -> None:
+        await self._session.execute(
+            update(WeeklyPulseLogModel)
+            .where(
+                WeeklyPulseLogModel.user_tg_id == tg_id,
+                WeeklyPulseLogModel.week_start == week_start,
+            )
+            .values(status=status)
+        )
+
     async def get_resume_upload_stats(
         self, tg_id: int, since: datetime
     ) -> tuple[int, datetime | None]:
@@ -103,8 +137,8 @@ class UserRepository(IUserRepository):
         await self._session.flush()
 
     async def delete_by_tg_id(self, tg_id: UserId) -> bool:
-        """Профиль и оба лога. Внешних ключей нет, каскад не сработает."""
-        for model in (VacancyDispatchLogModel, ResumeUploadLogModel):
+        """Профиль и все его журналы. Внешних ключей нет, каскад не сработает."""
+        for model in (VacancyDispatchLogModel, ResumeUploadLogModel, WeeklyPulseLogModel):
             await self._session.execute(delete(model).where(model.user_tg_id == tg_id.value))
         # execute() объявлен как Result, но на DML возвращает CursorResult —
         # только у него есть rowcount. Приведение вместо ignore, чтобы не

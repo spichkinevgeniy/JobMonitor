@@ -28,6 +28,18 @@ class IVacancyRepository(Protocol):
 
     async def count_dispatched_for_user(self, user_tg_id: int) -> tuple[int, datetime | None]: ...
 
+    async def count_dispatches_between(
+        self, user_tg_id: int, since: datetime, until: datetime
+    ) -> tuple[int, int]: ...
+
+    async def salary_median(
+        self,
+        specialization: str,
+        grade: str | None,
+        since: datetime,
+        until: datetime,
+    ) -> tuple[int | None, int]: ...
+
     async def get_by_content_hash(self, content_hash: ContentHash) -> Vacancy | None: ...
 
     async def exists_by_content_hash(self, content_hash: ContentHash) -> bool: ...

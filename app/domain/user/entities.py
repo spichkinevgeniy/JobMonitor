@@ -32,6 +32,7 @@ class User:
     filter_work_format_mode: FilterMode
 
     is_active: bool = True
+    pulse_enabled: bool = True
 
     @classmethod
     def create(

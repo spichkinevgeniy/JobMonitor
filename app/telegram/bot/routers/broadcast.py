@@ -8,8 +8,8 @@ from aiogram.types import Message
 from app.core.config import config
 from app.core.logger import get_app_logger
 from app.core.privacy import user_ref
-from app.domain.user.value_objects import UserId
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
+from app.telegram.bot.delivery import deactivate_user
 from app.telegram.bot.keyboards import get_main_menu_kb
 
 router = Router()
@@ -54,7 +54,7 @@ async def cmd_broadcast(message: Message, command: CommandObject) -> None:
                 failed += 1
         except TelegramForbiddenError:
             blocked += 1
-            await _deactivate_user(tg_id)
+            await deactivate_user(tg_id)
         except Exception:
             logger.exception("Broadcast failed for user %s", user_ref(tg_id))
             failed += 1
@@ -63,16 +63,3 @@ async def cmd_broadcast(message: Message, command: CommandObject) -> None:
     await message.answer(
         f"Рассылка завершена.\nОтправлено: {sent}\nЗаблокировали бота: {blocked}\nОшибок: {failed}"
     )
-
-
-async def _deactivate_user(tg_id: int) -> None:
-    try:
-        async with UserUnitOfWork(async_session_factory) as uow:
-            user = await uow.users.get_by_tg_id(UserId(tg_id))
-            if user is not None and user.is_active:
-                user.is_active = False
-                await uow.users.update(user)
-    except Exception:
-        logger.exception(
-            "Failed to deactivate user %s after broadcast-forbidden error", user_ref(tg_id)
-        )

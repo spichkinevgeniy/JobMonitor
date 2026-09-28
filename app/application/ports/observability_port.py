@@ -35,6 +35,9 @@ class Feature(StrEnum):
     RESUME_UPLOAD = "resume_upload"
     PROFILE_SAVE = "profile_save"
     ADVICE_SHOWN = "advice_shown"
+    PULSE_SENT = "pulse_sent"
+    PULSE_OPEN = "pulse_open"
+    PULSE_UNSUBSCRIBE = "pulse_unsubscribe"
 
 
 class IObservabilityService(Protocol):

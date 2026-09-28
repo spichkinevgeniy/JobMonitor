@@ -1,3 +1,5 @@
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+
 from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
@@ -30,6 +32,15 @@ DELETE_CANCEL_CALLBACK = "delete:cancel"
 
 SETTINGS_DONE_BUTTON_TEXT = "✅ Готов"
 SETTINGS_DONE_CALLBACK = "settings:done"
+
+PULSE_STATS_BUTTON_TEXT = "📈 Открыть аналитику"
+PULSE_SETTINGS_BUTTON_TEXT = "⚙️ Изменить фильтры"
+PULSE_OFF_BUTTON_TEXT = "🔕 Не присылать сводку"
+PULSE_SETTINGS_CALLBACK = "pulse:settings"
+PULSE_OFF_CALLBACK = "pulse:off"
+PULSE_TOGGLE_CALLBACK = "pulse:toggle"
+# Метка в ссылке на аналитику: по ней считаем, сколько людей открыли её из сводки.
+PULSE_SOURCE = "pulse"
 
 
 # Кнопки главного меню шлют обычный текст, поэтому fallback обязан их
@@ -99,6 +110,7 @@ def get_settings_menu_kb(
     format_url: str,
     salary_url: str,
     level_url: str,
+    pulse_label: str,
 ) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.button(
@@ -117,11 +129,32 @@ def get_settings_menu_kb(
         text=f"📈 {level_label}",
         web_app=WebAppInfo(url=level_url),
     )
+    builder.button(text=pulse_label, callback_data=PULSE_TOGGLE_CALLBACK)
     builder.button(
         text=SETTINGS_DONE_BUTTON_TEXT,
         callback_data=SETTINGS_DONE_CALLBACK,
     )
-    builder.adjust(1, 1, 1, 1, 1)
+    builder.adjust(1)
+    return builder.as_markup()
+
+
+def with_source(url: str, source: str) -> str:
+    """Добавляет к ссылке метку источника, не теряя её собственных параметров."""
+    parts = urlsplit(url)
+    query = [*parse_qsl(parts.query, keep_blank_values=True), ("source", source)]
+    return urlunsplit(parts._replace(query=urlencode(query)))
+
+
+def get_pulse_kb(stats_url: str) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    if stats_url:
+        builder.button(
+            text=PULSE_STATS_BUTTON_TEXT,
+            web_app=WebAppInfo(url=with_source(stats_url, PULSE_SOURCE)),
+        )
+    builder.button(text=PULSE_SETTINGS_BUTTON_TEXT, callback_data=PULSE_SETTINGS_CALLBACK)
+    builder.button(text=PULSE_OFF_BUTTON_TEXT, callback_data=PULSE_OFF_CALLBACK)
+    builder.adjust(1)
     return builder.as_markup()
 
 
