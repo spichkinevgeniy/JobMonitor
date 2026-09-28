@@ -8,6 +8,7 @@ class SkipReason(StrEnum):
     TOO_SHORT = "too_short"
     NOT_VACANCY = "not_vacancy"
     DUPLICATE = "duplicate"
+    NO_SPECIALIZATION = "no_specialization"
     NO_SKILLS = "no_skills"
     MIRROR_FAILED = "mirror_failed"
     PARSE_FAILED = "parse_failed"
