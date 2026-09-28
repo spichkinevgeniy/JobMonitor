@@ -1,6 +1,6 @@
 /* Публичная страница рынка: вывод терминала моноширинным шрифтом.
-   На телефоне одна колонка, на широком экране блоки встают парами
-   в панели, как окно tmux. */
+   Блоки идут одним списком сверху вниз на любом экране: две колонки
+   на ноутбуке давали слишком много цифр сразу. */
 :root {
   color-scheme: dark;
   --bg: #0f1011;
@@ -134,39 +134,35 @@ a {
   color: var(--status-fg);
 }
 
-/* Ноутбук и монитор: панели tmux по две в ряд. */
+/* Ноутбук и монитор: тот же список, крупнее и в рамках панелей. */
 @media (min-width: 900px) {
-  body { font-size: 14px; }
+  body { font-size: 15px; }
 
   .page {
-    max-width: 1180px;
+    max-width: 880px;
     padding-inline: 24px;
-    padding-block: 20px 28px;
+    padding-block: 24px 32px;
   }
 
   h1 {
-    font-size: 26px;
-    margin-bottom: 20px;
+    font-size: 28px;
+    margin-bottom: 24px;
   }
 
   .grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
 
   .pane {
     background: var(--pane);
     border: 1px solid var(--line);
-    padding: 14px 18px 18px;
+    padding: 16px 22px 20px;
   }
 
   .pane > .cmd:first-child {
     margin-top: 0;
-  }
-
-  .pane--wide {
-    grid-column: 1 / -1;
   }
 
   .pane--wide .links {
@@ -174,12 +170,12 @@ a {
   }
 
   .status {
-    margin-top: 16px;
+    margin-top: 20px;
   }
 }
 
-/* Большой монитор: шрифт крупнее, колонки остаются ровными. */
+/* Большой монитор: шрифт ещё крупнее, ширина колонки по тексту. */
 @media (min-width: 1400px) {
-  body { font-size: 15px; }
-  .page { max-width: 1280px; }
+  body { font-size: 16px; }
+  .page { max-width: 940px; }
 }
