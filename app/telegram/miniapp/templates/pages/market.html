@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="{{ asset_path('css/market.css') }}">
 </head>
 <body>
-{% macro prompt() %}<span class="u">hochusilnorabotu@jobmonitor</span>:<span class="p">~</span>$ {% endmacro %}
+{% macro prompt() %}<span class="u">superanalyst@jobmonitor</span>:<span class="p">~</span>$ {% endmacro %}
 {% macro rows(items) %}{% for row in items %}{{ row.text }}<span class="a">{{ row.bar }}</span><span class="d">{{ row.rest }}</span>{% if not loop.last %}
 {% endif %}{% endfor %}{% endmacro %}
 <div class="page">
@@ -30,7 +30,9 @@
 
   <h1>Рынок IT-вакансий <span>в Telegram</span></h1>
 
-  <div class="cmd">{{ prompt() }}cat about.txt</div>
+  <div class="grid">
+    <section class="pane">
+      <div class="cmd">{{ prompt() }}cat about.txt</div>
 <pre class="out">JobMonitor читает Telegram-каналы
 с IT-вакансиями и присылает только
 те, что подходят под твой стек,
@@ -39,43 +41,60 @@
 Ниже срез по этим вакансиям
 за последние 4 недели.
 Цифры пересчитываются каждый час.</pre>
+    </section>
 
-  <div class="cmd">{{ prompt() }}./market --source=telegram --days=28</div>
+    <section class="pane">
+      <div class="cmd">{{ prompt() }}./market --source=telegram --days=28</div>
 <pre class="out">{% for key, value in summary %}{{ "%-14s"|format(key) }}<span class="a">{{ value }}</span>{% if not loop.last %}
 {% endif %}{% endfor %}</pre>
+    </section>
 
-  {% if direction_rows|length > 1 %}
-  <div class="cmd">{{ prompt() }}./market directions</div>
+    {% if direction_rows|length > 1 %}
+    <section class="pane">
+      <div class="cmd">{{ prompt() }}./market directions</div>
 <pre class="out">{{ rows(direction_rows) }}
 
 <span class="c"># зп = медиана «от», за 8 недель</span></pre>
-  {% endif %}
+    </section>
+    {% endif %}
 
-  {% if grade_rows|length > 1 %}
-  <div class="cmd">{{ prompt() }}./market salary --by=grade</div>
+    {% if grade_rows|length > 1 %}
+    <section class="pane">
+      <div class="cmd">{{ prompt() }}./market salary --by=grade</div>
 <pre class="out">{{ rows(grade_rows) }}
 
 <span class="c"># - = меньше 10 вакансий с зарплатой</span></pre>
-  {% endif %}
+    </section>
+    {% endif %}
 
-  <div class="cmd">{{ prompt() }}./market format</div>
+    <section class="pane">
+      <div class="cmd">{{ prompt() }}./market format</div>
 <pre class="out">{{ rows(format_rows) }}</pre>
+    </section>
 
-  {% if skill_rows %}
-  <div class="cmd">{{ prompt() }}./market skills --top=12</div>
+    {% if skill_rows %}
+    <section class="pane">
+      <div class="cmd">{{ prompt() }}./market skills --top=12</div>
 <pre class="out">{{ rows(skill_rows) }}
 
 <span class="c"># доля вакансий, где навык обязателен</span></pre>
-  {% endif %}
+    </section>
+    {% endif %}
 
-  <div class="cmd">{{ prompt() }}./subscribe</div>
-  <div class="out links">
-    <a class="btn" href="{{ bot_url }}">[ открыть бота в telegram ]</a>
-    <span class="c">бесплатно, настройка за минуту</span>
+    <section class="pane pane--wide">
+      <div class="cmd">{{ prompt() }}./subscribe</div>
+      <div class="out links">
+        <a class="btn" href="{{ bot_url }}">[ открыть бота в telegram ]</a>
+        <span class="c">бесплатно, настройка за минуту</span>
+      </div>
+      <div class="cmd">{{ prompt() }}<span class="cursor" aria-hidden="true">█</span></div>
+    </section>
   </div>
 
-  <div class="cmd">{{ prompt() }}<span class="cursor" aria-hidden="true">█</span></div>
-
+  <div class="status">
+    <span><b>[jobmonitor]</b> 0:market* <a href="{{ bot_url }}">1:bot</a></span>
+    <span>{{ updated_date }}</span>
+  </div>
 </div>
 </body>
 </html>

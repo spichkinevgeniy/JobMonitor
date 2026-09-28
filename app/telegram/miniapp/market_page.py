@@ -143,6 +143,7 @@ def build_market_context(snapshot: MarketSnapshot) -> dict[str, Any]:
         "format_rows": build_format_rows(snapshot),
         "skill_rows": build_skill_rows(snapshot),
         "vacancies_text": _number(snapshot.vacancies),
+        "updated_date": snapshot.generated_at.astimezone(MSK).strftime("%d.%m.%Y"),
     }
 
 
