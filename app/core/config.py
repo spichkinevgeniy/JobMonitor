@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import computed_field
+from pydantic import Field, computed_field
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -44,6 +44,14 @@ class BaseAppSettings(BaseSettings):
     # пишет рядом для сравнения. Идёт через тот же ключ OpenRouter.
     JEV_SHADOW_ENABLED: bool = False
     JEV_MODEL: str = "typesafe/jev-1.13"
+    # Фильтр перед Gemini: тексты, где Jev даёт вакансии меньше порога, в
+    # Gemini не идут, а контрольная доля отсеянного всё равно уходит туда,
+    # чтобы видеть потери. Включённый фильтр заменяет тень и пишет в ту же
+    # таблицу. Порог 0.1 выбран по двум суткам тени: 78% вызовов Gemini
+    # уходят, ни одной вакансии не потеряно из 203.
+    JEV_GATE_ENABLED: bool = False
+    JEV_GATE_THRESHOLD: float = Field(default=0.1, ge=0.0, le=1.0)
+    JEV_GATE_AUDIT_RATE: float = Field(default=0.05, ge=0.0, le=1.0)
 
     SENTRY_DSN: str | None = None
     SENTRY_ENV: str

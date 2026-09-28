@@ -122,8 +122,9 @@ async def init_db() -> None:
 class JevShadowLog(Base):
     """Сравнение Jev с Gemini на живом потоке.
 
-    Временная таблица на время эксперимента: после выбора порога удаляется.
-    Текст пишется только там, где ответы разошлись или Jev не уверена.
+    Текст пишется только там, где ответы разошлись или Jev не уверена. С
+    включённым фильтром каждая строка — ещё и его решение (gate): у
+    отсеянных текстов ответа Gemini нет.
     """
 
     __tablename__ = "jev_shadow_log"
@@ -145,3 +146,4 @@ class JevShadowLog(Base):
     llm_error: Mapped[str | None] = mapped_column(String(64), nullable=True)
     text: Mapped[str | None] = mapped_column(Text, nullable=True)
     text_reason: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    gate: Mapped[str | None] = mapped_column(String(16), nullable=True)
