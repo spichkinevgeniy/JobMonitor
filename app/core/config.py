@@ -52,6 +52,9 @@ class BaseAppSettings(BaseSettings):
     JEV_GATE_ENABLED: bool = False
     JEV_GATE_THRESHOLD: float = Field(default=0.1, ge=0.0, le=1.0)
     JEV_GATE_AUDIT_RATE: float = Field(default=0.05, ge=0.0, le=1.0)
+    # Недельная сводка по понедельникам. Выключатель на случай, если сводка
+    # начнёт раздражать людей: отписки видны по счётчику pulse_unsubscribe.
+    WEEKLY_PULSE_ENABLED: bool = False
 
     SENTRY_DSN: str | None = None
     SENTRY_ENV: str

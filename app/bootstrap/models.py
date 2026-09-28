@@ -27,6 +27,7 @@ class RuntimeTasks:
     bot_task: asyncio.Task[None] | None = None
     miniapp_task: asyncio.Task[None] | None = None
     metrics_sync_task: asyncio.Task[None] | None = None
+    weekly_pulse_task: asyncio.Task[None] | None = None
     stop_task: asyncio.Task[bool] | None = None
 
     def active(self) -> list[asyncio.Task[object]]:
@@ -37,6 +38,7 @@ class RuntimeTasks:
                 self.bot_task,
                 self.miniapp_task,
                 self.metrics_sync_task,
+                self.weekly_pulse_task,
                 self.stop_task,
             )
             if task is not None and not task.done()

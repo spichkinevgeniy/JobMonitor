@@ -16,6 +16,9 @@ from app.infrastructure.db.mappers.vacancy import (
 from app.infrastructure.db.models import Vacancy as VacancyModel
 from app.infrastructure.db.models import VacancyDispatchLog
 
+# Отметка «не подходит» в vacancy_dispatch_log.feedback.
+FEEDBACK_REJECTED = "rejected"
+
 
 class VacancyRepository(IVacancyRepository):
     def __init__(self, session: AsyncSession) -> None:
@@ -129,6 +132,49 @@ class VacancyRepository(IVacancyRepository):
         ).where(VacancyDispatchLog.user_tg_id == user_tg_id)
         count, since = (await self._session.execute(query)).one()
         return int(count), since
+
+    async def count_dispatches_between(
+        self, user_tg_id: int, since: datetime, until: datetime
+    ) -> tuple[int, int]:
+        """Сколько вакансий ушло человеку за окно и сколько он отметил «не подходит»."""
+        query = select(
+            func.count(VacancyDispatchLog.id),
+            func.count(VacancyDispatchLog.id).filter(
+                VacancyDispatchLog.feedback == FEEDBACK_REJECTED
+            ),
+        ).where(
+            VacancyDispatchLog.user_tg_id == user_tg_id,
+            VacancyDispatchLog.dispatched_at >= since,
+            VacancyDispatchLog.dispatched_at < until,
+        )
+        sent, rejected = (await self._session.execute(query)).one()
+        return int(sent), int(rejected)
+
+    async def salary_median(
+        self,
+        specialization: str,
+        grade: str | None,
+        since: datetime,
+        until: datetime,
+    ) -> tuple[int | None, int]:
+        """Медиана зарплаты и число вакансий, по которым она посчитана.
+
+        Число нужно вызывающему: медиана по трём вакансиям — не рынок.
+        """
+        query = (
+            select(
+                func.percentile_cont(0.5).within_group(VacancyModel.salary_amount),
+                func.count(VacancyModel.salary_amount),
+            )
+            .where(VacancyModel.created_at >= since)
+            .where(VacancyModel.created_at < until)
+            .where(VacancyModel.salary_amount.is_not(None))
+            .where(VacancyModel.specializations.contains([specialization]))
+        )
+        if grade is not None:
+            query = query.where(VacancyModel.grade == grade)
+        median, sample = (await self._session.execute(query)).one()
+        return (round(median) if median is not None else None), int(sample)
 
     async def get_by_content_hash(self, content_hash: ContentHash) -> Vacancy | None:
         result = await self._session.execute(

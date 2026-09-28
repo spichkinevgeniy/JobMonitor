@@ -45,6 +45,7 @@ from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode, LevelFilterMode
 from app.infrastructure.notifications import TelegramDocumentSender
 from app.infrastructure.observability import observe_feature
+from app.telegram.bot.keyboards import PULSE_SOURCE
 from app.telegram.bot.views import SUPPORT_BOT_HANDLE
 from app.telegram.miniapp.deps import (
     get_current_user,
@@ -138,6 +139,8 @@ async def level_page(request: Request) -> HTMLResponse:
 
 @router.get("/miniapp/stats", response_class=HTMLResponse, name="miniapp-stats")
 async def stats_page(request: Request) -> HTMLResponse:
+    if request.query_params.get("source") == PULSE_SOURCE:
+        observe_feature(Feature.PULSE_OPEN)
     return templates.TemplateResponse(
         request,
         "pages/stats.html",

@@ -12,6 +12,7 @@ from app.infrastructure.db import async_session_factory
 from app.infrastructure.db.models import User as UserModel
 from app.infrastructure.db.models import Vacancy as VacancyModel
 from app.infrastructure.db.models import VacancyDispatchLog
+from app.infrastructure.db.repositories.vacancy_repository import FEEDBACK_REJECTED
 from app.infrastructure.observability import observe_feature
 from app.telegram.bot.keyboards import (
     VACANCY_REJECT_CALLBACK_PREFIX,
@@ -29,8 +30,6 @@ from app.telegram.bot.views import (
 
 router = Router()
 logger = get_app_logger(__name__)
-
-FEEDBACK_REJECTED = "rejected"
 
 
 def _vacancy_id(data: str, prefix: str) -> UUID | None:

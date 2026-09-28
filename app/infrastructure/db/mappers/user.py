@@ -41,6 +41,7 @@ def user_to_model(user: User) -> UserModel:
         cv_work_format=user.cv_work_format.value if user.cv_work_format else None,
         filter_work_format_mode=user.filter_work_format_mode.value,
         is_active=user.is_active,
+        pulse_enabled=user.pulse_enabled,
     )
 
 
@@ -60,6 +61,7 @@ def apply_user(model: UserModel, user: User) -> None:
     model.cv_work_format = user.cv_work_format.value if user.cv_work_format else None
     model.filter_work_format_mode = user.filter_work_format_mode.value
     model.is_active = user.is_active
+    model.pulse_enabled = user.pulse_enabled
 
 
 def user_from_model(model: UserModel) -> User:
@@ -113,4 +115,5 @@ def user_from_model(model: UserModel) -> User:
         cv_work_format=work_format,
         filter_work_format_mode=work_format_mode,
         is_active=model.is_active,
+        pulse_enabled=model.pulse_enabled,
     )

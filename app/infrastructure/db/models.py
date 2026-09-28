@@ -1,9 +1,20 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import BigInteger, Boolean, DateTime, Float, Integer, String, Text, func
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    Date,
+    DateTime,
+    Float,
+    Integer,
+    String,
+    Text,
+    func,
+    true,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.ext.asyncio import AsyncAttrs
@@ -67,6 +78,7 @@ class User(Base):
     filter_work_format_mode: Mapped[str] = mapped_column(String, default="SOFT")
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    pulse_enabled: Mapped[bool] = mapped_column(Boolean, default=True, server_default=true())
 
 
 class VacancyDispatchLog(Base):
@@ -95,6 +107,21 @@ class ResumeUploadLog(Base):
     uploaded_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+
+class WeeklyPulseLog(Base):
+    """Кому и за какую неделю уже ушла сводка.
+
+    Каждая выкатка перезапускает контейнер, и без журнала рассылка после
+    рестарта дошла бы до людей второй раз.
+    """
+
+    __tablename__ = "weekly_pulse_log"
+
+    user_tg_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    week_start: Mapped[date] = mapped_column(Date, primary_key=True)
+    status: Mapped[str] = mapped_column(String(16))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class MetricCounter(Base):
