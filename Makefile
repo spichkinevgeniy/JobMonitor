@@ -117,8 +117,10 @@ test:
 test-unit:
 	uv run -m pytest $(TEST_DIR)/unit -q
 
+# Нужен Postgres с пустой базой, в имени которой есть «test»: тесты сносят
+# схему целиком. Адрес — из POSTGRES_*, пример в tests/integration/conftest.py.
 test-integration:
-	uv run -m pytest $(TEST_DIR)/integration -q
+	INTEGRATION_DB=1 uv run -m pytest $(TEST_DIR)/integration -q
 
 precommit-install:
 	uv run pre-commit install
