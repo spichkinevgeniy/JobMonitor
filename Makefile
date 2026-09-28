@@ -189,7 +189,15 @@ prod-deploy:
 	$(MAKE) prod-migrate
 	$(MAKE) prod-ps
 
+# Каждая сборка оставляет прежний образ бота без имени, по полгигабайта: за
+# полгода такие заняли 13 ГБ из 30. Удаляются только они — базовые образы
+# остаются, чтобы следующая сборка не качала их заново. Сбой очистки
+# выкладку не валит.
+prod-prune:
+	-docker image prune -f
+
 prod-deploy-all: prod-deploy obs-up
+	$(MAKE) prod-prune
 
 obs-up:
 	$(OBS_COMPOSE) up -d
