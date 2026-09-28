@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Зарплаты и навыки в IT-вакансиях из Telegram | JobMonitor</title>
+  <meta name="description" content="Срез рынка IT-вакансий из Telegram-каналов за последние 4 недели: медианные зарплаты по направлениям и грейдам, доля удалёнки и самые востребованные навыки.">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:site_name" content="JobMonitor">
+  <meta property="og:title" content="Рынок IT-вакансий в Telegram">
+  <meta property="og:description" content="{{ vacancies_text }} вакансий за 4 недели: зарплаты по грейдам, удалёнка, навыки.">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta name="theme-color" content="#0f1011">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="{{ asset_path('css/market.css') }}">
+</head>
+<body>
+{% macro prompt() %}<span class="u">hochusilnorabotu@jobmonitor</span>:<span class="p">~</span>$ {% endmacro %}
+{% macro rows(items) %}{% for row in items %}{{ row.text }}<span class="a">{{ row.bar }}</span><span class="d">{{ row.rest }}</span>{% if not loop.last %}
+{% endif %}{% endfor %}{% endmacro %}
+<div class="page">
+  <div class="bar-top">
+    <span><b>jobmonitor</b> · вакансии из telegram</span>
+    <a href="{{ bot_url }}">[ бот ]</a>
+  </div>
+
+  <h1>Рынок IT-вакансий <span>в Telegram</span></h1>
+
+  <div class="cmd">{{ prompt() }}cat about.txt</div>
+<pre class="out">JobMonitor читает Telegram-каналы
+с IT-вакансиями и присылает только
+те, что подходят под твой стек,
+грейд и зарплату.
+
+Ниже срез по этим вакансиям
+за последние 4 недели.
+Цифры пересчитываются каждый час.</pre>
+
+  <div class="cmd">{{ prompt() }}./market --source=telegram --days=28</div>
+<pre class="out">{% for key, value in summary %}{{ "%-14s"|format(key) }}<span class="a">{{ value }}</span>{% if not loop.last %}
+{% endif %}{% endfor %}</pre>
+
+  {% if direction_rows|length > 1 %}
+  <div class="cmd">{{ prompt() }}./market directions</div>
+<pre class="out">{{ rows(direction_rows) }}
+
+<span class="c"># зп = медиана «от», за 8 недель</span></pre>
+  {% endif %}
+
+  {% if grade_rows|length > 1 %}
+  <div class="cmd">{{ prompt() }}./market salary --by=grade</div>
+<pre class="out">{{ rows(grade_rows) }}
+
+<span class="c"># - = меньше 10 вакансий с зарплатой</span></pre>
+  {% endif %}
+
+  <div class="cmd">{{ prompt() }}./market format</div>
+<pre class="out">{{ rows(format_rows) }}</pre>
+
+  {% if skill_rows %}
+  <div class="cmd">{{ prompt() }}./market skills --top=12</div>
+<pre class="out">{{ rows(skill_rows) }}
+
+<span class="c"># доля вакансий, где навык обязателен</span></pre>
+  {% endif %}
+
+  <div class="cmd">{{ prompt() }}./subscribe</div>
+  <div class="out links">
+    <a class="btn" href="{{ bot_url }}">[ открыть бота в telegram ]</a>
+    <span class="c">бесплатно, настройка за минуту</span>
+  </div>
+
+  <div class="cmd">{{ prompt() }}<span class="cursor" aria-hidden="true">█</span></div>
+
+</div>
+</body>
+</html>

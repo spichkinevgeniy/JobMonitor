@@ -38,6 +38,7 @@ class Feature(StrEnum):
     PULSE_SENT = "pulse_sent"
     PULSE_OPEN = "pulse_open"
     PULSE_UNSUBSCRIBE = "pulse_unsubscribe"
+    MARKET_VIEW = "market_view"
 
 
 class IObservabilityService(Protocol):

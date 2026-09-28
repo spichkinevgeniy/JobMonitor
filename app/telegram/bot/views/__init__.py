@@ -1,4 +1,5 @@
 from app.telegram.bot.views.copy import (
+    BOT_HANDLE,
     SUPPORT_BOT_HANDLE,
     build_available_commands_text,
     build_delete_cancelled_text,
@@ -56,6 +57,7 @@ from app.telegram.bot.views.tracking_settings import (
 )
 
 __all__ = [
+    "BOT_HANDLE",
     "SUPPORT_BOT_HANDLE",
     "build_available_commands_text",
     "build_delete_cancelled_text",
