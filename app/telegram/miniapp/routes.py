@@ -100,7 +100,7 @@ async def privacy_page(request: Request) -> HTMLResponse:
     )
 
 
-@router.get("/market", response_class=HTMLResponse, name="market")
+@router.get("/", response_class=HTMLResponse, name="market")
 async def market_page(
     request: Request,
     snapshot: Annotated[MarketSnapshot, Depends(get_market_snapshot)],
@@ -113,7 +113,7 @@ async def market_page(
         "pages/market.html",
         {
             **build_market_context(snapshot),
-            "canonical_url": f"{origin}/market",
+            "canonical_url": f"{origin}/",
             "bot_url": _telegram_url(BOT_HANDLE),
         },
     )
@@ -122,20 +122,13 @@ async def market_page(
 @router.get("/robots.txt", response_class=PlainTextResponse, include_in_schema=False)
 async def robots_txt(request: Request) -> str:
     # Мини-апп без Telegram бесполезен, в поиске ему делать нечего.
-    return (
-        "User-agent: *\n"
-        "Allow: /market\n"
-        "Allow: /privacy\n"
-        "Disallow: /miniapp\n"
-        "\n"
-        f"Sitemap: {_public_origin(request)}/sitemap.xml\n"
-    )
+    return f"User-agent: *\nDisallow: /miniapp\n\nSitemap: {_public_origin(request)}/sitemap.xml\n"
 
 
 @router.get("/sitemap.xml", include_in_schema=False)
 async def sitemap_xml(request: Request) -> Response:
     origin = _public_origin(request)
-    urls = "".join(f"<url><loc>{origin}{path}</loc></url>" for path in ("/market", "/privacy"))
+    urls = "".join(f"<url><loc>{origin}{path}</loc></url>" for path in ("/", "/privacy"))
     body = (
         '<?xml version="1.0" encoding="UTF-8"?>'
         f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>'
