@@ -1,9 +1,8 @@
 """Недельная сводка по рынку для одного пользователя.
 
-Почти всё уже считает StatsService для мини-аппа: тренд подходящих вакансий,
-воронку фильтров и навыки, которые открыли бы больше вакансий. Сводка берёт
-оттуда прошедшую календарную неделю и добавляет медиану зарплаты и то,
-сколько вакансий бот человеку отправил.
+Почти всё уже считает StatsService для мини-аппа: тренд подходящих вакансий
+и воронку фильтров. Сводка берёт оттуда прошедшую календарную неделю
+и добавляет медиану зарплаты и то, сколько вакансий бот человеку отправил.
 """
 
 from dataclasses import dataclass
@@ -12,7 +11,6 @@ from datetime import UTC, date, datetime, timedelta, timezone
 from app.application.ports.unit_of_work import VacancyUnitOfWork
 from app.application.services.stats_service import (
     RejectionCount,
-    SkillSuggestion,
     StatsService,
     TrendGranularity,
 )
@@ -75,7 +73,6 @@ class WeeklyPulse:
     sent: int
     rejected: int
     salary: SalaryMedian | None
-    skill: SkillSuggestion | None
     top_rejection: RejectionCount | None
 
     @property
@@ -107,7 +104,6 @@ class WeeklyPulseService:
             sent=sent,
             rejected=rejected,
             salary=salary,
-            skill=stats.skill_suggestions[0] if stats.skill_suggestions else None,
             top_rejection=stats.funnel.rejections[0] if stats.funnel.rejections else None,
         )
 
