@@ -1,8 +1,10 @@
 from types import TracebackType
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.application.ports.unit_of_work import VacancyUnitOfWork as VacancyUnitOfWorkPort
+from app.domain.vacancy.exceptions import DuplicateVacancyError
 from app.domain.vacancy.repository import IVacancyRepository
 from app.infrastructure.db.repositories.vacancy_repository import VacancyRepository
 from app.infrastructure.db.uow.base import SQLAlchemyUnitOfWork
@@ -34,3 +36,12 @@ class VacancyUnitOfWork(SQLAlchemyUnitOfWork, VacancyUnitOfWorkPort):
             await super().__aexit__(exc_type, exc_val, exc_tb)
         finally:
             self._vacancies = None
+
+    async def commit(self) -> None:
+        try:
+            await super().commit()
+        except IntegrityError as exc:
+            # Уникален у вакансий, кроме случайного id, только хэш текста:
+            # нарушение здесь — это всегда дубль. Прикладной слой о
+            # SQLAlchemy знать не должен, поэтому ошибка переводится.
+            raise DuplicateVacancyError("Vacancy with the same text already exists") from exc
