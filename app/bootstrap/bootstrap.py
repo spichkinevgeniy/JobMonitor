@@ -7,7 +7,10 @@ from app.application.services.user_service import UserService
 from app.bootstrap.models import RuntimeComponents
 from app.core.config import config
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
-from app.infrastructure.extractors.jev_shadow import JevShadowVacancyExtractor
+from app.infrastructure.extractors.jev_shadow import (
+    JevGateVacancyExtractor,
+    JevShadowVacancyExtractor,
+)
 from app.infrastructure.extractors.vacancy_extractor import GoogleVacancyLLMExtractor
 from app.infrastructure.jev import JevClient
 from app.infrastructure.observability import (
@@ -59,6 +62,14 @@ async def build_scraper(
 
 def build_vacancy_extractor() -> IVacancyLLMExtractor:
     extractor: IVacancyLLMExtractor = GoogleVacancyLLMExtractor()
+    if config.JEV_GATE_ENABLED:
+        return JevGateVacancyExtractor(
+            extractor,
+            JevClient(config.OPENROUTER_API_KEY, config.JEV_MODEL),
+            async_session_factory,
+            threshold=config.JEV_GATE_THRESHOLD,
+            audit_rate=config.JEV_GATE_AUDIT_RATE,
+        )
     if not config.JEV_SHADOW_ENABLED:
         return extractor
     return JevShadowVacancyExtractor(

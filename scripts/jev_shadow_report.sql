@@ -8,6 +8,10 @@
 -- Кто прав там, где модели разошлись, видно только по текстам — они лежат
 -- в колонке text как раз для таких случаев (запросы 8 и 9). Почему текст
 -- сохранён, написано в text_reason.
+--
+-- С включённым фильтром (JEV_GATE_ENABLED) отсеянные тексты в Gemini не
+-- идут, и запросы 2–7 видят только то, что до Gemini дошло. Что фильтр
+-- отсеял и сколько вакансий при этом потерял — в запросе 10.
 
 \echo '== 1. Сводка =='
 select count(*)                                                  as vyzovov,
@@ -114,3 +118,30 @@ from jev_shadow_log
 where text_reason = 'sample'
 order by random()
 limit 25;
+
+\echo '== 10. Фильтр Jev перед Gemini =='
+-- skipped — в Gemini не ходил; audit — отсеян бы, но для контроля ушёл в
+-- Gemini; jev_failed — Jev не ответила, текст ушёл в Gemini как раньше.
+select gate                                                        as reshenie,
+       count(*)                                                    as shtuk,
+       round(100.0 * count(*) / sum(count(*)) over (), 1)          as proc
+from jev_shadow_log
+where gate is not null
+group by 1
+order by 2 desc;
+
+-- Потери фильтра: контрольные тексты, которые Gemini счёл вакансиями. На
+-- весь поток их делить на долю контроля — здесь 0.05, как JEV_GATE_AUDIT_RATE.
+select count(*) filter (where llm_is_vacancy)                      as poter_v_kontrole,
+       count(*)                                                    as v_kontrole,
+       round(count(*) filter (where llm_is_vacancy) / 0.05)        as okolo_poter_vsego
+from jev_shadow_log
+where gate = 'audit';
+
+select created_at::timestamp(0)       as kogda,
+       round(jev_is_vacancy_p::numeric, 3) as jev_p,
+       left(regexp_replace(text, '\s+', ' ', 'g'), 220) as tekst
+from jev_shadow_log
+where gate = 'audit' and llm_is_vacancy
+order by created_at desc
+limit 20;
