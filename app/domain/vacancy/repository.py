@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Protocol, runtime_checkable
 
 from app.domain.vacancy.entities import DispatchedVacancy, Vacancy
+from app.domain.vacancy.market import MarketAggregates
 from app.domain.vacancy.value_objects import ContentHash, VacancyId
 
 
@@ -39,6 +40,10 @@ class IVacancyRepository(Protocol):
         since: datetime,
         until: datetime,
     ) -> tuple[int | None, int]: ...
+
+    async def market_aggregates(
+        self, counts_since: datetime, salary_since: datetime
+    ) -> MarketAggregates: ...
 
     async def get_by_content_hash(self, content_hash: ContentHash) -> Vacancy | None: ...
 

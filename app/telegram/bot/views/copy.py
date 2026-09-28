@@ -1,4 +1,6 @@
 SUPPORT_BOT_HANDLE = "@JobMonitor_Support_Bot"
+# Публичные страницы ведут в боевого бота и из локальной разработки тоже.
+BOT_HANDLE = "@JobMonitorIT_BOT"
 
 
 def build_available_commands_text() -> str:

@@ -1,7 +1,8 @@
 from typing import Annotated
+from urllib.parse import urlsplit
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse, Response
 
 from app.application.dto.miniapp import (
     ExperienceLevelChoice,
@@ -30,6 +31,7 @@ from app.application.dto.miniapp import (
 )
 from app.application.ports.observability_port import Feature
 from app.application.services.export_service import ExportFormat, ExportService
+from app.application.services.market_stats_service import MarketSnapshot
 from app.application.services.stats_service import (
     FilterFunnel,
     ProfileStats,
@@ -46,15 +48,17 @@ from app.domain.user.value_objects import FilterMode, LevelFilterMode
 from app.infrastructure.notifications import TelegramDocumentSender
 from app.infrastructure.observability import observe_feature
 from app.telegram.bot.keyboards import PULSE_SOURCE
-from app.telegram.bot.views import SUPPORT_BOT_HANDLE
+from app.telegram.bot.views import BOT_HANDLE, SUPPORT_BOT_HANDLE
 from app.telegram.miniapp.deps import (
     get_current_user,
     get_document_sender,
     get_export_service,
+    get_market_snapshot,
     get_stats_service,
     get_user_service,
     parse_user_context,
 )
+from app.telegram.miniapp.market_page import build_market_context
 from app.telegram.miniapp.page_context import (
     build_format_page_context,
     build_level_page_context,
@@ -94,6 +98,65 @@ async def privacy_page(request: Request) -> HTMLResponse:
             "contact_email": config.PRIVACY_CONTACT_EMAIL,
         },
     )
+
+
+@router.get("/market", response_class=HTMLResponse, name="market")
+async def market_page(
+    request: Request,
+    snapshot: Annotated[MarketSnapshot, Depends(get_market_snapshot)],
+) -> HTMLResponse:
+    """Публичная страница: срез рынка по вакансиям из Telegram, без авторизации."""
+    observe_feature(Feature.MARKET_VIEW)
+    origin = _public_origin(request)
+    return templates.TemplateResponse(
+        request,
+        "pages/market.html",
+        {
+            **build_market_context(snapshot),
+            "canonical_url": f"{origin}/market",
+            "bot_url": _telegram_url(BOT_HANDLE),
+        },
+    )
+
+
+@router.get("/robots.txt", response_class=PlainTextResponse, include_in_schema=False)
+async def robots_txt(request: Request) -> str:
+    # Мини-апп без Telegram бесполезен, в поиске ему делать нечего.
+    return (
+        "User-agent: *\n"
+        "Allow: /market\n"
+        "Allow: /privacy\n"
+        "Disallow: /miniapp\n"
+        "\n"
+        f"Sitemap: {_public_origin(request)}/sitemap.xml\n"
+    )
+
+
+@router.get("/sitemap.xml", include_in_schema=False)
+async def sitemap_xml(request: Request) -> Response:
+    origin = _public_origin(request)
+    urls = "".join(f"<url><loc>{origin}{path}</loc></url>" for path in ("/market", "/privacy"))
+    body = (
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>'
+    )
+    return Response(body, media_type="application/xml")
+
+
+def _public_origin(request: Request) -> str:
+    """Адрес сайта для ссылок наружу.
+
+    За nginx приложение видит себя по http и внутреннему адресу, поэтому
+    домен берётся из настроек, а запрос — только запасной вариант.
+    """
+    parsed = urlsplit(config.MINI_APP_BASE_URL.strip())
+    if parsed.scheme and parsed.netloc:
+        return f"{parsed.scheme}://{parsed.netloc}"
+    return str(request.base_url).rstrip("/")
+
+
+def _telegram_url(handle: str) -> str:
+    return f"https://t.me/{handle.removeprefix('@')}"
 
 
 @router.get("/miniapp", include_in_schema=False)
