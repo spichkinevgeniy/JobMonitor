@@ -58,6 +58,7 @@ from app.telegram.miniapp.deps import (
     get_user_service,
     parse_user_context,
 )
+from app.telegram.miniapp.market_facts import build_findings, build_json_ld, build_llms_txt
 from app.telegram.miniapp.market_page import build_market_context
 from app.telegram.miniapp.page_context import (
     build_format_page_context,
@@ -107,16 +108,27 @@ async def market_page(
 ) -> HTMLResponse:
     """Публичная страница: срез рынка по вакансиям из Telegram, без авторизации."""
     observe_feature(Feature.MARKET_VIEW)
-    origin = _public_origin(request)
+    canonical_url = f"{_public_origin(request)}/"
     return templates.TemplateResponse(
         request,
         "pages/market.html",
         {
             **build_market_context(snapshot),
-            "canonical_url": f"{origin}/",
+            "findings": build_findings(snapshot),
+            "json_ld": build_json_ld(snapshot, canonical_url),
+            "canonical_url": canonical_url,
             "bot_url": _telegram_url(BOT_HANDLE),
         },
     )
+
+
+@router.get("/llms.txt", response_class=PlainTextResponse, include_in_schema=False)
+async def llms_txt(
+    request: Request,
+    snapshot: Annotated[MarketSnapshot, Depends(get_market_snapshot)],
+) -> str:
+    """Справка о сайте для ИИ-ассистентов: что это и главные цифры."""
+    return build_llms_txt(snapshot, _public_origin(request), _telegram_url(BOT_HANDLE))
 
 
 @router.get("/robots.txt", response_class=PlainTextResponse, include_in_schema=False)

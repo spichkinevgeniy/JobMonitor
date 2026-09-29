@@ -74,6 +74,21 @@ h1 span {
   overflow-x: auto;
 }
 
+/* Выводы обычным текстом: переносятся по ширине экрана, а не по символам. */
+.prose {
+  white-space: normal;
+  overflow-x: visible;
+}
+
+.prose p {
+  margin: 0 0 8px;
+  max-width: 64ch;
+}
+
+.prose p:last-child {
+  margin-bottom: 0;
+}
+
 .u { color: var(--user); }
 .p { color: var(--path); }
 .a { color: var(--amber); }

@@ -17,6 +17,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="{{ asset_path('css/market.css') }}">
+  <script type="application/ld+json">{{ json_ld|safe }}</script>
 </head>
 <body>
 {% macro prompt() %}<span class="u">superanalyst@jobmonitor</span>:<span class="p">~</span>$ {% endmacro %}
@@ -47,6 +48,13 @@
       <div class="cmd">{{ prompt() }}./market --source=telegram --days=28</div>
 <pre class="out">{% for key, value in summary %}{{ "%-14s"|format(key) }}<span class="a">{{ value }}</span>{% if not loop.last %}
 {% endif %}{% endfor %}</pre>
+    </section>
+
+    <section class="pane">
+      <div class="cmd">{{ prompt() }}./market summary</div>
+      <div class="out prose">
+        {% for line in findings %}<p>{{ line }}</p>{% endfor %}
+      </div>
     </section>
 
     {% if direction_rows|length > 1 %}
