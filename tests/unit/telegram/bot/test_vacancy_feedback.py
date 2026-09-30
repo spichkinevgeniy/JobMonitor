@@ -1,8 +1,13 @@
 """Кнопки под вакансией: объяснение и отметка «не подходит»."""
 
-from types import SimpleNamespace
-from typing import Any
+import inspect
 
+from app.application.services.vacancy_feedback_service import (
+    VacancyExplanation,
+    VacancyFeedbackService,
+)
+from app.bootstrap.bootstrap import build_bot_services
+from app.domain.matching.entities import MatchRejectionReason
 from app.telegram.bot.keyboards import (
     VACANCY_REJECT_BUTTON_TEXT,
     VACANCY_REJECT_CALLBACK_PREFIX,
@@ -12,17 +17,19 @@ from app.telegram.bot.keyboards import (
     VACANCY_WHY_CALLBACK_PREFIX,
     get_vacancy_kb,
 )
-from app.telegram.bot.routers.vacancy_feedback import _caveats
-from app.telegram.bot.views import build_vacancy_reason_text
+from app.telegram.bot.routers.vacancy_feedback import (
+    _caveats,
+    explain_vacancy,
+    reject_vacancy,
+    undo_rejection,
+)
+from app.telegram.bot.views import (
+    build_reason_caveat_format,
+    build_reason_caveat_salary,
+    build_vacancy_reason_text,
+)
 
 VACANCY_ID = "0f8a1b2c-3d4e-5f60-7182-93a4b5c6d7e8"
-
-
-class FakeVacancy:
-    def __init__(self, grade: str = "MIDDLE", work_format: str = "REMOTE") -> None:
-        self.specializations = ["Backend"]
-        self.grade = grade
-        self.work_format = work_format
 
 
 class TestKeyboard:
@@ -105,79 +112,43 @@ class TestReasonText:
 
 
 class TestCaveats:
-    """Объясняем только то, что прошло вопреки настройке человека."""
+    """Пояснения к фильтрам, которые не проверили вакансию. Какие это
+    фильтры, решает домен — см. tests/unit/domain/matching/test_unchecked_filters.py."""
 
-    def _vacancy(self, **kwargs: object) -> Any:
-        base = {
-            "work_format": "REMOTE",
-            "grade": "MIDDLE",
-            "experience_level": "THREE_TO_SIX_YEARS",
-            "salary_amount": 100,
-        }
-        return SimpleNamespace(**{**base, **kwargs})
-
-    def _user(self, **kwargs: object) -> Any:
-        base = {
-            "filter_work_format_mode": "SOFT",
-            "cv_work_format": None,
-            "filter_grade_mode": "IGNORE",
-            "cv_grade": None,
-            "filter_experience_mode": "IGNORE",
-            "cv_experience_level": None,
-            "filter_salary_mode": "SOFT",
-            "cv_salary_amount": None,
-        }
-        return SimpleNamespace(**{**base, **kwargs})
-
-    def test_silent_when_everything_stated(self) -> None:
-        assert _caveats(self._vacancy(), self._user()) == []
-
-    def test_unstated_format_explained_for_strict_filter(self) -> None:
-        caveats = _caveats(
-            self._vacancy(work_format="UNDEFINED"),
-            self._user(filter_work_format_mode="STRICT", cv_work_format="REMOTE"),
+    def _explanation(self, *unchecked: MatchRejectionReason) -> VacancyExplanation:
+        return VacancyExplanation(
+            matched_specializations=["Backend"],
+            matched_skills=["Python"],
+            unchecked_filters=list(unchecked),
+            user_work_format="REMOTE",
         )
+
+    def test_silent_when_every_filter_checked(self) -> None:
+        assert _caveats(self._explanation()) == []
+
+    def test_format_caveat_names_the_users_choice(self) -> None:
+        caveats = _caveats(self._explanation(MatchRejectionReason.FORMAT))
 
         assert len(caveats) == 1
         assert "только удалёнка" in caveats[0]
 
-    def test_unstated_format_silent_for_soft_filter(self) -> None:
-        """Фильтр мягкий — вакансия прошла бы в любом случае, объяснять нечего."""
+    def test_one_line_per_filter_in_the_same_order(self) -> None:
         caveats = _caveats(
-            self._vacancy(work_format="UNDEFINED"),
-            self._user(filter_work_format_mode="SOFT", cv_work_format="REMOTE"),
+            self._explanation(MatchRejectionReason.FORMAT, MatchRejectionReason.SALARY)
         )
 
-        assert caveats == []
+        assert caveats == [build_reason_caveat_format("REMOTE"), build_reason_caveat_salary()]
 
-    def test_unstated_grade_explained(self) -> None:
-        caveats = _caveats(
-            self._vacancy(grade="UNDEFINED"),
-            self._user(filter_grade_mode="UP_TO", cv_grade="MIDDLE"),
-        )
 
-        assert len(caveats) == 1
+class TestWiring:
+    def test_handlers_get_the_service_they_ask_for(self) -> None:
+        """aiogram отдаёт сервис по имени параметра: опечатка в имени сломала бы кнопки."""
+        services = build_bot_services()
 
-    def test_unstated_salary_explained(self) -> None:
-        caveats = _caveats(
-            self._vacancy(salary_amount=None),
-            self._user(filter_salary_mode="STRICT", cv_salary_amount=200000),
-        )
-
-        assert len(caveats) == 1
-
-    def test_several_caveats_at_once(self) -> None:
-        caveats = _caveats(
-            self._vacancy(work_format="UNDEFINED", salary_amount=None),
-            self._user(
-                filter_work_format_mode="STRICT",
-                cv_work_format="REMOTE",
-                filter_salary_mode="STRICT",
-                cv_salary_amount=200000,
-            ),
-        )
-
-        assert len(caveats) == 2
+        for handler in (explain_vacancy, reject_vacancy, undo_rejection):
+            wanted = set(inspect.signature(handler).parameters) - {"callback"}
+            assert wanted <= services.keys()
+        assert isinstance(services["vacancy_feedback"], VacancyFeedbackService)
 
 
 class TestSourceButton:

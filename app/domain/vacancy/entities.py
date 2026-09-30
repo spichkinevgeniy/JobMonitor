@@ -24,6 +24,14 @@ class DispatchedVacancy:
     dispatched_at: datetime
 
 
+@dataclass(frozen=True, slots=True)
+class DispatchMatch:
+    """Чем вакансия совпала с профилем — снимок на момент отправки."""
+
+    matched_specializations: list[str]
+    matched_skills: list[str]
+
+
 @dataclass(slots=True)
 class Vacancy:
     id: VacancyId
