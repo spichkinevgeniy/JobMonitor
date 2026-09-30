@@ -11,7 +11,7 @@ from app.application.services.stats_service import (
     TrendSeries,
 )
 from app.domain.shared.value_objects import CompanyType
-from app.telegram.miniapp.routes import _has_any_data, _to_funnel_response
+from app.telegram.miniapp.routes.stats import _has_any_data, _to_funnel_response
 
 BUCKET = date(2026, 8, 1)
 
