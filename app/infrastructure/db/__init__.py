@@ -1,4 +1,4 @@
-from .models import Base, User, Vacancy, init_db
+from .models import Base, User, Vacancy
 from .repositories.user_repository import UserRepository
 from .repositories.vacancy_repository import VacancyRepository
 from .session import async_session_factory, engine
@@ -16,5 +16,4 @@ __all__ = [
     "UserUnitOfWork",
     "async_session_factory",
     "engine",
-    "init_db",
 ]

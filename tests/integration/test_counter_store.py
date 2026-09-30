@@ -1,9 +1,22 @@
 """Счётчики переживают перезапуск: суммы в базе копятся через ON CONFLICT."""
 
+from datetime import datetime
+
+from sqlalchemy import select
+
 from app.infrastructure.db import async_session_factory
+from app.infrastructure.db.models import MetricCounter
 from app.infrastructure.observability.counter_store import PersistentCounterStore
 
 KEY = ("messages_skipped", "duplicate")
+
+
+async def updated_at() -> datetime:
+    async with async_session_factory() as session:
+        query = select(MetricCounter.updated_at).where(
+            MetricCounter.name == KEY[0], MetricCounter.label == KEY[1]
+        )
+        return (await session.execute(query)).scalar_one()
 
 
 async def test_increments_accumulate_across_flushes() -> None:
@@ -28,3 +41,16 @@ async def test_new_process_continues_from_saved_sum() -> None:
     after_restart.increment(*KEY)
 
     assert (await after_restart.flush())[KEY] == 5
+
+
+async def test_flush_moves_updated_at() -> None:
+    """Раньше updated_at замирал на первой записи и не говорил ничего."""
+    store = PersistentCounterStore(async_session_factory)
+
+    store.increment(*KEY)
+    await store.flush()
+    first = await updated_at()
+    store.increment(*KEY)
+    await store.flush()
+
+    assert await updated_at() > first

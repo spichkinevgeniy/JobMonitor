@@ -18,10 +18,6 @@ _RETRY_ATTEMPTS = 3
 _BASE_DELAY_SECONDS = 1.0
 
 
-class TemporaryLLMUnavailableError(LLMUnavailableError):
-    pass
-
-
 async def run_with_llm_retry[T](
     operation_name: str,
     runner: Callable[[], Awaitable[T]],
@@ -47,7 +43,7 @@ async def run_with_llm_retry[T](
                 raise
 
             if attempt == _RETRY_ATTEMPTS:
-                raise TemporaryLLMUnavailableError(
+                raise LLMUnavailableError(
                     f"LLM temporarily unavailable during {operation_name}"
                 ) from exc
 
@@ -70,7 +66,7 @@ async def run_with_llm_retry[T](
             ).inc()
             raise
 
-    raise TemporaryLLMUnavailableError(f"LLM temporarily unavailable during {operation_name}")
+    raise LLMUnavailableError(f"LLM temporarily unavailable during {operation_name}")
 
 
 def _record_usage(result: object) -> None:

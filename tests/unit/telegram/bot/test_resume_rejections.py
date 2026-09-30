@@ -6,7 +6,7 @@ from typing import Any
 
 import pytest
 
-from app.infrastructure.llm_runtime import TemporaryLLMUnavailableError
+from app.application.ports.llm_port import LLMUnavailableError
 from app.infrastructure.parsers import NotAResumeError, ParserError, TooManyPagesError
 from app.telegram.bot.routers import resume as resume_router
 from app.telegram.bot.views import (
@@ -40,7 +40,7 @@ class RecordingUpload:
         (NotAResumeError("not a resume"), build_resume_not_a_resume_text),
         (TooManyPagesError("too many pages"), build_resume_too_many_pages_text),
         (ParserError("broken pdf"), build_resume_parser_error_text),
-        (TemporaryLLMUnavailableError("down"), build_resume_llm_unavailable_text),
+        (LLMUnavailableError("down"), build_resume_llm_unavailable_text),
         (RuntimeError("boom"), build_resume_unknown_error_text),
     ],
 )

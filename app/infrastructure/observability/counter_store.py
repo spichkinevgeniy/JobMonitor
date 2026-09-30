@@ -11,7 +11,7 @@
 import asyncio
 from collections import Counter
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -51,7 +51,7 @@ class PersistentCounterStore:
                         .values(name=name, label=label, value=delta)
                         .on_conflict_do_update(
                             index_elements=["name", "label"],
-                            set_={"value": MetricCounter.value + delta},
+                            set_={"value": MetricCounter.value + delta, "updated_at": func.now()},
                         )
                     )
                     await session.execute(statement)

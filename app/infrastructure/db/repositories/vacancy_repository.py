@@ -264,15 +264,6 @@ class VacancyRepository(IVacancyRepository):
         rows = await self._session.execute(query)
         return {str(key): int(count) for key, count in rows}
 
-    async def get_by_content_hash(self, content_hash: ContentHash) -> Vacancy | None:
-        result = await self._session.execute(
-            select(VacancyModel).where(VacancyModel.content_hash == content_hash.value)
-        )
-        model = result.scalar_one_or_none()
-        if model is None:
-            return None
-        return vacancy_from_model(model)
-
     async def exists_by_content_hash(self, content_hash: ContentHash) -> bool:
         result = await self._session.execute(
             select(VacancyModel.id).where(VacancyModel.content_hash == content_hash.value)

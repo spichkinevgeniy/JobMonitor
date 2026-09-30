@@ -5,10 +5,6 @@ class VacancyDomainError(DomainError):
     pass
 
 
-class NotAVacancyError(VacancyDomainError):
-    pass
-
-
 class ValidationError(VacancyDomainError):
     pass
 

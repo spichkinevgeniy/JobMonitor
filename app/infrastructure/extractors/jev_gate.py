@@ -1,44 +1,36 @@
-"""Jev рядом с Gemini: тень и фильтр.
+"""Фильтр Jev перед Gemini.
 
-Тень: бот живёт только по ответу Gemini. Jev получает тот же текст
-параллельно, и её ответ пишется рядом для сравнения: основной путь её не
-ждёт, а её ошибки наружу не выходят. Цель — узнать на своих русских
-вакансиях, насколько Jev совпадает с Gemini и честна ли её уверенность,
-прежде чем доверять ей что-либо решать.
-
-Фильтр: Jev решает первой, и тексты, которые она уверенно считает не
-вакансиями, до Gemini не доходят. Пишет в ту же таблицу, что и тень.
+Jev решает первой, и тексты, которые она уверенно считает не вакансиями, до
+Gemini не доходят: четыре пятых текстов, дошедших до модели, — не вакансии.
+Контрольная доля отсеянного всё равно идёт в Gemini — по ней видно, сколько
+вакансий фильтр теряет. Если Jev не ответила, текст идёт в Gemini как раньше.
+Каждое решение пишется в jev_gate_log.
 """
 
 import asyncio
 import random
-from collections.abc import Callable, Coroutine
+from collections.abc import Callable
 from enum import StrEnum
-from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.application.dto import OutVacancyParse
 from app.application.ports.llm_port import IVacancyLLMExtractor
 from app.core.logger import get_app_logger
-from app.infrastructure.db.models import JevShadowLog
+from app.infrastructure.db.models import JevGateLog
 from app.infrastructure.jev import JevClient, JevDecision
 
 logger = get_app_logger(__name__)
 
-# Сколько запись ждёт ответа Jev. Основной путь не ждёт вовсе, поэтому
-# запас щедрый: обычно ответ приходит за полсекунды.
-JEV_WAIT_SECONDS = 20
-
-# Сколько фильтр ждёт Jev, прежде чем отдать текст в Gemini без неё. Здесь
-# Jev стоит на основном пути, поэтому запас меньше, чем у тени.
+# Сколько фильтр ждёт Jev, прежде чем отдать текст в Gemini без неё. Jev
+# стоит на основном пути, а обычно отвечает за полсекунды.
 JEV_GATE_WAIT_SECONDS = 10
 
 # От этой вероятности ответ Jev считается «да». Нужен только чтобы решить,
-# сохранять ли текст; настоящий порог выбирается по отчёту.
+# сохранять ли текст для разбора; порог фильтра задаётся в конфиге.
 DECISION_THRESHOLD = 0.5
 
-# Середина шкалы — ровно те случаи, по которым потом выбирается порог,
+# Середина шкалы — ровно те случаи, по которым подбирается порог фильтра,
 # поэтому их текст тоже сохраняется.
 UNCERTAIN_LOW = 0.2
 UNCERTAIN_HIGH = 0.8
@@ -114,9 +106,9 @@ def build_row(
     llm_error: str | None,
     draw: Callable[[], float] = random.random,
     gate: GateDecision | None = None,
-) -> JevShadowLog:
+) -> JevGateLog:
     reason = text_reason(decision, llm, draw)
-    return JevShadowLog(
+    return JevGateLog(
         text_length=len(text),
         jev_is_vacancy_p=decision.is_vacancy_probability if decision else None,
         jev_grade=decision.grade if decision else None,
@@ -138,74 +130,7 @@ def _error_name(exc: BaseException) -> str:
     return type(exc).__name__[:ERROR_NAME_LENGTH]
 
 
-class _Recorder:
-    """Пишет строки сравнения в фоне: запись не тормозит разбор и не роняет его."""
-
-    def __init__(self, session_factory: async_sessionmaker[AsyncSession]) -> None:
-        self._session_factory = session_factory
-        self._pending: set[asyncio.Task[None]] = set()
-
-    def _spawn(self, coro: Coroutine[Any, Any, None]) -> None:
-        task = asyncio.create_task(coro)
-        # Без ссылки сборщик мусора может снять задачу на середине.
-        self._pending.add(task)
-        task.add_done_callback(self._pending.discard)
-
-    async def _write(self, row: JevShadowLog) -> None:
-        async with self._session_factory() as session:
-            session.add(row)
-            await session.commit()
-
-
-class JevShadowVacancyExtractor(_Recorder, IVacancyLLMExtractor):
-    def __init__(
-        self,
-        inner: IVacancyLLMExtractor,
-        jev: JevClient,
-        session_factory: async_sessionmaker[AsyncSession],
-    ) -> None:
-        super().__init__(session_factory)
-        self._inner = inner
-        self._jev = jev
-
-    async def parse_vacancy(self, text: str) -> OutVacancyParse:
-        jev_task = asyncio.create_task(self._jev.decide(text))
-        try:
-            result = await self._inner.parse_vacancy(text)
-        except Exception as exc:
-            self._spawn(self._record(jev_task, text, None, _error_name(exc)))
-            raise
-        self._spawn(self._record(jev_task, text, result, None))
-        return result
-
-    async def _record(
-        self,
-        jev_task: asyncio.Task[JevDecision],
-        text: str,
-        llm: OutVacancyParse | None,
-        llm_error: str | None,
-    ) -> None:
-        try:
-            try:
-                decision = await asyncio.wait_for(jev_task, timeout=JEV_WAIT_SECONDS)
-                jev_error = None
-            except Exception as exc:
-                decision, jev_error = None, _error_name(exc)
-
-            await self._write(build_row(text, decision, jev_error, llm, llm_error))
-        except Exception:
-            logger.warning("Jev shadow record failed", exc_info=True)
-
-
-class JevGateVacancyExtractor(_Recorder, IVacancyLLMExtractor):
-    """Jev решает первой: явные «не вакансии» до Gemini не доходят.
-
-    Четыре пятых текстов, дошедших до модели, — не вакансии, и на них
-    уходит большая часть вызовов Gemini. Контрольная доля отсеянного всё
-    равно идёт в Gemini: по ней видно, сколько вакансий фильтр теряет. Если
-    Jev не ответила, текст идёт в Gemini как раньше.
-    """
-
+class JevGateVacancyExtractor(IVacancyLLMExtractor):
     def __init__(
         self,
         inner: IVacancyLLMExtractor,
@@ -215,12 +140,13 @@ class JevGateVacancyExtractor(_Recorder, IVacancyLLMExtractor):
         audit_rate: float,
         draw: Callable[[], float] = random.random,
     ) -> None:
-        super().__init__(session_factory)
         self._inner = inner
         self._jev = jev
+        self._session_factory = session_factory
         self._threshold = threshold
         self._audit_rate = audit_rate
         self._draw = draw
+        self._pending: set[asyncio.Task[None]] = set()
 
     async def parse_vacancy(self, text: str) -> OutVacancyParse:
         try:
@@ -231,16 +157,15 @@ class JevGateVacancyExtractor(_Recorder, IVacancyLLMExtractor):
 
         gate = self.decide_gate(decision)
         if gate is GateDecision.SKIPPED:
-            self._spawn(self._record(build_row(text, decision, None, None, None, gate=gate)))
+            self._record(build_row(text, decision, None, None, None, gate=gate))
             return OutVacancyParse(is_vacancy=False)
 
         try:
             result = await self._inner.parse_vacancy(text)
         except Exception as exc:
-            row = build_row(text, decision, jev_error, None, _error_name(exc), gate=gate)
-            self._spawn(self._record(row))
+            self._record(build_row(text, decision, jev_error, None, _error_name(exc), gate=gate))
             raise
-        self._spawn(self._record(build_row(text, decision, jev_error, result, None, gate=gate)))
+        self._record(build_row(text, decision, jev_error, result, None, gate=gate))
         return result
 
     def decide_gate(self, decision: JevDecision | None) -> GateDecision:
@@ -252,8 +177,17 @@ class JevGateVacancyExtractor(_Recorder, IVacancyLLMExtractor):
             return GateDecision.AUDIT
         return GateDecision.SKIPPED
 
-    async def _record(self, row: JevShadowLog) -> None:
+    def _record(self, row: JevGateLog) -> None:
+        """Пишет решение в фоне: запись не тормозит разбор и не роняет его."""
+        task = asyncio.create_task(self._write(row))
+        # Без ссылки сборщик мусора может снять задачу на середине.
+        self._pending.add(task)
+        task.add_done_callback(self._pending.discard)
+
+    async def _write(self, row: JevGateLog) -> None:
         try:
-            await self._write(row)
+            async with self._session_factory() as session:
+                session.add(row)
+                await session.commit()
         except Exception:
             logger.warning("Jev gate record failed", exc_info=True)

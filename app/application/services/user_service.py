@@ -52,19 +52,6 @@ class UserService:
                 await self._uow.users.update(user)
             return user, False
 
-    async def sync_user_metrics(self) -> None:
-        if self._observability is None:
-            return
-
-        async with self._uow:
-            total_users = await self._uow.users.count_total()
-            active_users = await self._uow.users.count_active()
-
-        self._observability.observe_users_snapshot(
-            total_users=total_users,
-            active_users=active_users,
-        )
-
     async def update_resume(self, tg_id: int, dto: OutResumeParse) -> bool:
         async with self._uow:
             user = await self._uow.users.get_by_tg_id(UserId(tg_id))
