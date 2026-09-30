@@ -1,5 +1,9 @@
 import logfire
 from telethon import TelegramClient, events  # type: ignore[import-untyped]
+from telethon.errors import (  # type: ignore[import-untyped]
+    ChatForwardsRestrictedError,
+    MessageIdInvalidError,
+)
 from telethon.tl.custom.message import Message  # type: ignore[import-untyped]
 
 from app.application.dto import InfoRawVacancy
@@ -153,6 +157,25 @@ class TelegramScraper:
                 config.MIRROR_CHANNEL,
                 message,
             )
+        except (MessageIdInvalidError, ChatForwardsRestrictedError) as exc:
+            # Не сбой, а отказ: пост удалили раньше, чем мы его переслали, или
+            # канал запретил пересылку. Считаются отдельно — так видно, если
+            # отказы вдруг скопятся в одном канале.
+            reason = (
+                SkipReason.FORWARDS_RESTRICTED
+                if isinstance(exc, ChatForwardsRestrictedError)
+                else SkipReason.SOURCE_UNAVAILABLE
+            )
+            self._observability.observe_message_skipped(reason)
+            logger.warning(
+                "Message not mirrored: %s (source_chat_id=%s, source_channel=%s, "
+                "source_message_id=%s)",
+                reason.value,
+                event.chat_id,
+                self._source_channel_name(event),
+                message.id,
+            )
+            return None
         except Exception:
             source_channel = self._source_channel_name(event)
             preview = self._message_preview(text)
