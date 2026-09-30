@@ -4,6 +4,7 @@ from collections.abc import Awaitable, Callable
 from pydantic_ai.exceptions import ModelHTTPError
 from pydantic_ai.run import AgentRunResult
 
+from app.application.ports.llm_port import LLMUnavailableError
 from app.application.ports.observability_port import TokenKind
 from app.core.logger import get_app_logger
 from app.infrastructure.observability.current import observe_llm_cost, observe_llm_tokens
@@ -17,7 +18,7 @@ _RETRY_ATTEMPTS = 3
 _BASE_DELAY_SECONDS = 1.0
 
 
-class TemporaryLLMUnavailableError(Exception):
+class TemporaryLLMUnavailableError(LLMUnavailableError):
     pass
 
 

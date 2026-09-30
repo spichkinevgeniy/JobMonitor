@@ -3,16 +3,23 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from app.application.ports.llm_port import IVacancyLLMExtractor
 from app.application.ports.observability_port import IObservabilityService
+from app.application.services.channel_message_service import ChannelMessageService
 from app.application.services.user_service import UserService
 from app.bootstrap.models import RuntimeComponents
 from app.core.config import config
-from app.infrastructure.db import UserUnitOfWork, async_session_factory
+from app.infrastructure.db import (
+    MatchingUnitOfWork,
+    UserUnitOfWork,
+    VacancyUnitOfWork,
+    async_session_factory,
+)
 from app.infrastructure.extractors.jev_shadow import (
     JevGateVacancyExtractor,
     JevShadowVacancyExtractor,
 )
 from app.infrastructure.extractors.vacancy_extractor import GoogleVacancyLLMExtractor
 from app.infrastructure.jev import JevClient
+from app.infrastructure.notifications import TelegramNotificationService
 from app.infrastructure.observability import (
     build_counter_store,
     build_observability_service,
@@ -50,14 +57,18 @@ async def build_scraper(
 ) -> tuple[TelegramScraper, TelethonClientProvider]:
     provider = TelethonClientProvider()
     client = await provider.start()
-    scraper = TelegramScraper(
-        client,
-        bot,
-        async_session_factory,
-        build_vacancy_extractor(),
-        observability,
-    )
+    scraper = TelegramScraper(client, build_message_service(bot, observability), observability)
     return scraper, provider
+
+
+def build_message_service(bot: Bot, observability: IObservabilityService) -> ChannelMessageService:
+    return ChannelMessageService(
+        vacancy_uow=lambda: VacancyUnitOfWork(async_session_factory),
+        matching_uow=lambda: MatchingUnitOfWork(async_session_factory),
+        extractor=build_vacancy_extractor(),
+        notifications=TelegramNotificationService(bot, async_session_factory),
+        observability=observability,
+    )
 
 
 def build_vacancy_extractor() -> IVacancyLLMExtractor:
