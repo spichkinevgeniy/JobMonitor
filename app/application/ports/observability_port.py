@@ -10,6 +10,8 @@ class SkipReason(StrEnum):
     DUPLICATE = "duplicate"
     NO_SPECIALIZATION = "no_specialization"
     NO_SKILLS = "no_skills"
+    SOURCE_UNAVAILABLE = "source_unavailable"
+    FORWARDS_RESTRICTED = "forwards_restricted"
     MIRROR_FAILED = "mirror_failed"
     PARSE_FAILED = "parse_failed"
 

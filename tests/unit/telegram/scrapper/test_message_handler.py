@@ -4,8 +4,12 @@ from types import SimpleNamespace
 from typing import Any
 from unittest.mock import AsyncMock
 
+import pytest
+from telethon.errors import ChatForwardsRestrictedError, MessageIdInvalidError
+
 from app.application.dto import InfoRawVacancy
 from app.application.ports.observability_port import SkipReason
+from app.telegram.scrapper import handlers
 from app.telegram.scrapper.handlers import MIN_VACANCY_TEXT_LENGTH, TelegramScraper
 
 LONG_TEXT = "Ищем Python-разработчика. " * 10
@@ -38,11 +42,25 @@ def event(text: str) -> Any:
     )
 
 
-def scraper(messages: FakeMessages, spy: SkipSpy) -> TelegramScraper:
-    client = SimpleNamespace(
-        forward_messages=AsyncMock(return_value=SimpleNamespace(chat_id=-100, id=7))
-    )
+def scraper(
+    messages: FakeMessages, spy: SkipSpy, forward_error: Exception | None = None
+) -> TelegramScraper:
+    forward = AsyncMock(return_value=SimpleNamespace(chat_id=-100, id=7))
+    if forward_error is not None:
+        forward.side_effect = forward_error
+    client = SimpleNamespace(forward_messages=forward)
     return TelegramScraper(client, messages, spy)  # type: ignore[arg-type]
+
+
+class LogSpy:
+    def __init__(self) -> None:
+        self.levels: list[str] = []
+
+    def warning(self, *args: Any, **kwargs: Any) -> None:
+        self.levels.append("warning")
+
+    def exception(self, *args: Any, **kwargs: Any) -> None:
+        self.levels.append("error")
 
 
 async def test_long_message_is_mirrored_and_handed_over() -> None:
@@ -73,3 +91,40 @@ async def test_failure_in_processing_is_counted_and_swallowed() -> None:
     await scraper(messages, spy)._message_handler(event(LONG_TEXT))
 
     assert spy.skipped == [SkipReason.PARSE_FAILED]
+
+
+@pytest.mark.parametrize(
+    ("error", "reason"),
+    [
+        (MessageIdInvalidError(request=None), SkipReason.SOURCE_UNAVAILABLE),
+        (ChatForwardsRestrictedError(request=None), SkipReason.FORWARDS_RESTRICTED),
+    ],
+)
+async def test_forward_refusal_is_a_quiet_skip(
+    error: Exception, reason: SkipReason, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Удалённый пост и запрет пересылки — не сбой: без трейсбека, своя причина."""
+    log = LogSpy()
+    monkeypatch.setattr(handlers, "logger", log)
+    messages, spy = FakeMessages(), SkipSpy()
+
+    await scraper(messages, spy, forward_error=error)._message_handler(event(LONG_TEXT))
+
+    assert messages.processed == []
+    assert spy.skipped == [reason]
+    assert log.levels == ["warning"]
+
+
+async def test_unexpected_forward_failure_is_still_an_error(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    log = LogSpy()
+    monkeypatch.setattr(handlers, "logger", log)
+    messages, spy = FakeMessages(), SkipSpy()
+
+    await scraper(messages, spy, forward_error=ConnectionError("down"))._message_handler(
+        event(LONG_TEXT)
+    )
+
+    assert spy.skipped == [SkipReason.MIRROR_FAILED]
+    assert log.levels == ["error"]
