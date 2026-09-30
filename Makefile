@@ -174,7 +174,7 @@ prod-restart:
 	$(PROD_COMPOSE) restart
 
 prod-migrate:
-	$(PROD_COMPOSE) run --rm app uv run alembic upgrade head
+	$(PROD_COMPOSE) run --rm app uv run --no-sync alembic upgrade head
 
 prod-db-up:
 	$(PROD_COMPOSE) up -d db

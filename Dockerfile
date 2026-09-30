@@ -16,4 +16,6 @@ COPY alembic ./alembic
 COPY alembic.ini channels_map.json ./
 RUN mkdir -p /app/data
 
-CMD ["uv", "run", "-m", "app.main"]
+# Пакеты ставятся при сборке. Без --no-sync uv run на каждом старте докачивал
+# dev-группу (mypy, ruff, pytest): ~30 МБ и лишние секунды простоя.
+CMD ["uv", "run", "--no-sync", "-m", "app.main"]
