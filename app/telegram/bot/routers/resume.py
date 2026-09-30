@@ -10,6 +10,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Document, Message
 
 from app.application.dto import OutResumeParse
+from app.application.ports.llm_port import LLMUnavailableError
 from app.application.ports.observability_port import Feature
 from app.application.services.resume_quota_service import (
     DAILY_QUOTA,
@@ -20,7 +21,6 @@ from app.application.services.user_service import UserService
 from app.core.logger import get_app_logger
 from app.core.privacy import file_ext, user_ref
 from app.infrastructure.db import UserUnitOfWork, async_session_factory
-from app.infrastructure.llm_runtime import TemporaryLLMUnavailableError
 from app.infrastructure.observability import observe_feature
 from app.infrastructure.parsers import (
     BaseResumeParser,
@@ -162,7 +162,7 @@ _REJECTIONS: tuple[tuple[type[Exception], Callable[..., None], str, Callable[[],
         build_resume_parser_error_text,
     ),
     (
-        TemporaryLLMUnavailableError,
+        LLMUnavailableError,
         bot_logfire.warning,
         "Resume processing delayed: llm temporarily unavailable",
         build_resume_llm_unavailable_text,

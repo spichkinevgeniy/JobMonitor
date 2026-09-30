@@ -13,10 +13,7 @@ from app.infrastructure.db import (
     VacancyUnitOfWork,
     async_session_factory,
 )
-from app.infrastructure.extractors.jev_shadow import (
-    JevGateVacancyExtractor,
-    JevShadowVacancyExtractor,
-)
+from app.infrastructure.extractors.jev_gate import JevGateVacancyExtractor
 from app.infrastructure.extractors.vacancy_extractor import GoogleVacancyLLMExtractor
 from app.infrastructure.jev import JevClient
 from app.infrastructure.notifications import TelegramNotificationService
@@ -73,20 +70,14 @@ def build_message_service(bot: Bot, observability: IObservabilityService) -> Cha
 
 def build_vacancy_extractor() -> IVacancyLLMExtractor:
     extractor: IVacancyLLMExtractor = GoogleVacancyLLMExtractor()
-    if config.JEV_GATE_ENABLED:
-        return JevGateVacancyExtractor(
-            extractor,
-            JevClient(config.OPENROUTER_API_KEY, config.JEV_MODEL),
-            async_session_factory,
-            threshold=config.JEV_GATE_THRESHOLD,
-            audit_rate=config.JEV_GATE_AUDIT_RATE,
-        )
-    if not config.JEV_SHADOW_ENABLED:
+    if not config.JEV_GATE_ENABLED:
         return extractor
-    return JevShadowVacancyExtractor(
+    return JevGateVacancyExtractor(
         extractor,
         JevClient(config.OPENROUTER_API_KEY, config.JEV_MODEL),
         async_session_factory,
+        threshold=config.JEV_GATE_THRESHOLD,
+        audit_rate=config.JEV_GATE_AUDIT_RATE,
     )
 
 

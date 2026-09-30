@@ -40,16 +40,13 @@ class BaseAppSettings(BaseSettings):
     OPENROUTER_MODEL: str = "google/gemini-2.5-flash"
     OPENROUTER_APP_TITLE: str = "jobmonitor"
 
-    # Теневой прогон Jev рядом с Gemini: ответ Jev бот не использует, только
-    # пишет рядом для сравнения. Идёт через тот же ключ OpenRouter.
-    JEV_SHADOW_ENABLED: bool = False
-    JEV_MODEL: str = "typesafe/jev-1.13"
-    # Фильтр перед Gemini: тексты, где Jev даёт вакансии меньше порога, в
+    # Фильтр Jev перед Gemini: тексты, где Jev даёт вакансии меньше порога, в
     # Gemini не идут, а контрольная доля отсеянного всё равно уходит туда,
-    # чтобы видеть потери. Включённый фильтр заменяет тень и пишет в ту же
-    # таблицу. Порог 0.1 выбран по двум суткам тени: 78% вызовов Gemini
-    # уходят, ни одной вакансии не потеряно из 203.
-    JEV_GATE_ENABLED: bool = False
+    # чтобы видеть потери. Jev ходит через тот же ключ OpenRouter. Порог 0.1
+    # выбран по двум суткам сравнения с Gemini: 78% вызовов Gemini уходят, ни
+    # одной вакансии не потеряно из 203. Флаг — аварийный выключатель.
+    JEV_MODEL: str = "typesafe/jev-1.13"
+    JEV_GATE_ENABLED: bool = True
     JEV_GATE_THRESHOLD: float = Field(default=0.1, ge=0.0, le=1.0)
     JEV_GATE_AUDIT_RATE: float = Field(default=0.05, ge=0.0, le=1.0)
     # Недельная сводка по понедельникам. Выключатель на случай, если сводка
@@ -126,11 +123,6 @@ class BaseAppSettings(BaseSettings):
             parsed[group_name] = cleaned_channels
 
         return parsed
-
-    @computed_field  # type: ignore[prop-decorator]
-    @property
-    def CHANNELS_GROUPS(self) -> dict[str, list[str]]:
-        return self._channels_groups()
 
     @computed_field  # type: ignore[prop-decorator]
     @property

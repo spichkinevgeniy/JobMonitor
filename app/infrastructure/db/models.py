@@ -139,22 +139,16 @@ class MetricCounter(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
-async def init_db() -> None:
-    from app.infrastructure.db.session import engine
+class JevGateLog(Base):
+    """Решения фильтра Jev перед Gemini.
 
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-
-class JevShadowLog(Base):
-    """Сравнение Jev с Gemini на живом потоке.
-
-    Текст пишется только там, где ответы разошлись или Jev не уверена. С
-    включённым фильтром каждая строка — ещё и его решение (gate): у
-    отсеянных текстов ответа Gemini нет.
+    У отсеянных текстов (gate = skipped) ответа Gemini нет. Текст пишется
+    только там, где его придётся читать: Jev и Gemini разошлись, Jev не
+    уверена или строка попала в случайную выборку. У строк до включения
+    фильтра gate пустой: это сравнение 26–28.09.2026.
     """
 
-    __tablename__ = "jev_shadow_log"
+    __tablename__ = "jev_gate_log"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     created_at: Mapped[datetime] = mapped_column(

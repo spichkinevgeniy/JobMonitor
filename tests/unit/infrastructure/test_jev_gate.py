@@ -1,4 +1,4 @@
-"""Теневой прогон Jev: не влияет на основной путь и пишет нужное для сравнения."""
+"""Фильтр Jev перед Gemini: запрос к Jev, решения фильтра и строки журнала."""
 
 import asyncio
 import json
@@ -10,12 +10,11 @@ import pytest
 from app.application.dto import OutVacancyParse
 from app.core.config import config
 from app.domain.shared.value_objects import Grade
-from app.infrastructure.extractors import jev_shadow
-from app.infrastructure.extractors.jev_shadow import (
+from app.infrastructure.extractors import jev_gate
+from app.infrastructure.extractors.jev_gate import (
     AGREEMENT_SAMPLE_RATE,
     GateDecision,
     JevGateVacancyExtractor,
-    JevShadowVacancyExtractor,
     TextReason,
     build_row,
     text_reason,
@@ -236,11 +235,9 @@ class FakeJev:
         self.delay = delay
         self.error = error
         self.p = p
-        self.finished = asyncio.Event()
 
     async def decide(self, text: str) -> JevDecision:
         await asyncio.sleep(self.delay)
-        self.finished.set()
         if self.error is not None:
             raise self.error
         return decision(self.p)
@@ -263,13 +260,7 @@ class FakeSession:
         return None
 
 
-def make(inner: FakeInner, jev: FakeJev) -> tuple[JevShadowVacancyExtractor, list[Any]]:
-    rows: list[Any] = []
-    extractor = JevShadowVacancyExtractor(inner, jev, lambda: FakeSession(rows))  # type: ignore[arg-type]
-    return extractor, rows
-
-
-async def drain(extractor: JevShadowVacancyExtractor | JevGateVacancyExtractor) -> None:
+async def drain(extractor: JevGateVacancyExtractor) -> None:
     while extractor._pending:
         await asyncio.gather(*extractor._pending)
 
@@ -291,79 +282,6 @@ def make_gate(
         draw=draw,
     )
     return extractor, rows
-
-
-class TestShadowNeverAffectsTheBot:
-    @pytest.mark.asyncio
-    async def test_returns_gemini_answer_unchanged(self) -> None:
-        expected = gemini(False)
-        extractor, _ = make(FakeInner(expected), FakeJev())
-
-        assert await extractor.parse_vacancy(TEXT) is expected
-
-    @pytest.mark.asyncio
-    async def test_does_not_wait_for_slow_jev(self) -> None:
-        """Основной путь не ждёт Jev: ответ Gemini уходит дальше сразу."""
-        jev = FakeJev(delay=0.5)
-        extractor, rows = make(FakeInner(), jev)
-
-        await asyncio.wait_for(extractor.parse_vacancy(TEXT), timeout=0.2)
-
-        assert not jev.finished.is_set()
-        await drain(extractor)
-        assert len(rows) == 1
-
-    @pytest.mark.asyncio
-    async def test_jev_failure_is_swallowed_and_recorded(self) -> None:
-        extractor, rows = make(FakeInner(), FakeJev(error=RuntimeError("down")))
-
-        result = await extractor.parse_vacancy(TEXT)
-        await drain(extractor)
-
-        assert result.is_vacancy is True
-        assert rows[0].jev_error == "RuntimeError"
-        assert rows[0].jev_is_vacancy_p is None
-
-    @pytest.mark.asyncio
-    async def test_gemini_failure_still_propagates(self) -> None:
-        """Сломанный Gemini должен ломаться как раньше — тень его не спасает."""
-        extractor, rows = make(FakeInner(error=ValueError("bad")), FakeJev())
-
-        with pytest.raises(ValueError):
-            await extractor.parse_vacancy(TEXT)
-        await drain(extractor)
-
-        assert rows[0].llm_error == "ValueError"
-        assert rows[0].llm_is_vacancy is None
-
-    @pytest.mark.asyncio
-    async def test_slow_jev_times_out_without_hanging(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        monkeypatch.setattr(jev_shadow, "JEV_WAIT_SECONDS", 0.05)
-        extractor, rows = make(FakeInner(), FakeJev(delay=1.0))
-
-        await extractor.parse_vacancy(TEXT)
-        await drain(extractor)
-
-        assert rows[0].jev_error == "TimeoutError"
-
-    @pytest.mark.asyncio
-    async def test_storage_failure_is_swallowed(self) -> None:
-        class BrokenSession(FakeSession):
-            async def commit(self) -> None:
-                raise ConnectionError("db down")
-
-        extractor = JevShadowVacancyExtractor(
-            FakeInner(),
-            FakeJev(),
-            lambda: BrokenSession([]),  # type: ignore[arg-type]
-        )
-
-        result = await extractor.parse_vacancy(TEXT)
-        await drain(extractor)
-
-        assert result.is_vacancy is True
 
 
 class TestGate:
@@ -444,7 +362,7 @@ class TestGate:
 
     @pytest.mark.asyncio
     async def test_slow_jev_falls_back_to_gemini(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setattr(jev_shadow, "JEV_GATE_WAIT_SECONDS", 0.05)
+        monkeypatch.setattr(jev_gate, "JEV_GATE_WAIT_SECONDS", 0.05)
         inner = FakeInner()
         extractor, rows = make_gate(inner, FakeJev(delay=1.0))
 
@@ -488,13 +406,11 @@ class TestGate:
 
 
 class TestSwitch:
-    def test_disabled_by_default(self) -> None:
-        assert type(config).model_fields["JEV_SHADOW_ENABLED"].default is False
-
-    def test_gate_disabled_by_default(self) -> None:
+    def test_gate_is_on_by_default(self) -> None:
+        """Фильтр — обычная часть пути, флаг остался аварийным выключателем."""
         fields = type(config).model_fields
 
-        assert fields["JEV_GATE_ENABLED"].default is False
+        assert fields["JEV_GATE_ENABLED"].default is True
         assert fields["JEV_GATE_THRESHOLD"].default == 0.1
         assert fields["JEV_GATE_AUDIT_RATE"].default == 0.05
 
@@ -506,39 +422,21 @@ class TestSwitch:
         with pytest.raises(ValidationError, match=name):
             type(config)(**{name: 10})
 
-    def test_flag_reaches_the_container(self) -> None:
+    def test_flags_reach_the_container(self) -> None:
         """Переменные в compose перечислены поимённо: без записи флаг не долетит."""
         from pathlib import Path
 
         compose = Path("docker-compose.yml").read_text(encoding="utf-8")
 
-        for name in (
-            "JEV_SHADOW_ENABLED",
-            "JEV_MODEL",
-            "JEV_GATE_ENABLED",
-            "JEV_GATE_THRESHOLD",
-            "JEV_GATE_AUDIT_RATE",
-        ):
+        for name in ("JEV_MODEL", "JEV_GATE_ENABLED", "JEV_GATE_THRESHOLD", "JEV_GATE_AUDIT_RATE"):
             assert name in compose
 
-    def test_bootstrap_wraps_only_when_enabled(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        from app.bootstrap import bootstrap
-        from app.infrastructure.extractors.vacancy_extractor import GoogleVacancyLLMExtractor
-
-        monkeypatch.setattr(bootstrap, "GoogleVacancyLLMExtractor", lambda: FakeInner())
-        monkeypatch.setattr(config, "JEV_SHADOW_ENABLED", False)
-        assert not isinstance(bootstrap.build_vacancy_extractor(), JevShadowVacancyExtractor)
-
-        monkeypatch.setattr(config, "JEV_SHADOW_ENABLED", True)
-        assert isinstance(bootstrap.build_vacancy_extractor(), JevShadowVacancyExtractor)
-        assert GoogleVacancyLLMExtractor is not None
-
-    def test_gate_takes_over_from_shadow(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Оба флага на проде включены: тень на время фильтра отходит."""
+    def test_bootstrap_puts_the_gate_in_front(self, monkeypatch: pytest.MonkeyPatch) -> None:
         from app.bootstrap import bootstrap
 
         monkeypatch.setattr(bootstrap, "GoogleVacancyLLMExtractor", lambda: FakeInner())
-        monkeypatch.setattr(config, "JEV_SHADOW_ENABLED", True)
         monkeypatch.setattr(config, "JEV_GATE_ENABLED", True)
-
         assert isinstance(bootstrap.build_vacancy_extractor(), JevGateVacancyExtractor)
+
+        monkeypatch.setattr(config, "JEV_GATE_ENABLED", False)
+        assert isinstance(bootstrap.build_vacancy_extractor(), FakeInner)
