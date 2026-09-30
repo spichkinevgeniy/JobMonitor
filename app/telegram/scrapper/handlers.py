@@ -117,8 +117,6 @@ class TelegramScraper:
                 vacancy_id=vacancy_id,
             )
         except Exception:
-            # Сюда попадает и «модель не нашла ни одного навыка» — самая
-            # частая причина, по которой распознанный текст не стал вакансией.
             self._observability.observe_message_skipped(SkipReason.PARSE_FAILED)
             logger.exception(
                 "Scraper message handling failed (chat_id=%s, message_id=%s, content_hash=%s, "

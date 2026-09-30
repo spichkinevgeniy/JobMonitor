@@ -14,6 +14,22 @@ logger = get_app_logger(__name__)
 application_logfire = logfire.with_tags("application")
 
 
+def nothing_to_match_on(parsed: OutVacancyParse) -> SkipReason | None:
+    """Чего не хватает вакансии, чтобы её было с кем сопоставить.
+
+    Без специализации или навыков домен вакансию не создаёт. Раньше это
+    всплывало исключением из Vacancy.create и писалось в лог как ошибка с
+    трейсбеком — по сорок в день, и среди них терялись настоящие сбои. Это
+    обычный исход разбора, поэтому он проверяется здесь, в том же порядке,
+    что и в домене.
+    """
+    if not parsed.specializations:
+        return SkipReason.NO_SPECIALIZATION
+    if not parsed.skills:
+        return SkipReason.NO_SKILLS
+    return None
+
+
 class VacancyService:
     def __init__(
         self,
@@ -52,6 +68,17 @@ class VacancyService:
                 )
                 self._observability.observe_not_vacancy_detected(1)
                 self._observability.observe_message_skipped(SkipReason.NOT_VACANCY)
+                return None
+
+            missing = nothing_to_match_on(result)
+            if missing is not None:
+                application_logfire.info(
+                    "Vacancy has nothing to match on",
+                    chat_id=raw_vacancy_info.chat_id,
+                    message_id=raw_vacancy_info.message_id,
+                    reason=missing.value,
+                )
+                self._observability.observe_message_skipped(missing)
                 return None
 
             application_logfire.info(

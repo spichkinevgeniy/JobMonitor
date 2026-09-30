@@ -243,7 +243,7 @@
       "type": "row"
     },
     {
-      "description": "too_short — короткое, not_vacancy — модель не признала, duplicate — уже есть, mirror_failed — не переслалось, parse_failed — упало при разборе (чаще всего нет навыков).",
+      "description": "too_short — короткое, not_vacancy — модель не признала, duplicate — уже есть, mirror_failed — не переслалось, no_specialization и no_skills — вакансия, которую не с чем сопоставить, parse_failed — сбой при разборе.",
       "fieldConfig": {
         "defaults": {
           "color": {
