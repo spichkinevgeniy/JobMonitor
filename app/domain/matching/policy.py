@@ -28,6 +28,42 @@ def evaluate_match(vacancy: Vacancy, user: User) -> MatchDecision:
     return MatchDecision(accepted=True)
 
 
+def unchecked_filters(vacancy: Vacancy, user: User) -> list[MatchRejectionReason]:
+    """Фильтры человека, которые не проверили вакансию: в ней нет нужного поля.
+
+    Для evaluate_match пустое поле означает «не отсеиваем», и человеку это
+    кажется необъяснимым: настройка стоит, а вакансия всё равно пришла.
+    Порядок — как в объяснении под вакансией: формат, грейд, опыт, зарплата.
+    """
+    unchecked: list[MatchRejectionReason] = []
+    if (
+        vacancy.work_format == WorkFormat.UNDEFINED
+        and user.filter_work_format_mode == FilterMode.STRICT
+        and user.cv_work_format
+    ):
+        unchecked.append(MatchRejectionReason.FORMAT)
+    if (
+        vacancy.grade == Grade.UNDEFINED
+        and user.filter_grade_mode != LevelFilterMode.IGNORE
+        and user.cv_grade
+    ):
+        unchecked.append(MatchRejectionReason.GRADE)
+    if (
+        vacancy.experience_level == ExperienceLevel.UNDEFINED
+        and user.filter_experience_mode != LevelFilterMode.IGNORE
+        and user.cv_experience_level
+    ):
+        unchecked.append(MatchRejectionReason.EXPERIENCE)
+    if (
+        vacancy.salary.amount is None
+        and user.filter_salary_mode == FilterMode.STRICT
+        and user.cv_salary is not None
+        and user.cv_salary.amount
+    ):
+        unchecked.append(MatchRejectionReason.SALARY)
+    return unchecked
+
+
 def _rejected_by_salary(vacancy: Vacancy, user: User) -> bool:
     if user.filter_salary_mode != FilterMode.STRICT:
         return False

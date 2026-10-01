@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from sqlalchemy import Select, distinct, func, select, true
+from sqlalchemy import Select, distinct, func, select, true, update
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import InstrumentedAttribute
 from sqlalchemy.sql.selectable import TableValuedAlias
 
-from app.domain.vacancy.entities import DispatchedVacancy, Vacancy
+from app.domain.vacancy.entities import DispatchedVacancy, DispatchMatch, Vacancy
 from app.domain.vacancy.market import MarketAggregates, SalarySample
 from app.domain.vacancy.repository import IVacancyRepository
 from app.domain.vacancy.value_objects import ContentHash, VacancyId
@@ -161,6 +161,47 @@ class VacancyRepository(IVacancyRepository):
         )
         sent, rejected = (await self._session.execute(query)).one()
         return int(sent), int(rejected)
+
+    async def get_dispatch_match(
+        self, vacancy_id: VacancyId, user_tg_id: int
+    ) -> DispatchMatch | None:
+        row = (
+            await self._session.execute(
+                select(
+                    VacancyDispatchLog.matched_specializations,
+                    VacancyDispatchLog.matched_skills,
+                )
+                .where(VacancyDispatchLog.vacancy_id == vacancy_id.value)
+                .where(VacancyDispatchLog.user_tg_id == user_tg_id)
+            )
+        ).first()
+        if row is None:
+            return None
+        # У отправок до снимка специализаций их нет.
+        return DispatchMatch(
+            matched_specializations=row.matched_specializations or [],
+            matched_skills=row.matched_skills or [],
+        )
+
+    async def reject_dispatch(self, vacancy_id: VacancyId, user_tg_id: int, at: datetime) -> None:
+        await self._set_feedback(vacancy_id, user_tg_id, FEEDBACK_REJECTED, at)
+
+    async def clear_dispatch_feedback(self, vacancy_id: VacancyId, user_tg_id: int) -> None:
+        await self._set_feedback(vacancy_id, user_tg_id, None, None)
+
+    async def _set_feedback(
+        self,
+        vacancy_id: VacancyId,
+        user_tg_id: int,
+        feedback: str | None,
+        at: datetime | None,
+    ) -> None:
+        await self._session.execute(
+            update(VacancyDispatchLog)
+            .where(VacancyDispatchLog.vacancy_id == vacancy_id.value)
+            .where(VacancyDispatchLog.user_tg_id == user_tg_id)
+            .values(feedback=feedback, feedback_at=at)
+        )
 
     async def salary_median(
         self,

@@ -5,6 +5,7 @@ from app.application.ports.llm_port import IVacancyLLMExtractor
 from app.application.ports.observability_port import IObservabilityService
 from app.application.services.channel_message_service import ChannelMessageService
 from app.application.services.user_service import UserService
+from app.application.services.vacancy_feedback_service import VacancyFeedbackService
 from app.bootstrap.models import RuntimeComponents
 from app.core.config import config
 from app.infrastructure.db import (
@@ -46,7 +47,21 @@ def build_bot() -> tuple[Dispatcher, Bot]:
     dp = Dispatcher(storage=MemoryStorage())
     dp.message.outer_middleware(UserGuardMiddleware(async_session_factory))
     dp.include_router(get_bot_router())
+    dp.workflow_data.update(build_bot_services())
     return dp, bot
+
+
+def build_bot_services() -> dict[str, object]:
+    """Сервисы для обработчиков бота.
+
+    aiogram передаёт их аргументом с тем же именем, что и ключ, — обработчику
+    не нужно самому открывать базу.
+    """
+    return {
+        "vacancy_feedback": VacancyFeedbackService(
+            lambda: MatchingUnitOfWork(async_session_factory)
+        ),
+    }
 
 
 async def build_scraper(

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Protocol, runtime_checkable
 
-from app.domain.vacancy.entities import DispatchedVacancy, Vacancy
+from app.domain.vacancy.entities import DispatchedVacancy, DispatchMatch, Vacancy
 from app.domain.vacancy.market import MarketAggregates
 from app.domain.vacancy.value_objects import ContentHash, VacancyId
 
@@ -32,6 +32,16 @@ class IVacancyRepository(Protocol):
     async def count_dispatches_between(
         self, user_tg_id: int, since: datetime, until: datetime
     ) -> tuple[int, int]: ...
+
+    async def get_dispatch_match(
+        self, vacancy_id: VacancyId, user_tg_id: int
+    ) -> DispatchMatch | None: ...
+
+    async def reject_dispatch(
+        self, vacancy_id: VacancyId, user_tg_id: int, at: datetime
+    ) -> None: ...
+
+    async def clear_dispatch_feedback(self, vacancy_id: VacancyId, user_tg_id: int) -> None: ...
 
     async def salary_median(
         self,
