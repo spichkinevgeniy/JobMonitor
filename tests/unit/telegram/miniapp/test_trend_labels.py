@@ -8,7 +8,7 @@
 from datetime import date
 
 from app.application.services.stats_service import TrendGranularity, TrendPoint
-from app.telegram.miniapp.routes import _trend_point_label
+from app.telegram.miniapp.routes.stats import _trend_point_label
 
 POINT = TrendPoint(bucket_start=date(2026, 8, 3), count=40)
 
