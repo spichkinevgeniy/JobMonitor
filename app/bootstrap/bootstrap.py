@@ -29,6 +29,7 @@ from app.infrastructure.telegram.miniapp_server import build_miniapp_server
 from app.infrastructure.telegram.telethon_client import TelethonClientProvider
 from app.telegram.bot import get_router as get_bot_router
 from app.telegram.bot.commands import setup_bot_commands, setup_menu_button
+from app.telegram.bot.keyboards import get_vacancy_kb
 from app.telegram.bot.middlewares import UserGuardMiddleware
 from app.telegram.scrapper.handlers import TelegramScraper
 
@@ -63,7 +64,9 @@ def build_message_service(bot: Bot, observability: IObservabilityService) -> Cha
         vacancy_uow=lambda: VacancyUnitOfWork(async_session_factory),
         matching_uow=lambda: MatchingUnitOfWork(async_session_factory),
         extractor=build_vacancy_extractor(),
-        notifications=TelegramNotificationService(bot, async_session_factory),
+        notifications=TelegramNotificationService(
+            bot, async_session_factory, vacancy_keyboard=get_vacancy_kb
+        ),
         observability=observability,
     )
 

@@ -1,7 +1,9 @@
+from typing import Protocol
 from uuid import UUID
 
 from aiogram import Bot
 from aiogram.exceptions import TelegramForbiddenError
+from aiogram.types import InlineKeyboardMarkup
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.application.ports.notification_port import DispatchTarget, INotificationService
@@ -11,15 +13,28 @@ from app.domain.user.value_objects import UserId
 from app.infrastructure.db.models import VacancyDispatchLog
 from app.infrastructure.db.uow.base import SQLAlchemyUnitOfWork
 from app.infrastructure.db.uow.user_uow import UserUnitOfWork
-from app.telegram.bot.keyboards import get_vacancy_kb
 
 logger = get_app_logger(__name__)
 
 
+class VacancyKeyboard(Protocol):
+    """Кнопки под вакансией. Их собирает Telegram-слой: там же и их обработчики."""
+
+    def __call__(
+        self, vacancy_id: str, *, source_channel: str | None, source_url: str | None
+    ) -> InlineKeyboardMarkup: ...
+
+
 class TelegramNotificationService(INotificationService):
-    def __init__(self, bot: Bot, session_factory: async_sessionmaker[AsyncSession]) -> None:
+    def __init__(
+        self,
+        bot: Bot,
+        session_factory: async_sessionmaker[AsyncSession],
+        vacancy_keyboard: VacancyKeyboard,
+    ) -> None:
         self._bot = bot
         self._session_factory = session_factory
+        self._vacancy_keyboard = vacancy_keyboard
 
     async def dispatch_vacancy(
         self,
@@ -47,7 +62,7 @@ class TelegramNotificationService(INotificationService):
                     chat_id=user_id,
                     from_chat_id=mirror_chat_id,
                     message_id=mirror_message_id,
-                    reply_markup=get_vacancy_kb(
+                    reply_markup=self._vacancy_keyboard(
                         str(vacancy_id),
                         source_channel=source_channel,
                         source_url=source_url,
