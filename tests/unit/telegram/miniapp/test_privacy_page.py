@@ -42,6 +42,11 @@ class TestPage:
         внешнему ИИ и за границу — остаются: ради них политика и пишется."""
         assert claim in page
 
+    def test_tells_channel_owners_how_to_opt_out(self, page: str) -> None:
+        """Владелец канала должен знать, куда написать, чтобы канал убрали."""
+        assert "Владельцам каналов" in page
+        assert "уберём канал из подборки" in page
+
 
 class TestBotLink:
     def test_url_points_to_privacy(self) -> None:

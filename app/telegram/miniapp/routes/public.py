@@ -16,7 +16,7 @@ from app.telegram.miniapp.market_facts import build_findings, build_json_ld, bui
 from app.telegram.miniapp.market_page import build_market_context
 from app.telegram.miniapp.ui import templates
 
-PRIVACY_UPDATED_AT = "10 августа 2026"
+PRIVACY_UPDATED_AT = "4 октября 2026"
 
 router = APIRouter()
 
