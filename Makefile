@@ -186,9 +186,14 @@ prod-backup:
 	mkdir -p $(BACKUP_DIR)
 	$(PROD_COMPOSE) exec -T db sh -lc 'pg_dump -U "$$POSTGRES_USER" "$$POSTGRES_DB"' > $(BACKUP_DIR)/job_monitor_$$(date +%F).sql
 
+# Образ собирается, пока работает старая версия, а миграции идут до старта
+# нового кода — иначе он несколько секунд работает на старой схеме. Поэтому
+# миграция обязана быть совместима и со старым кодом: сначала добавляем,
+# удаляем — следующим релизом. Простой — только перезапуск контейнеров.
 prod-deploy:
-	$(MAKE) prod-up
+	$(PROD_COMPOSE) build app
 	$(MAKE) prod-migrate
+	$(MAKE) prod-up
 	$(MAKE) prod-ps
 
 # Каждая сборка оставляет прежний образ бота без имени, по полгигабайта: за
