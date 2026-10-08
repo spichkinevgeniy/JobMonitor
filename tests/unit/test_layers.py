@@ -22,19 +22,22 @@ ALLOWED = {
 }
 
 
-def _imported_layers(path: Path) -> set[str]:
-    layers = set()
+def _imported_modules(path: Path) -> set[str]:
+    modules = set()
     for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
         if isinstance(node, ast.ImportFrom) and node.module and node.level == 0:
-            modules = [node.module]
+            modules.add(node.module)
         elif isinstance(node, ast.Import):
-            modules = [alias.name for alias in node.names]
-        else:
-            continue
-        for module in modules:
-            parts = module.split(".")
-            if parts[0] == "app" and len(parts) > 1:
-                layers.add(parts[1])
+            modules.update(alias.name for alias in node.names)
+    return modules
+
+
+def _imported_layers(path: Path) -> set[str]:
+    layers = set()
+    for module in _imported_modules(path):
+        parts = module.split(".")
+        if parts[0] == "app" and len(parts) > 1:
+            layers.add(parts[1])
     return layers
 
 
@@ -46,3 +49,16 @@ def test_layer_imports_only_allowed_layers(layer: str) -> None:
         for other in sorted(_imported_layers(path) - ALLOWED[layer] - {layer})
     ]
     assert violations == []
+
+
+def test_bot_does_not_open_the_database() -> None:
+    """Сервисы боту даёт bootstrap — сам он в базу не ходит."""
+    offenders = [
+        path.relative_to(APP.parent).as_posix()
+        for path in sorted((APP / "telegram" / "bot").rglob("*.py"))
+        if any(
+            module.startswith(("app.infrastructure.db", "sqlalchemy"))
+            for module in _imported_modules(path)
+        )
+    ]
+    assert offenders == []

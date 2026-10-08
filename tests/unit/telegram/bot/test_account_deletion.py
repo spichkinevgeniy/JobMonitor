@@ -55,8 +55,6 @@ class FakeService:
 @pytest.fixture
 def patch_service(monkeypatch: pytest.MonkeyPatch):
     def _install(service: FakeService) -> FakeService:
-        monkeypatch.setattr(account, "UserService", lambda *a, **kw: service)
-        monkeypatch.setattr(account, "UserUnitOfWork", lambda *a, **kw: None)
         # Хендлер отсеивает недоступные сообщения через isinstance, а собрать
         # настоящий aiogram Message ради этого дороже, чем подменить тип.
         monkeypatch.setattr(account, "Message", FakeMessage)
@@ -95,10 +93,10 @@ class TestDeletion:
 
     @pytest.mark.asyncio
     async def test_confirm_deletes_and_hides_keyboard(self, patch_service) -> None:
-        patch_service(FakeService(deleted=True))
+        service = patch_service(FakeService(deleted=True))
         message = FakeMessage()
 
-        await account.confirm_delete(FakeCallback(message, tg_id=777))
+        await account.confirm_delete(FakeCallback(message, tg_id=777), service)
 
         assert message.edited == [build_delete_done_text()]
         assert len(message.answers) == 1
@@ -109,27 +107,27 @@ class TestDeletion:
         """Удалять можно только себя: id берётся из callback, не из текста."""
         service = patch_service(FakeService())
 
-        await account.confirm_delete(FakeCallback(FakeMessage(), tg_id=777))
+        await account.confirm_delete(FakeCallback(FakeMessage(), tg_id=777), service)
 
         assert service.calls == [777]
 
     @pytest.mark.asyncio
     async def test_nothing_to_delete(self, patch_service) -> None:
-        patch_service(FakeService(deleted=False))
+        service = patch_service(FakeService(deleted=False))
         message = FakeMessage()
 
-        await account.confirm_delete(FakeCallback(message))
+        await account.confirm_delete(FakeCallback(message), service)
 
         assert message.edited == [build_delete_nothing_text()]
         assert message.answers == []
 
     @pytest.mark.asyncio
     async def test_failure_does_not_claim_success(self, patch_service) -> None:
-        patch_service(FakeService(raises=True))
+        service = patch_service(FakeService(raises=True))
         message = FakeMessage()
         callback = FakeCallback(message)
 
-        await account.confirm_delete(callback)
+        await account.confirm_delete(callback, service)
 
         assert message.edited == []
         assert callback.answered and callback.answered[0] is not None
@@ -138,6 +136,6 @@ class TestDeletion:
     async def test_without_user_context(self, patch_service) -> None:
         service = patch_service(FakeService())
 
-        await account.confirm_delete(FakeCallback(FakeMessage(), tg_id=None))
+        await account.confirm_delete(FakeCallback(FakeMessage(), tg_id=None), service)
 
         assert service.calls == []

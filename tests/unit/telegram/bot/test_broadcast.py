@@ -29,29 +29,21 @@ class FakeBot:
         self.calls.append({"chat_id": chat_id, "text": text, **kwargs})
 
 
+class FakeUsers:
+    def __init__(self) -> None:
+        self.deactivated: list[int] = []
+
+    async def list_active_tg_ids(self) -> list[int]:
+        return TG_IDS
+
+    async def deactivate(self, tg_id: int) -> None:
+        self.deactivated.append(tg_id)
+
+
 @pytest.fixture(autouse=True)
 def stub_dependencies(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(broadcast_router.config, "ADMIN_TG_IDS", str(ADMIN_ID))
     monkeypatch.setattr(broadcast_router, "SEND_DELAY_SECONDS", 0)
-
-    class FakeUow:
-        users = SimpleNamespace(list_active_tg_ids=lambda: _ids())
-
-        async def __aenter__(self) -> "FakeUow":
-            return self
-
-        async def __aexit__(self, *args: object) -> None:
-            return None
-
-    async def _ids() -> list[int]:
-        return TG_IDS
-
-    monkeypatch.setattr(broadcast_router, "UserUnitOfWork", lambda factory: FakeUow())
-    monkeypatch.setattr(broadcast_router, "deactivate_user", _noop)
-
-
-async def _noop(tg_id: int) -> None:
-    return None
 
 
 def _message(bot: FakeBot, tg_id: int = ADMIN_ID) -> Any:
@@ -68,9 +60,18 @@ def _message(bot: FakeBot, tg_id: int = ADMIN_ID) -> Any:
     )
 
 
-async def _run(bot: FakeBot, text: str | None = "Привет", tg_id: int = ADMIN_ID) -> Any:
+async def _run(
+    bot: FakeBot,
+    text: str | None = "Привет",
+    tg_id: int = ADMIN_ID,
+    users: FakeUsers | None = None,
+) -> Any:
     message = _message(bot, tg_id)
-    await broadcast_router.cmd_broadcast(message, SimpleNamespace(args=text))
+    await broadcast_router.cmd_broadcast(
+        message,
+        SimpleNamespace(args=text),  # type: ignore[arg-type]
+        users or FakeUsers(),  # type: ignore[arg-type]
+    )
     return message
 
 
@@ -99,6 +100,15 @@ async def test_blocked_user_does_not_stop_the_rest() -> None:
     await _run(bot)
 
     assert [call["chat_id"] for call in bot.calls] == TG_IDS[1:]
+
+
+async def test_blocked_user_is_deactivated() -> None:
+    """Слать ему дальше бессмысленно — в следующую рассылку он не попадёт."""
+    users = FakeUsers()
+
+    await _run(FakeBot(forbidden={TG_IDS[0]}), users=users)
+
+    assert users.deactivated == [TG_IDS[0]]
 
 
 async def test_non_admin_is_ignored() -> None:

@@ -3,6 +3,7 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
+from app.application.services.user_service import UserService
 from app.telegram.bot.keyboards import (
     PROFILE_FILL_FORM_CALLBACK,
     SETTINGS_DONE_CALLBACK,
@@ -24,7 +25,7 @@ router = Router()
     ),
     Command("settings"),
 )
-async def cmd_settings(message: Message, state: FSMContext) -> None:
+async def cmd_settings(message: Message, state: FSMContext, user_service: UserService) -> None:
     if message.from_user is None:
         await message.answer(
             build_start_required_text(),
@@ -35,11 +36,13 @@ async def cmd_settings(message: Message, state: FSMContext) -> None:
     if bot is None:
         return
     await state.set_state(BotStates.main_menu)
-    await send_settings_menu(bot, message.chat.id, message.from_user.id)
+    await send_settings_menu(bot, message.chat.id, message.from_user.id, user_service)
 
 
 @router.callback_query(F.data == PROFILE_FILL_FORM_CALLBACK)
-async def open_settings_from_profile(callback: CallbackQuery, state: FSMContext) -> None:
+async def open_settings_from_profile(
+    callback: CallbackQuery, state: FSMContext, user_service: UserService
+) -> None:
     await callback.answer()
     if callback.from_user is None:
         return
@@ -54,6 +57,7 @@ async def open_settings_from_profile(callback: CallbackQuery, state: FSMContext)
         bot,
         chat_id,
         callback.from_user.id,
+        user_service,
     )
 
 

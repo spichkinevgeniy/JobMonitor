@@ -20,7 +20,6 @@ from app.application.services.resume_quota_service import (
 from app.application.services.user_service import UserService
 from app.core.logger import get_app_logger
 from app.core.privacy import file_ext, user_ref
-from app.infrastructure.db import UserUnitOfWork, async_session_factory
 from app.infrastructure.observability import observe_feature
 from app.infrastructure.parsers import (
     BaseResumeParser,
@@ -117,6 +116,7 @@ class _Upload:
     document: Document
     tg_id: int | None
     quota: ResumeQuotaService | None
+    users: UserService
 
     @property
     def log_fields(self) -> dict[str, Any]:
@@ -193,7 +193,12 @@ def _release_upload(tg_id: int | None) -> None:
     StateFilter(BotStates.waiting_resume, BotStates.main_menu, None),
     F.document,
 )
-async def handle_resume_document(message: Message, state: FSMContext) -> None:
+async def handle_resume_document(
+    message: Message,
+    state: FSMContext,
+    user_service: UserService,
+    resume_quota: ResumeQuotaService,
+) -> None:
     document = message.document
     if document is None:
         return
@@ -204,7 +209,8 @@ async def handle_resume_document(message: Message, state: FSMContext) -> None:
         state=state,
         document=document,
         tg_id=tg_id,
-        quota=ResumeQuotaService(UserUnitOfWork(async_session_factory)) if tg_id else None,
+        quota=resume_quota if tg_id else None,
+        users=user_service,
     )
     with bot_logfire.span("bot.handle_resume_document", **upload.log_fields):
         bot_logfire.info("Resume upload started", **upload.log_fields)
@@ -251,8 +257,7 @@ async def _process_upload(upload: _Upload, buffer: BytesIO) -> None:
     if dto is None:
         return
 
-    service = UserService(UserUnitOfWork(async_session_factory))
-    if not await service.update_resume(user.id, dto):
+    if not await upload.users.update_resume(user.id, dto):
         bot_logfire.info("Resume processing skipped: user not found", **upload.log_fields)
         await upload.reset_to_menu(build_start_required_text())
         return

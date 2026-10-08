@@ -3,11 +3,9 @@ from typing import Any
 
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from aiogram.types import Message, TelegramObject
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.application.services.user_service import UserService
 from app.core.logger import get_app_logger
-from app.domain.user.value_objects import UserId
-from app.infrastructure.db import UserUnitOfWork
 from app.telegram.bot.keyboards import START_BUTTON_TEXT, get_start_kb
 from app.telegram.bot.views import build_start_required_text
 
@@ -15,8 +13,10 @@ logger = get_app_logger(__name__)
 
 
 class UserGuardMiddleware(BaseMiddleware):
-    def __init__(self, session_factory: async_sessionmaker[AsyncSession]) -> None:
-        self._session_factory = session_factory
+    """Пускает дальше только тех, кто уже нажал /start.
+
+    Сервис пользователей кладёт в данные ServicesMiddleware — он стоит раньше.
+    """
 
     async def __call__(
         self,
@@ -35,9 +35,8 @@ class UserGuardMiddleware(BaseMiddleware):
         if text.startswith("/start") or text == START_BUTTON_TEXT:
             return await handler(event, data)
 
-        uow = UserUnitOfWork(self._session_factory)
-        async with uow:
-            user = await uow.users.get_by_tg_id(UserId(event.from_user.id))
+        users: UserService = data["user_service"]
+        user = await users.get_user_by_tg_id(event.from_user.id)
 
         if user is None:
             await event.answer(
