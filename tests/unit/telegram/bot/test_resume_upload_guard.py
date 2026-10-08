@@ -13,6 +13,12 @@ from app.telegram.bot.routers import resume as resume_router
 
 BOT_TOKEN = "123456:AAaaAAaaAAaaAAaaAAaaAAaaAAaaAAaaAAa"
 TG_ID = 777
+ALLOW = QuotaDecision(allowed=True)
+DENY = QuotaDecision(
+    allowed=False,
+    rejection=QuotaRejection.DAILY_QUOTA,
+    retry_after=timedelta(days=1),
+)
 
 
 def _make_update(update_id: int, tg_id: int = TG_ID) -> Update:
@@ -33,15 +39,21 @@ def _make_update(update_id: int, tg_id: int = TG_ID) -> Update:
     return Update(update_id=update_id, message=message)
 
 
-class _AlwaysAllowQuota:
-    def __init__(self, uow: object) -> None:
-        pass
+class _Quota:
+    """Квота живёт в БД, тут проверяется только захват."""
+
+    def __init__(self, decision: QuotaDecision) -> None:
+        self._decision = decision
+        self.registered: list[int] = []
 
     async def check(self, tg_id: int) -> QuotaDecision:
-        return QuotaDecision(allowed=True)
+        return self._decision
 
     async def register(self, tg_id: int) -> None:
-        pass
+        self.registered.append(tg_id)
+
+
+Feed = Callable[[list[Update], _Quota], Awaitable[None]]
 
 
 @pytest.fixture
@@ -58,21 +70,28 @@ def accepted(monkeypatch: pytest.MonkeyPatch) -> list[str]:
 
     monkeypatch.setattr(resume_router.ParserFactory, "get_parser_by_extension", fake_parser)
     monkeypatch.setattr(Message, "answer", fake_answer)
-    # Квота живёт в БД, тут проверяется только захват.
-    monkeypatch.setattr(resume_router, "ResumeQuotaService", _AlwaysAllowQuota)
     resume_router._active_resume_uploads.clear()
     return reached
 
 
 @pytest.fixture(scope="module")
-async def feed() -> AsyncIterator[Callable[[list[Update]], Awaitable[None]]]:
+async def feed() -> AsyncIterator[Feed]:
     """Роутер модульный: к диспетчеру он цепляется один раз, отсюда и scope."""
     bot = Bot(token=BOT_TOKEN)
     dispatcher = Dispatcher()
     dispatcher.include_router(resume_router.router)
 
-    async def _feed(updates: list[Update]) -> None:
-        await asyncio.gather(*(dispatcher.feed_update(bot=bot, update=item) for item in updates))
+    async def _feed(updates: list[Update], quota: _Quota) -> None:
+        # Сервисы в проде кладёт ServicesMiddleware; до сохранения профиля
+        # загрузка тут не доходит, поэтому сервис пользователей — заглушка.
+        await asyncio.gather(
+            *(
+                dispatcher.feed_update(
+                    bot=bot, update=item, resume_quota=quota, user_service=object()
+                )
+                for item in updates
+            )
+        )
 
     try:
         yield _feed
@@ -82,77 +101,43 @@ async def feed() -> AsyncIterator[Callable[[list[Update]], Awaitable[None]]]:
 
 class TestConcurrentUploads:
     async def test_burst_from_one_user_admits_only_one(
-        self, accepted: list[str], feed: Callable[[list[Update]], Awaitable[None]]
+        self, accepted: list[str], feed: Feed
     ) -> None:
-        await feed([_make_update(i) for i in range(1, 6)])
+        await feed([_make_update(i) for i in range(1, 6)], _Quota(ALLOW))
 
         assert len(accepted) == 1
 
     async def test_guard_is_released_after_processing(
-        self, accepted: list[str], feed: Callable[[list[Update]], Awaitable[None]]
+        self, accepted: list[str], feed: Feed
     ) -> None:
-        await feed([_make_update(1)])
-        await feed([_make_update(2)])
+        await feed([_make_update(1)], _Quota(ALLOW))
+        await feed([_make_update(2)], _Quota(ALLOW))
 
         assert len(accepted) == 2
         assert resume_router._active_resume_uploads == set()
 
-    async def test_different_users_are_not_blocked(
-        self, accepted: list[str], feed: Callable[[list[Update]], Awaitable[None]]
-    ) -> None:
-        await feed([_make_update(1, tg_id=111), _make_update(2, tg_id=222)])
+    async def test_different_users_are_not_blocked(self, accepted: list[str], feed: Feed) -> None:
+        await feed([_make_update(1, tg_id=111), _make_update(2, tg_id=222)], _Quota(ALLOW))
 
         assert len(accepted) == 2
 
 
 class TestQuotaBlocksProcessing:
-    @pytest.fixture
-    def rejecting_quota(self, monkeypatch: pytest.MonkeyPatch) -> list[int]:
-        registered: list[int] = []
-
-        class _Rejecting:
-            def __init__(self, uow: object) -> None:
-                pass
-
-            async def check(self, tg_id: int) -> QuotaDecision:
-                return QuotaDecision(
-                    allowed=False,
-                    rejection=QuotaRejection.DAILY_QUOTA,
-                    retry_after=timedelta(days=1),
-                )
-
-            async def register(self, tg_id: int) -> None:
-                registered.append(tg_id)
-
-        monkeypatch.setattr(resume_router, "ResumeQuotaService", _Rejecting)
-        return registered
-
     async def test_rejected_upload_never_reaches_parser(
-        self,
-        accepted: list[str],
-        rejecting_quota: list[int],
-        feed: Callable[[list[Update]], Awaitable[None]],
+        self, accepted: list[str], feed: Feed
     ) -> None:
-        await feed([_make_update(1)])
+        await feed([_make_update(1)], _Quota(DENY))
 
         assert accepted == []
 
-    async def test_rejected_upload_is_not_counted(
-        self,
-        accepted: list[str],
-        rejecting_quota: list[int],
-        feed: Callable[[list[Update]], Awaitable[None]],
-    ) -> None:
-        await feed([_make_update(1)])
+    async def test_rejected_upload_is_not_counted(self, accepted: list[str], feed: Feed) -> None:
+        quota = _Quota(DENY)
 
-        assert rejecting_quota == []
+        await feed([_make_update(1)], quota)
 
-    async def test_guard_is_released_after_rejection(
-        self,
-        accepted: list[str],
-        rejecting_quota: list[int],
-        feed: Callable[[list[Update]], Awaitable[None]],
-    ) -> None:
-        await feed([_make_update(1)])
+        assert quota.registered == []
+
+    async def test_guard_is_released_after_rejection(self, accepted: list[str], feed: Feed) -> None:
+        await feed([_make_update(1)], _Quota(DENY))
 
         assert resume_router._active_resume_uploads == set()

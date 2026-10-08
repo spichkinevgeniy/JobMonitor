@@ -11,6 +11,7 @@ from aiogram.types import InlineKeyboardMarkup
 
 from app.application.ports.observability_port import Feature
 from app.application.ports.unit_of_work import UserUnitOfWork, VacancyUnitOfWork
+from app.application.services.user_service import UserService
 from app.application.services.weekly_pulse_service import PulseWeek, WeeklyPulseService
 from app.core.logger import get_app_logger
 from app.core.privacy import user_ref
@@ -54,14 +55,14 @@ class WeeklyPulseSender:
         user_uow_factory: Callable[[], UserUnitOfWork],
         vacancy_uow_factory: Callable[[], VacancyUnitOfWork],
         stats_url: str,
-        deactivate: Callable[[int], Awaitable[None]] = deactivate_user,
+        deactivate: Callable[[int], Awaitable[None]] | None = None,
         delay_seconds: float = SEND_DELAY_SECONDS,
     ) -> None:
         self._bot = bot
         self._user_uow = user_uow_factory
         self._vacancy_uow = vacancy_uow_factory
         self._stats_url = stats_url
-        self._deactivate = deactivate
+        self._deactivate = deactivate or self._deactivate_blocked
         self._delay_seconds = delay_seconds
 
     async def run(self, week: PulseWeek) -> PulseRunResult:
@@ -122,6 +123,9 @@ class WeeklyPulseSender:
         observe_feature(Feature.PULSE_SENT)
         await asyncio.sleep(self._delay_seconds)
         return PulseStatus.SENT
+
+    async def _deactivate_blocked(self, tg_id: int) -> None:
+        await deactivate_user(UserService(self._user_uow()), tg_id)
 
     async def _send(self, tg_id: int, text: str, markup: InlineKeyboardMarkup) -> None:
         try:

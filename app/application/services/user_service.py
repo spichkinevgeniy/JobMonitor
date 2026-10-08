@@ -31,6 +31,28 @@ class UserService:
         async with self._uow:
             return await self._uow.users.delete_by_tg_id(UserId(tg_id))
 
+    async def list_active_tg_ids(self) -> list[int]:
+        async with self._uow:
+            return await self._uow.users.list_active_tg_ids()
+
+    async def deactivate(self, tg_id: int) -> None:
+        """Отключает того, кто заблокировал бота: слать ему дальше бессмысленно."""
+        async with self._uow:
+            user = await self._uow.users.get_by_tg_id(UserId(tg_id))
+            if user is not None and user.is_active:
+                user.is_active = False
+                await self._uow.users.update(user)
+
+    async def set_pulse_enabled(self, tg_id: int, enabled: bool | None) -> User | None:
+        """None переключает сводку на противоположное состояние."""
+        async with self._uow:
+            user = await self._uow.users.get_by_tg_id(UserId(tg_id))
+            if user is None:
+                return None
+            user.pulse_enabled = not user.pulse_enabled if enabled is None else enabled
+            await self._uow.users.update(user)
+            return user
+
     async def get_or_create_user(self, tg_id: int, username: str | None) -> tuple[User, bool]:
         async with self._uow:
             user = await self._uow.users.get_by_tg_id(UserId(tg_id))

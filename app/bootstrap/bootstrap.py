@@ -4,8 +4,10 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from app.application.ports.llm_port import IVacancyLLMExtractor
 from app.application.ports.observability_port import IObservabilityService
 from app.application.services.channel_message_service import ChannelMessageService
+from app.application.services.resume_quota_service import ResumeQuotaService
 from app.application.services.user_service import UserService
 from app.application.services.vacancy_feedback_service import VacancyFeedbackService
+from app.application.services.weekly_pulse_service import WeeklyPulseService
 from app.bootstrap.models import RuntimeComponents
 from app.core.config import config
 from app.infrastructure.db import (
@@ -31,7 +33,7 @@ from app.infrastructure.telegram.telethon_client import TelethonClientProvider
 from app.telegram.bot import get_router as get_bot_router
 from app.telegram.bot.commands import setup_bot_commands, setup_menu_button
 from app.telegram.bot.keyboards import get_vacancy_kb
-from app.telegram.bot.middlewares import UserGuardMiddleware
+from app.telegram.bot.middlewares import ServicesMiddleware, UserGuardMiddleware
 from app.telegram.scrapper.handlers import TelegramScraper
 
 
@@ -42,22 +44,27 @@ def init_infrastructure() -> None:
     init_metrics_server()
 
 
-def build_bot() -> tuple[Dispatcher, Bot]:
+def build_bot(observability: IObservabilityService) -> tuple[Dispatcher, Bot]:
     bot = Bot(token=config.BOT_TOKEN)
     dp = Dispatcher(storage=MemoryStorage())
-    dp.message.outer_middleware(UserGuardMiddleware(async_session_factory))
+    # Сервисы кладутся на уровне всего обновления, поэтому сторож сообщений
+    # ниже уже их видит.
+    dp.update.outer_middleware(ServicesMiddleware(lambda: build_bot_services(observability)))
+    dp.message.outer_middleware(UserGuardMiddleware())
     dp.include_router(get_bot_router())
-    dp.workflow_data.update(build_bot_services())
     return dp, bot
 
 
-def build_bot_services() -> dict[str, object]:
-    """Сервисы для обработчиков бота.
+def build_bot_services(observability: IObservabilityService | None = None) -> dict[str, object]:
+    """Сервисы для обработчиков бота, свежие на каждое обновление.
 
     aiogram передаёт их аргументом с тем же именем, что и ключ, — обработчику
     не нужно самому открывать базу.
     """
     return {
+        "user_service": UserService(UserUnitOfWork(async_session_factory), observability),
+        "resume_quota": ResumeQuotaService(UserUnitOfWork(async_session_factory)),
+        "weekly_pulse": WeeklyPulseService(VacancyUnitOfWork(async_session_factory)),
         "vacancy_feedback": VacancyFeedbackService(
             lambda: MatchingUnitOfWork(async_session_factory)
         ),
@@ -100,12 +107,12 @@ def build_vacancy_extractor() -> IVacancyLLMExtractor:
 
 
 async def build_runtime_components() -> RuntimeComponents:
-    dp, bot = build_bot()
-    await setup_bot_commands(bot)
-    await setup_menu_button(bot)
     counter_store = build_counter_store()
     observability = build_observability_service(counter_store)
     set_observability_service(observability)
+    dp, bot = build_bot(observability)
+    await setup_bot_commands(bot)
+    await setup_menu_button(bot)
     user_service = UserService(UserUnitOfWork(async_session_factory), observability)
     scraper, provider = await build_scraper(bot, observability)
     miniapp_server = build_miniapp_server()

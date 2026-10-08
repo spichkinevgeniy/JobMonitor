@@ -3,7 +3,6 @@ from aiogram.filters import Command, StateFilter
 from aiogram.types import Message
 
 from app.application.services.user_service import UserService
-from app.infrastructure.db import UserUnitOfWork, async_session_factory
 from app.telegram.bot.keyboards import (
     PROFILE_BUTTON_TEXT,
     PROFILE_STATS_BUTTON_TEXT,
@@ -31,7 +30,7 @@ router = Router()
     StateFilter(BotStates.main_menu, BotStates.processing_resume, None),
     Command("profile"),
 )
-async def show_profile(message: Message) -> None:
+async def show_profile(message: Message, user_service: UserService) -> None:
     if message.from_user is None:
         await message.answer(
             build_start_required_text(),
@@ -39,8 +38,7 @@ async def show_profile(message: Message) -> None:
         )
         return
 
-    service = UserService(UserUnitOfWork(async_session_factory))
-    user = await service.get_user_by_tg_id(message.from_user.id)
+    user = await user_service.get_user_by_tg_id(message.from_user.id)
     if user is None:
         await message.answer(
             build_start_required_text(),

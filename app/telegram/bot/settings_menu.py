@@ -3,7 +3,6 @@ from aiogram.types import InlineKeyboardMarkup
 
 from app.application.services.user_service import UserService
 from app.domain.user.entities import User
-from app.infrastructure.db import UserUnitOfWork, async_session_factory
 from app.telegram.bot.keyboards import get_main_menu_kb, get_settings_menu_kb, get_start_kb
 from app.telegram.bot.views import (
     build_settings_menu_text,
@@ -43,9 +42,8 @@ def build_settings_menu_markup(user: User) -> InlineKeyboardMarkup | None:
     )
 
 
-async def send_settings_menu(bot: Bot, chat_id: int, tg_id: int) -> None:
-    service = UserService(UserUnitOfWork(async_session_factory))
-    user = await service.get_user_by_tg_id(tg_id)
+async def send_settings_menu(bot: Bot, chat_id: int, tg_id: int, users: UserService) -> None:
+    user = await users.get_user_by_tg_id(tg_id)
     if user is None:
         await bot.send_message(
             chat_id=chat_id,

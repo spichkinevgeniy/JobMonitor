@@ -5,10 +5,10 @@ from aiogram.exceptions import TelegramForbiddenError, TelegramRetryAfter
 from aiogram.filters import Command, CommandObject
 from aiogram.types import Message
 
+from app.application.services.user_service import UserService
 from app.core.config import config
 from app.core.logger import get_app_logger
 from app.core.privacy import user_ref
-from app.infrastructure.db import UserUnitOfWork, async_session_factory
 from app.telegram.bot.delivery import deactivate_user
 from app.telegram.bot.keyboards import get_main_menu_kb
 
@@ -19,7 +19,9 @@ SEND_DELAY_SECONDS = 0.05
 
 
 @router.message(Command("broadcast"))
-async def cmd_broadcast(message: Message, command: CommandObject) -> None:
+async def cmd_broadcast(
+    message: Message, command: CommandObject, user_service: UserService
+) -> None:
     if message.from_user is None or message.from_user.id not in config.ADMIN_IDS:
         return
 
@@ -32,8 +34,7 @@ async def cmd_broadcast(message: Message, command: CommandObject) -> None:
     if bot is None:
         return
 
-    async with UserUnitOfWork(async_session_factory) as uow:
-        tg_ids = await uow.users.list_active_tg_ids()
+    tg_ids = await user_service.list_active_tg_ids()
 
     await message.answer(f"Начинаю рассылку на {len(tg_ids)} пользователей...")
 
@@ -54,7 +55,7 @@ async def cmd_broadcast(message: Message, command: CommandObject) -> None:
                 failed += 1
         except TelegramForbiddenError:
             blocked += 1
-            await deactivate_user(tg_id)
+            await deactivate_user(user_service, tg_id)
         except Exception:
             logger.exception("Broadcast failed for user %s", user_ref(tg_id))
             failed += 1

@@ -6,7 +6,6 @@ from app.application.services.user_service import UserService
 from app.core.config import config
 from app.core.logger import get_app_logger
 from app.core.privacy import user_ref
-from app.infrastructure.db import UserUnitOfWork, async_session_factory
 from app.telegram.bot.keyboards import (
     DELETE_CANCEL_CALLBACK,
     DELETE_CONFIRM_CALLBACK,
@@ -57,15 +56,14 @@ async def cancel_delete(callback: CallbackQuery) -> None:
 
 
 @router.callback_query(F.data == DELETE_CONFIRM_CALLBACK)
-async def confirm_delete(callback: CallbackQuery) -> None:
+async def confirm_delete(callback: CallbackQuery, user_service: UserService) -> None:
     if callback.from_user is None:
         await callback.answer()
         return
 
     tg_id = callback.from_user.id
-    service = UserService(UserUnitOfWork(async_session_factory))
     try:
-        deleted = await service.delete_user(tg_id)
+        deleted = await user_service.delete_user(tg_id)
     except Exception:
         logger.exception("Failed to delete user data (user=%s)", user_ref(tg_id))
         await callback.answer("Не получилось удалить, попробуйте позже")
