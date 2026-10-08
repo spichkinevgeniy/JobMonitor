@@ -6,6 +6,7 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from fastapi.testclient import TestClient
 
+from app.application.ports.observability_port import Feature
 from app.application.services.market_stats_service import (
     DirectionStat,
     GradeSalaryRow,
@@ -19,8 +20,14 @@ from app.telegram.miniapp.market_page import (
     MarketSnapshotCache,
     build_market_context,
 )
+from app.telegram.miniapp.routes import public as public_routes
 
 NOW = datetime(2026, 9, 28, 19, 49, tzinfo=UTC)
+BROWSER = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36"
+)
+VIEW_URL = "/miniapp/api/market/view"
 
 
 def snapshot(**overrides: object) -> MarketSnapshot:
@@ -190,3 +197,71 @@ class TestPage:
         assert response.headers["content-type"].startswith("application/xml")
         assert "/</loc>" in response.text
         assert "/privacy</loc>" in response.text
+
+
+@pytest.fixture
+def views(monkeypatch: pytest.MonkeyPatch) -> list[Feature]:
+    seen: list[Feature] = []
+    monkeypatch.setattr(public_routes, "observe_feature", seen.append)
+    return seen
+
+
+class TestHonestViews:
+    """Просмотр засчитывает браузер, а не каждый запрос страницы: в запросах
+    роботов было в разы больше, чем людей."""
+
+    def test_page_request_alone_is_not_a_view(
+        self, client: TestClient, views: list[Feature]
+    ) -> None:
+        client.get("/", headers={"user-agent": BROWSER})
+
+        assert views == []
+
+    def test_page_sends_the_signal(self, client: TestClient) -> None:
+        assert "js/market-view.js" in client.get("/").text
+
+    def test_signal_from_browser_counts(self, client: TestClient, views: list[Feature]) -> None:
+        response = client.post(
+            VIEW_URL, headers={"user-agent": BROWSER, "sec-fetch-site": "same-origin"}
+        )
+
+        assert response.status_code == 204
+        assert views == [Feature.MARKET_VIEW]
+
+    def test_old_browser_without_fetch_metadata_counts_by_origin(
+        self, client: TestClient, views: list[Feature]
+    ) -> None:
+        client.post(VIEW_URL, headers={"user-agent": BROWSER, "origin": str(client.base_url)})
+
+        assert views == [Feature.MARKET_VIEW]
+
+    @pytest.mark.parametrize(
+        "user_agent",
+        [
+            "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 HeadlessChrome/120.0 Safari/537.36",
+            "TelegramBot (like TwitterBot)",
+            "curl/8.4.0",
+            "python-requests/2.32.3",
+        ],
+    )
+    def test_robots_do_not_count(
+        self, client: TestClient, views: list[Feature], user_agent: str
+    ) -> None:
+        client.post(VIEW_URL, headers={"user-agent": user_agent, "sec-fetch-site": "same-origin"})
+
+        assert views == []
+
+    def test_signal_from_another_site_does_not_count(
+        self, client: TestClient, views: list[Feature]
+    ) -> None:
+        client.post(
+            VIEW_URL,
+            headers={
+                "user-agent": BROWSER,
+                "sec-fetch-site": "cross-site",
+                "origin": "https://example.com",
+            },
+        )
+
+        assert views == []
