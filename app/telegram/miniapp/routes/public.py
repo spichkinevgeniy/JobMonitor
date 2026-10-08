@@ -1,5 +1,6 @@
 """Публичный сайт: рынок, политика и служебные файлы, без Telegram и авторизации."""
 
+import re
 from typing import Annotated
 from urllib.parse import urlsplit
 
@@ -17,6 +18,14 @@ from app.telegram.miniapp.market_page import build_market_context
 from app.telegram.miniapp.ui import templates
 
 PRIVACY_UPDATED_AT = "4 октября 2026"
+
+# Подписи роботов и скриптов. Сканеры под видом браузера сюда не попадут, но
+# они обычно не выполняют скрипты и до сигнала просмотра не доходят вовсе.
+_ROBOT_UA = re.compile(
+    r"bot|crawl|spider|slurp|headless|lighthouse|preview|scan|python|curl|wget"
+    r"|go-http|java/|okhttp|axios|node-fetch",
+    re.IGNORECASE,
+)
 
 router = APIRouter()
 
@@ -42,7 +51,6 @@ async def market_page(
     snapshot: Annotated[MarketSnapshot, Depends(get_market_snapshot)],
 ) -> HTMLResponse:
     """Публичная страница: срез рынка по вакансиям из Telegram, без авторизации."""
-    observe_feature(Feature.MARKET_VIEW)
     canonical_url = f"{_public_origin(request)}/"
     return templates.TemplateResponse(
         request,
@@ -55,6 +63,30 @@ async def market_page(
             "bot_url": _telegram_url(BOT_HANDLE),
         },
     )
+
+
+@router.post("/miniapp/api/market/view", status_code=204, include_in_schema=False)
+async def count_market_view(request: Request) -> Response:
+    """Просмотр главной засчитывает сам браузер — static/js/market-view.js.
+
+    Раньше считался каждый запрос страницы, и роботов в счётчике было в разы
+    больше, чем людей: сканеры ходят и ночью, и под видом браузера.
+    """
+    user_agent = request.headers.get("user-agent", "")
+    if _from_this_site(request) and not _ROBOT_UA.search(user_agent):
+        observe_feature(Feature.MARKET_VIEW)
+    return Response(status_code=204)
+
+
+def _from_this_site(request: Request) -> bool:
+    """Сигнал отправила наша страница, а не чужой сайт или скрипт.
+
+    Sec-Fetch-Site ставят браузеры последних лет; у старых остаётся Origin.
+    """
+    if request.headers.get("sec-fetch-site") == "same-origin":
+        return True
+    origin = request.headers.get("origin", "").rstrip("/")
+    return bool(origin) and origin == _public_origin(request)
 
 
 @router.get("/llms.txt", response_class=PlainTextResponse, include_in_schema=False)
