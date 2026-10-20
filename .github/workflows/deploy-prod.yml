@@ -59,3 +59,28 @@ jobs:
             fi
             echo "Server commit: $(git rev-parse --short HEAD)"
             make prod-deploy-all
+
+      # Яндекс и Bing узнают о свежей главной без кабинетов вебмастера.
+      # Ключ берётся с живого сайта: заодно видно, что он отдаётся.
+      # Сбой уведомления выкладку не валит.
+      - name: Уведомление поисковиков (IndexNow)
+        continue-on-error: true
+        env:
+          SITE: https://jobmonitor-it.com
+        run: |
+          key=""
+          for attempt in $(seq 1 20); do
+            key=$(curl -fsS --max-time 10 "$SITE/indexnow.txt") && break
+            sleep 6
+          done
+          if [ -z "$key" ]; then
+            echo "Ключ $SITE/indexnow.txt недоступен, уведомление пропущено"
+            exit 1
+          fi
+          payload=$(printf '{"host":"%s","key":"%s","keyLocation":"%s/indexnow.txt","urlList":["%s/","%s/llms.txt"]}' \
+            "${SITE#https://}" "$key" "$SITE" "$SITE" "$SITE")
+          for endpoint in https://api.indexnow.org/indexnow https://yandex.com/indexnow; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 -X POST "$endpoint" \
+              -H 'Content-Type: application/json; charset=utf-8' -d "$payload")
+            echo "$endpoint → $code"
+          done

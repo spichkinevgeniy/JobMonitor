@@ -19,6 +19,10 @@ from app.telegram.miniapp.ui import templates
 
 PRIVACY_UPDATED_AT = "4 октября 2026"
 
+# Ключ протокола IndexNow. Он публичный по устройству протокола: поисковик
+# лишь сверяет, что файл с ним лежит на нашем сайте.
+INDEXNOW_KEY = "bcdc85d4c218277dc0bb76e87fda78bc"
+
 # Подписи роботов и скриптов. Сканеры под видом браузера сюда не попадут, но
 # они обычно не выполняют скрипты и до сигнала просмотра не доходят вовсе.
 _ROBOT_UA = re.compile(
@@ -96,6 +100,13 @@ async def llms_txt(
 ) -> str:
     """Справка о сайте для ИИ-ассистентов: что это и главные цифры."""
     return build_llms_txt(snapshot, _public_origin(request), _telegram_url(BOT_HANDLE))
+
+
+@router.get("/indexnow.txt", response_class=PlainTextResponse, include_in_schema=False)
+async def indexnow_key() -> str:
+    """Ключ IndexNow: по нему Яндекс и Bing проверяют, что уведомление о
+    страницах пришло от владельца сайта. Шлёт его сценарий выкатки."""
+    return INDEXNOW_KEY
 
 
 @router.get("/robots.txt", response_class=PlainTextResponse, include_in_schema=False)
