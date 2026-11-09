@@ -3,6 +3,7 @@
 import inspect
 from collections.abc import Iterator
 from datetime import datetime
+from types import SimpleNamespace
 from typing import Any
 
 import pytest
@@ -71,7 +72,7 @@ class _Users:
         self._known = known
 
     async def get_user_by_tg_id(self, tg_id: int) -> object | None:
-        return object() if self._known else None
+        return SimpleNamespace(is_active=True) if self._known else None
 
 
 def _message(text: str) -> Message:

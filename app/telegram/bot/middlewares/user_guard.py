@@ -45,4 +45,7 @@ class UserGuardMiddleware(BaseMiddleware):
             )
             return None
 
+        if not user.is_active:
+            await users.reactivate(event.from_user.id)
+
         return await handler(event, data)

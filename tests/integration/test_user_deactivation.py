@@ -46,6 +46,17 @@ async def test_deactivation_date_is_saved_and_read_back() -> None:
     assert user.deactivated_at == stored
 
 
+async def test_user_who_comes_back_is_active_again() -> None:
+    await _add_user(1)
+    await UserService(UserUnitOfWork(async_session_factory)).deactivate(1)
+
+    await UserService(UserUnitOfWork(async_session_factory)).get_or_create_user(1, None)
+
+    assert await _stored_date(1) is None
+    async with UserUnitOfWork(async_session_factory) as uow:
+        assert await uow.users.list_active_tg_ids() == [1]
+
+
 async def test_migration_fills_date_only_for_those_who_already_left() -> None:
     """Последняя доставка у ушедших; без доставок и у активных даты быть не должно."""
     first = datetime(2026, 10, 1, 12, tzinfo=UTC)

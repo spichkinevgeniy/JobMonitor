@@ -43,6 +43,14 @@ class UserService:
                 user.deactivate()
                 await self._uow.users.update(user)
 
+    async def reactivate(self, tg_id: int) -> None:
+        """Написал боту — значит, разблокировал его: рассылка снова нужна."""
+        async with self._uow:
+            user = await self._uow.users.get_by_tg_id(UserId(tg_id))
+            if user is not None and not user.is_active:
+                user.reactivate()
+                await self._uow.users.update(user)
+
     async def set_pulse_enabled(self, tg_id: int, enabled: bool | None) -> User | None:
         """None переключает сводку на противоположное состояние."""
         async with self._uow:
@@ -69,8 +77,10 @@ class UserService:
                     )
                 return user, True
 
-            if user.username != username:
+            if user.username != username or not user.is_active:
                 user.username = username
+                if not user.is_active:
+                    user.reactivate()
                 await self._uow.users.update(user)
             return user, False
 
