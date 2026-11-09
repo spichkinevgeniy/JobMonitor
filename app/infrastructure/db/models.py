@@ -79,6 +79,7 @@ class User(Base):
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     pulse_enabled: Mapped[bool] = mapped_column(Boolean, default=True, server_default=true())
+    deactivated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 class VacancyDispatchLog(Base):

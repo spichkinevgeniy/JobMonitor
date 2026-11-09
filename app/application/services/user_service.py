@@ -40,7 +40,7 @@ class UserService:
         async with self._uow:
             user = await self._uow.users.get_by_tg_id(UserId(tg_id))
             if user is not None and user.is_active:
-                user.is_active = False
+                user.deactivate()
                 await self._uow.users.update(user)
 
     async def set_pulse_enabled(self, tg_id: int, enabled: bool | None) -> User | None:

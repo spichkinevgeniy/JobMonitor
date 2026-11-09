@@ -1,7 +1,9 @@
+from datetime import UTC, datetime
+
 from app.domain.shared import WorkFormat
 from app.domain.user.entities import User
 from app.domain.user.value_objects import FilterMode
-from app.infrastructure.db.mappers.user import user_from_model, user_to_model
+from app.infrastructure.db.mappers.user import apply_user, user_from_model, user_to_model
 from app.infrastructure.db.models import User as UserModel
 
 
@@ -20,6 +22,21 @@ def test_user_mapper_round_trip_preserves_skills() -> None:
 
     assert sorted(model.cv_skills) == ["Python", "React"]
     assert sorted(item.value for item in restored.cv_skills.items) == ["Python", "React"]
+
+
+def test_user_mapper_keeps_deactivation_date() -> None:
+    user = User.create(tg_id=123)
+    blocked_at = datetime(2026, 11, 8, 7, 14, tzinfo=UTC)
+    user.deactivated_at = blocked_at
+
+    model = user_to_model(user)
+
+    assert user_from_model(model).deactivated_at == blocked_at
+
+    user.deactivated_at = None
+    apply_user(model, user)
+
+    assert model.deactivated_at is None
 
 
 def test_user_mapper_normalizes_undefined_work_format_to_any() -> None:
