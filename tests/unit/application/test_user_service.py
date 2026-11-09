@@ -1,5 +1,7 @@
 """Методы UserService, которые раньше жили прямо в обработчиках бота."""
 
+from datetime import UTC, datetime, timedelta
+
 from app.application.services.user_service import UserService
 from app.domain.user.entities import User
 from app.domain.user.value_objects import UserId
@@ -46,13 +48,19 @@ class TestDeactivate:
         await service.deactivate(1)
 
         assert user.is_active is False
+        assert user.deactivated_at is not None
+        assert datetime.now(UTC) - user.deactivated_at < timedelta(minutes=1)
         assert repo.updated == [1]
 
     async def test_already_inactive_user_is_not_rewritten(self) -> None:
-        service, repo = _service(User.create(tg_id=1, is_active=False))
+        blocked_at = datetime(2026, 10, 1, tzinfo=UTC)
+        user = User.create(tg_id=1, is_active=False)
+        user.deactivated_at = blocked_at
+        service, repo = _service(user)
 
         await service.deactivate(1)
 
+        assert user.deactivated_at == blocked_at
         assert repo.updated == []
 
     async def test_unknown_user_is_ignored(self) -> None:

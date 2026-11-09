@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import UTC, datetime
 
 from app.domain.shared.value_objects import (
     ExperienceLevel,
@@ -33,6 +34,13 @@ class User:
 
     is_active: bool = True
     pulse_enabled: bool = True
+    # Когда бот узнал о блокировке. Узнаёт он при первой неудачной отправке,
+    # поэтому человек мог заблокировать его немного раньше.
+    deactivated_at: datetime | None = None
+
+    def deactivate(self) -> None:
+        self.is_active = False
+        self.deactivated_at = datetime.now(UTC)
 
     @classmethod
     def create(

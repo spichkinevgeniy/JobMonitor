@@ -17,7 +17,7 @@ from app.telegram.miniapp.market_facts import build_findings, build_json_ld, bui
 from app.telegram.miniapp.market_page import build_market_context
 from app.telegram.miniapp.ui import templates
 
-PRIVACY_UPDATED_AT = "4 октября 2026"
+PRIVACY_UPDATED_AT = "9 ноября 2026"
 
 # Ключ протокола IndexNow. Он публичный по устройству протокола: поисковик
 # лишь сверяет, что файл с ним лежит на нашем сайте.

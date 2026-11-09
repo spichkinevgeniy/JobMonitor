@@ -42,6 +42,7 @@ def user_to_model(user: User) -> UserModel:
         filter_work_format_mode=user.filter_work_format_mode.value,
         is_active=user.is_active,
         pulse_enabled=user.pulse_enabled,
+        deactivated_at=user.deactivated_at,
     )
 
 
@@ -62,6 +63,7 @@ def apply_user(model: UserModel, user: User) -> None:
     model.filter_work_format_mode = user.filter_work_format_mode.value
     model.is_active = user.is_active
     model.pulse_enabled = user.pulse_enabled
+    model.deactivated_at = user.deactivated_at
 
 
 def user_from_model(model: UserModel) -> User:
@@ -116,4 +118,5 @@ def user_from_model(model: UserModel) -> User:
         filter_work_format_mode=work_format_mode,
         is_active=model.is_active,
         pulse_enabled=model.pulse_enabled,
+        deactivated_at=model.deactivated_at,
     )
