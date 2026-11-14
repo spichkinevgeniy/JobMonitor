@@ -42,6 +42,10 @@ class User:
         self.is_active = False
         self.deactivated_at = datetime.now(UTC)
 
+    def reactivate(self) -> None:
+        self.is_active = True
+        self.deactivated_at = None
+
     @classmethod
     def create(
         cls,

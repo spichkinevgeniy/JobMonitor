@@ -71,6 +71,51 @@ class TestDeactivate:
         assert repo.updated == []
 
 
+class TestReturnAfterBlock:
+    """Разблокировал бота и написал ему: рассылка возобновляется, дата блокировки стирается."""
+
+    @staticmethod
+    def _blocked_user() -> User:
+        user = User.create(tg_id=1, username="alice")
+        user.deactivate()
+        return user
+
+    async def test_reactivate(self) -> None:
+        user = self._blocked_user()
+        service, repo = _service(user)
+
+        await service.reactivate(1)
+
+        assert user.is_active is True
+        assert user.deactivated_at is None
+        assert repo.updated == [1]
+
+    async def test_active_user_is_not_rewritten(self) -> None:
+        service, repo = _service(User.create(tg_id=1))
+
+        await service.reactivate(1)
+
+        assert repo.updated == []
+
+    async def test_start_brings_user_back(self) -> None:
+        user = self._blocked_user()
+        service, repo = _service(user)
+
+        returned, is_new = await service.get_or_create_user(1, "alice")
+
+        assert is_new is False
+        assert returned.is_active is True
+        assert returned.deactivated_at is None
+        assert repo.updated == [1]
+
+    async def test_start_of_active_user_writes_nothing(self) -> None:
+        service, repo = _service(User.create(tg_id=1, username="alice"))
+
+        await service.get_or_create_user(1, "alice")
+
+        assert repo.updated == []
+
+
 class TestPulseSwitch:
     async def test_none_flips_the_setting(self) -> None:
         service, _ = _service(User.create(tg_id=1))
