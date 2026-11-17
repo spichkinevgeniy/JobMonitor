@@ -29,6 +29,7 @@ SPECIALIZATION_LABELS = {
     SpecializationType.UI_UX_DESIGN.value: "дизайн",
     SpecializationType.DATA_SCIENCE_ML.value: "ds/ml",
     SpecializationType.MOBILE.value: "mobile",
+    SpecializationType.ONE_C.value: "1с",
 }
 SKILL_LABELS = {
     "System Administration": "sysadmin",

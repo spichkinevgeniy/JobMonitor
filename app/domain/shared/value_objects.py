@@ -50,6 +50,9 @@ class SpecializationType(StrEnum):
     INFRASTRUCTURE_DEVOPS = "Infrastructure & DevOps"
     ANALYTICS = "Analytics"
     UI_UX_DESIGN = "UI/UX & Product Design"
+    # Латиница в значении: так же названа группа каналов, и значение
+    # не путается при наборе. Пользователь видит те же «1C».
+    ONE_C = "1C"
 
 
 class SkillType(StrEnum):
@@ -108,6 +111,9 @@ class SkillType(StrEnum):
     UX_RESEARCH = "UX Research"
     DESIGN_SYSTEMS = "Design Systems"
     INTERACTION_DESIGN = "Interaction Design"
+
+    # 1C
+    ONE_C = "1C"
 
 
 @dataclass(frozen=True, slots=True)
