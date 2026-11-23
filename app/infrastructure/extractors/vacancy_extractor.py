@@ -1,6 +1,7 @@
 import re
 
 from app.application.dto import OutVacancyParse
+from app.application.dto.resume_dto import SkillWithEvidence
 from app.application.ports.llm_port import IVacancyLLMExtractor
 from app.core.logger import get_app_logger
 from app.infrastructure.llm import get_vacancy_parse_agent
@@ -27,6 +28,8 @@ _SKILL_ALIASES: dict[str, tuple[str, ...]] = {
     "Python": ("python", "питон"),
     "Java/Scala": ("java", "scala", "kotlin", "spring", "джава"),
     "C#": ("c#", ".net", "asp.net", "шарп"),
+    # Кириллическая и латинская «с» выглядят одинаково, в текстах встречаются обе.
+    "1C": ("1с", "1c"),
     "Go": ("go", "golang"),
     "PHP": ("php", "laravel", "symfony"),
     "Ruby": ("ruby", "rails"),
@@ -61,9 +64,12 @@ def drop_unsupported_skills(parsed: OutVacancyParse, text: str) -> int:
     вовсе. Просьбу модель нарушает молча, а подстроку проверяет код.
     """
     haystack = _normalized(text)
-    kept = []
+    kept: list[SkillWithEvidence] = []
     dropped = []
     for item in parsed.skills:
+        # Модель иногда повторяет навык с другой цитатой — второй раз он лишний.
+        if any(kept_item.skill == item.skill for kept_item in kept):
+            continue
         evidence = _normalized(item.evidence)
         if not evidence or evidence not in haystack:
             dropped.append(item.skill.value)

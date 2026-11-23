@@ -128,3 +128,35 @@ class TestShortNamesSurvive:
         drop_unsupported_skills(parsed, "Разработчик и инженер, GitLab CI")
 
         assert _kept(parsed) == []
+
+
+class TestOneC:
+    """В вакансиях 1С пишут и кириллическую, и латинскую «с» — обе должны проходить."""
+
+    VACANCY = "Программист 1С (УТ 11, ЗУП). Доработка конфигураций 1C:Предприятие 8.3."
+
+    def test_cyrillic_and_latin_spelling(self) -> None:
+        for quote in ("Программист 1С", "1C:Предприятие 8.3"):
+            parsed = _parsed(SkillWithEvidence(skill=SkillType.ONE_C, evidence=quote))
+
+            drop_unsupported_skills(parsed, self.VACANCY)
+
+            assert _kept(parsed) == ["1C"]
+
+    def test_csharp_is_not_confirmed_by_one_c_quote(self) -> None:
+        """Раньше вакансии 1С уходили C#-разработчикам."""
+        parsed = _parsed(SkillWithEvidence(skill=SkillType.C_SHARP, evidence="Программист 1С"))
+
+        drop_unsupported_skills(parsed, self.VACANCY)
+
+        assert _kept(parsed) == []
+
+    def test_repeated_skill_is_kept_once(self) -> None:
+        parsed = _parsed(
+            SkillWithEvidence(skill=SkillType.ONE_C, evidence="Программист 1С"),
+            SkillWithEvidence(skill=SkillType.ONE_C, evidence="1C:Предприятие 8.3"),
+        )
+
+        drop_unsupported_skills(parsed, self.VACANCY)
+
+        assert _kept(parsed) == ["1C"]

@@ -31,6 +31,7 @@ PROSE_LABELS = {
     SpecializationType.UI_UX_DESIGN.value: "дизайн",
     SpecializationType.DATA_SCIENCE_ML.value: "Data Science и ML",
     SpecializationType.MOBILE.value: "мобильная разработка",
+    SpecializationType.ONE_C.value: "1С",
 }
 GENITIVE_MONTHS = (
     "января",
